@@ -4222,7 +4222,10 @@ FORM z28_run_sm35_gui_fallback
 
   p_bdc_mode               = gc_mode_call.
   CLEAR chkp_background.
-  CLEAR chkp_stop_on_error.
+  "Keep the monitor-wide error policy during automatic fallback. Clearing
+  "this flag made the fallback timer continue to CALL TRANSACTION for the
+  "next PO_KEY even after the current fallback group failed.
+  chkp_stop_on_error       = 'X'.
   gv_runtime_mode_override = 'E'.
   gv_runtime_upd_override  = gv_last_sm35_policy.
   IF gv_runtime_upd_override <> 'S' AND
@@ -4359,6 +4362,10 @@ FORM z29_fb_tick.
     lv_msg = 'Automatic fallback finished but SAP document proof was not created. Open Error Detail.'.
     PERFORM z24_async_q_set
       USING ls_key 'ERROR' lv_msg ''.
+    IF chkp_stop_on_error = 'X'.
+      gv_exec_stop_req = abap_true.
+      g_stop_flag = 'X'.
+    ENDIF.
   ENDIF.
 
   PERFORM z16_display_0500_queue.
@@ -4367,7 +4374,9 @@ FORM z29_fb_tick.
   PERFORM z16_sapgui_progress USING gv_fb_done gv_fb_total gv_exec_run_phase.
   PERFORM z16_flush_0500_queue.
 
-  IF gv_fb_done >= gv_fb_total.
+  IF gv_exec_stop_req = abap_true OR g_stop_flag = 'X'.
+    PERFORM z29_fb_finish USING abap_true.
+  ELSEIF gv_fb_done >= gv_fb_total.
     PERFORM z29_fb_finish USING abap_false.
   ENDIF.
 ENDFORM.
@@ -5161,6 +5170,9 @@ FORM z16_run_0500_group_loop
 
     lv_err_before = gv_exec_err_grp.
     PERFORM execute_bdc_engine USING lt_one gc_mode_call.
+    IF g_stop_flag = 'X'.
+      gv_exec_stop_req = abap_true.
+    ENDIF.
 
     GET RUN TIME FIELD lv_rt_now.
     lv_elapsed_ms = lv_rt_now - iv_rt_start.
@@ -5175,7 +5187,8 @@ FORM z16_run_0500_group_loop
     PERFORM z16_flush_0500_queue.
     PERFORM z16_sapgui_progress USING lv_idx lv_total_grp lv_group_key.
 
-    IF chkp_stop_on_error = 'X' AND gv_exec_err_grp > lv_err_before.
+    IF chkp_stop_on_error = 'X'
+       AND ( gv_exec_err_grp > lv_err_before OR gv_exec_stop_req = abap_true ).
       gv_exec_stop_req = abap_true.
       EXIT.
     ENDIF.
@@ -5409,13 +5422,9 @@ FORM z16_after_0500_execute.
   PERFORM z16_has_0500_issue CHANGING lv_issue.
 
   IF lv_issue = abap_true.
-    MESSAGE 'Execution has runtime issue(s). Opening 0550 Error Detail / Fix flow before final dashboard.' TYPE 'S' DISPLAY LIKE 'W'.
-    PERFORM z16_open_0500_error_detail.
+    MESSAGE 'Execution has runtime issue(s). Stay in 0500; use Error Detail or Fix Guide when ready.' TYPE 'S' DISPLAY LIKE 'W'.
   ELSEIF lv_total > 0 AND lv_done >= lv_total.
-    "V5J: BDC execution succeeded; do not let an invalid custom dynpro 0600
-    "turn a successful SAP document creation into a runtime dump.
-    MESSAGE 'Execution finished successfully. Opening safe Result Dashboard.' TYPE 'S'.
-    PERFORM z16_open_result_dash_curr.
+    MESSAGE 'Execution finished successfully. Stay in 0500; open Dashboard when ready.' TYPE 'S'.
   ELSE.
     MESSAGE 'Execution queue still has pending READY group(s). Stay in 0500 or retry/refresh.' TYPE 'S' DISPLAY LIKE 'W'.
   ENDIF.

@@ -562,8 +562,18 @@ MODULE user_command_0500 INPUT.
       "release the full-client control and clear the old row selection before
       "returning to 0400.
       IF gv_exec_run_active = abap_true OR gv_async_active = abap_true.
-        MESSAGE 'Execution is still running. Use Stop Queue or wait for the current document to finish.' TYPE 'S' DISPLAY LIKE 'W'.
-        RETURN.
+        IF gv_async_active = abap_true
+           OR gv_exec_mon_kind = 'B'
+           OR gv_exec_mon_kind = 'F'.
+          MESSAGE 'Execution is still running. Use Stop Queue or wait for the current document to finish.' TYPE 'S' DISPLAY LIKE 'W'.
+          RETURN.
+        ELSE.
+          "A direct CALL TRANSACTION has already returned to 0500, but the
+          "run-active flag can remain set after ME21N exits through Hold/Error.
+          "At this point user input is possible again, so cleanup and leave.
+          g_stop_flag      = 'X'.
+          gv_exec_stop_req = abap_true.
+        ENDIF.
       ENDIF.
       PERFORM z22_stop_0500_timer.
       CLEAR: gv_0500_pending_run, gv_0500_pending_engine,

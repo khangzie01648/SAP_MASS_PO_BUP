@@ -176,7 +176,16 @@ CLASS lcl_grid_events IMPLEMENTATION.
       WHEN 'STOP0500'.
         PERFORM stop_bdc_execution.
         gv_exec_stop_req = abap_true.
+        IF gv_async_active <> abap_true
+           AND gv_exec_mon_kind <> 'B'
+           AND gv_exec_mon_kind <> 'F'.
+          CLEAR: gv_exec_run_active, gv_exec_run_engine,
+                 gv_exec_run_phase, gv_0500_pending_run,
+                 gv_0500_pending_engine.
+          PERFORM z22_stop_0500_timer.
+        ENDIF.
         PERFORM z16_display_0500_queue.
+        PERFORM z23_refresh_0500_tools.
       WHEN 'REF0500'.
         CLEAR g_stop_flag.
         gv_exec_stop_req = abap_false.
