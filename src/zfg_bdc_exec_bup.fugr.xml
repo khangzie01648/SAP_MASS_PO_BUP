@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>Async BDC execution worker</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFG_BDC_EXEC_BUPTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFG_BDC_EXEC_BUP</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>Z_BDC_EXEC_ONE_BUP</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Execute one BDC group asynchronously</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_TCODE</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>TCODE</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_UPDMODE</PARAMETER>
+       <DEFAULT>&apos;S&apos;</DEFAULT>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>CHAR1</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>EV_SUBRC</PARAMETER>
+       <TYP>SYSUBRC</TYP>
+      </RSEXP>
+      <RSEXP>
+       <PARAMETER>EV_MESSAGE</PARAMETER>
+       <TYP>CHAR255</TYP>
+      </RSEXP>
+     </EXPORT>
+     <TABLES>
+      <RSTBL>
+       <PARAMETER>IT_BDCDATA</PARAMETER>
+       <DBSTRUCT>BDCDATA</DBSTRUCT>
+      </RSTBL>
+      <RSTBL>
+       <PARAMETER>ET_BDCMSG</PARAMETER>
+       <DBSTRUCT>BDCMSGCOLL</DBSTRUCT>
+      </RSTBL>
+     </TABLES>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_TCODE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Transaction Code</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_UPDMODE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Single-Character Flag</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>EV_SUBRC</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Return Code</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>EV_MESSAGE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Message Text</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IT_BDCDATA</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Batch input: New table field structure</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>ET_BDCMSG</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Collecting messages in the SAP System</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
