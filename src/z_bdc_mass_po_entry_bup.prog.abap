@@ -1,36 +1,65 @@
 *&---------------------------------------------------------------------*
-*& Report Z_BDC_MASS_PO_ENTRY
+*& Report  Z_BDC_MASS_PO_ENTRY_BUP
 *&---------------------------------------------------------------------*
-*& Capstone Project: Mass Purchase Order entry via custom BDC on ME21N
-*& Main Hub and Automation Orchestrator
+*& SAP BDC Multi-TCODE Engine
+*&
+*& Transaction routing:
+*&   ZBDC_CONFIG_BUP -> Configuration / Onboarding
+*&   ZBDC_RUN_BUP    -> Runtime / Operations
+*&   Z_BDC_02_BUP    -> Legacy Runtime
 *&---------------------------------------------------------------------*
+
 REPORT z_bdc_mass_po_entry_bup.
 
-INCLUDE Z_BDC_MASS_PO_ENTRY_TOP_BUP.
-*INCLUDE z_bdc_mass_po_entry_top.  " Global Data Definitions
-INCLUDE Z_BDC_MASS_PO_ENTRY_O01_BUP.
-*INCLUDE z_bdc_mass_po_entry_o01.  " Process Before Output (PBO) Modules
-INCLUDE Z_BDC_MASS_PO_ENTRY_I01_BUP.
-*INCLUDE z_bdc_mass_po_entry_i01.  " Process After Input (PAI) Modules
-INCLUDE Z_BDC_MASS_PO_ENTRY_F01_BUP.
-*INCLUDE z_bdc_mass_po_entry_f01.  " Form Subroutines & Business Logic
+*---------------------------------------------------------------------*
+* Legacy core includes
+*---------------------------------------------------------------------*
+INCLUDE z_bdc_mass_po_entry_top_bup.
+INCLUDE z_bdc_mass_po_entry_o01_bup.
+INCLUDE z_bdc_mass_po_entry_i01_bup.
+INCLUDE z_bdc_mass_po_entry_f01_bup.
 
-INCLUDE ZBDC_MPE_M0_NAV_BUP.
+*---------------------------------------------------------------------*
+* Modular engine includes
+*---------------------------------------------------------------------*
+INCLUDE zbdc_mpe_m0_nav_bup.
+INCLUDE zbdc_mpe_m0_util_bup.
 
-INCLUDE ZBDC_MPE_M0_UTIL_BUP.
+INCLUDE zbdc_mpe_m1_source_bup.
+INCLUDE zbdc_mpe_m1_parse_bup.
+INCLUDE zbdc_mpe_m1_stage_bup.
 
-INCLUDE ZBDC_MPE_M1_SOURCE_BUP.
+INCLUDE zbdc_mpe_m2_map_bup.
 
-INCLUDE ZBDC_MPE_M1_PARSE_BUP.
+INCLUDE zbdc_mpe_m3_valid_bup.
+INCLUDE zbdc_mpe_m3_exec_bup.
 
-INCLUDE ZBDC_MPE_M1_STAGE_BUP.
+INCLUDE zbdc_mpe_m4_dash_bup.
+INCLUDE zbdc_mpe_m4_error_bup.
 
-INCLUDE ZBDC_MPE_M2_MAP_BUP.
+*---------------------------------------------------------------------*
+* Application entry routing
+*---------------------------------------------------------------------*
+START-OF-SELECTION.
 
-INCLUDE ZBDC_MPE_M3_VALID_BUP.
+  CASE sy-tcode.
 
-INCLUDE ZBDC_MPE_M3_EXEC_BUP.
+    WHEN 'ZBDC_CONFIG_BUP'.
+      "Transaction 1:
+      "Configuration / Onboarding for admin or consultant
+      CALL SCREEN 0800.
 
-INCLUDE ZBDC_MPE_M4_DASH_BUP.
+    WHEN 'ZBDC_RUN_BUP'.
+      "Transaction 2:
+      "Daily Runtime / Operations for end users
+      CALL SCREEN 0100.
 
-INCLUDE ZBDC_MPE_M4_ERROR_BUP.
+    WHEN 'Z_BDC_02_BUP'.
+      "Legacy transaction kept temporarily for compatibility
+      CALL SCREEN 0100.
+
+    WHEN OTHERS.
+      "Direct execution from SE38 / SE80
+      CALL SCREEN 0100.
+
+  ENDCASE.

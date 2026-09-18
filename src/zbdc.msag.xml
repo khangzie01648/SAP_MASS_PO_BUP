@@ -1,0 +1,2393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZBDC</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Execution mode is blank.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Unsupported execution mode &quot;&amp;1&quot;.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Select one executor: CT or SM35.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Executor selection is ambiguous; choose exactly one.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Select one BDC display mode: N, E or A.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>BDC display-mode radio state is ambiguous.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>Select one update mode: S or A.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>008</MSGNR>
+     <TEXT>Update-mode radio state is ambiguous.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>009</MSGNR>
+     <TEXT>Unsupported BDC display mode &quot;&amp;1&quot;.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>010</MSGNR>
+     <TEXT>Unsupported update mode &quot;&amp;1&quot;.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>Executor value and selected radio do not match.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>012</MSGNR>
+     <TEXT>&amp;1 is required.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>013</MSGNR>
+     <TEXT>&amp;1 &quot;&amp;2&quot; is not numeric.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>014</MSGNR>
+     <TEXT>&amp;1 must be greater than zero.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>015</MSGNR>
+     <TEXT>Component &amp;1 does not exist in the target structure.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>016</MSGNR>
+     <TEXT>Script compiler metadata key could not be generated.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>017</MSGNR>
+     <TEXT>Script compiler metadata value is empty.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>018</MSGNR>
+     <TEXT>Script compiler metadata could not be persisted.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>019</MSGNR>
+     <TEXT>Executable contract has no immutable Script ID.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>020</MSGNR>
+     <TEXT>Select one exact session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>021</MSGNR>
+     <TEXT>Session &amp;1 has no runnable staging rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>022</MSGNR>
+     <TEXT>Selected file history row has no exact session identity.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>023</MSGNR>
+     <TEXT>Loaded your upload &amp;1 to Preview Data (&amp;2 rows).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>024</MSGNR>
+     <TEXT>Shared upload from &amp;1 is preview-only; lock before run.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>025</MSGNR>
+     <TEXT>Select one file/source history row.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>026</MSGNR>
+     <TEXT>Selected history row has no exact session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>027</MSGNR>
+     <TEXT>Preview Data loaded from batch &amp;1 (&amp;2 rows).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>028</MSGNR>
+     <TEXT>All Uploads: &amp;1 history row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>029</MSGNR>
+     <TEXT>My Uploads: &amp;1 history row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>030</MSGNR>
+     <TEXT>0500 ALV function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>031</MSGNR>
+     <TEXT>SM35 session &amp;1 is active; return and use Refresh Queue.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>032</MSGNR>
+     <TEXT>Execution is active; wait or use Stop Queue.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>033</MSGNR>
+     <TEXT>SM35 is SAP-owned; finish it, then Refresh Queue.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>034</MSGNR>
+     <TEXT>Stop requested; no new group starts after current group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>035</MSGNR>
+     <TEXT>Execution queue refreshed from its exact current scope.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>036</MSGNR>
+     <TEXT>Action removed; use Upload, Staging, or Execution Monitor.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>037</MSGNR>
+     <TEXT>No session selected; choose one from Dashboard or popup.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>038</MSGNR>
+     <TEXT>No session selected; choose one from Dashboard or popup.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>039</MSGNR>
+     <TEXT>Select an exact session/batch before Execution Monitor.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>040</MSGNR>
+     <TEXT>Result Dashboard is shown on Main Dashboard 0100.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>041</MSGNR>
+     <TEXT>Mapping comes from the active profile, not screen 0300.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>042</MSGNR>
+     <TEXT>No preview rows; check template data and retry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>043</MSGNR>
+     <TEXT>Preview Data loaded: &amp;1 row(s) from the selected file.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>044</MSGNR>
+     <TEXT>Preview Files opened: &amp;1 history row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>045</MSGNR>
+     <TEXT>My Uploads restored: &amp;1 file/source rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>046</MSGNR>
+     <TEXT>All Uploads restored: &amp;1 recent rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>047</MSGNR>
+     <TEXT>Download Template moved from 0300; use Mapping Profile.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>048</MSGNR>
+     <TEXT>Choose Local, Google Drive or Gmail with Browse first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>049</MSGNR>
+     <TEXT>Choose one local file first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>050</MSGNR>
+     <TEXT>Import SHDB moved from 0300; use the 0800 Recording Manager.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>051</MSGNR>
+     <TEXT>No upload data to validate; select or upload a source first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>052</MSGNR>
+     <TEXT>No upload data; load a source before opening Staging.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>053</MSGNR>
+     <TEXT>No executable upload data; load Preview/Staging first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>054</MSGNR>
+     <TEXT>Upload note saved for this session context.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>055</MSGNR>
+     <TEXT>Preview Files opened: &amp;1 file/source rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>056</MSGNR>
+     <TEXT>Runtime actions belong to transaction ZBDC_RUN_BUP.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>057</MSGNR>
+     <TEXT>0350 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>058</MSGNR>
+     <TEXT>No READY group to send to 0500.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>059</MSGNR>
+     <TEXT>Scope loaded: &amp;1 READY group(s). Execute in 0500.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>060</MSGNR>
+     <TEXT>Select at least one READY group before opening 0500.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>061</MSGNR>
+     <TEXT>Selected scope loaded: &amp;1 READY group(s). Execute in 0500.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>062</MSGNR>
+     <TEXT>Staging is already in edit mode.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>063</MSGNR>
+     <TEXT>Editing &amp;1 selected group(s), &amp;2 staging row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>064</MSGNR>
+     <TEXT>Staging is not in edit mode.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>065</MSGNR>
+     <TEXT>Select at least one group to open Execution Monitor.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>066</MSGNR>
+     <TEXT>Execution Monitor scope: &amp;1 selected group(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>067</MSGNR>
+     <TEXT>0400 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>068</MSGNR>
+     <TEXT>Current executor is SM35; use Run Batch Session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>069</MSGNR>
+     <TEXT>Current executor is CALL TRANSACTION; use Execute Now.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>070</MSGNR>
+     <TEXT>SM35 Monitor is available only in Batch Input Session mode.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>071</MSGNR>
+     <TEXT>Execution is running; stop queue or wait for current group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>072</MSGNR>
+     <TEXT>0500 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>073</MSGNR>
+     <TEXT>0700 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>074</MSGNR>
+     <TEXT>AI KB note save is optional; archive stays read-only.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>075</MSGNR>
+     <TEXT>0750 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>076</MSGNR>
+     <TEXT>0800 function not handled: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>077</MSGNR>
+     <TEXT>Source Config removed; use runtime config on Upload screen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>100</MSGNR>
+     <TEXT>Starting n8n Gmail service. Please wait...</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>101</MSGNR>
+     <TEXT>Gmail submission selection canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>102</MSGNR>
+     <TEXT>Select at least one Gmail submission.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>103</MSGNR>
+     <TEXT>Selected Gmail submissions use different contracts.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>104</MSGNR>
+     <TEXT>All selected Gmail submissions were already imported (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>105</MSGNR>
+     <TEXT>No Gmail rows loaded; duplicates &amp;1, invalid/skipped &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>106</MSGNR>
+     <TEXT>Gmail loaded &amp;1 rows from &amp;2 submissions; dup &amp;3, skip &amp;4.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>107</MSGNR>
+     <TEXT>No local data file was selected.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>108</MSGNR>
+     <TEXT>Please choose a file or channel first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>109</MSGNR>
+     <TEXT>Email batch data is ready in staging (&amp;1 row(s)).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>110</MSGNR>
+     <TEXT>Please choose local file(s) first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>111</MSGNR>
+     <TEXT>Local batch &amp;1: &amp;2 rows, &amp;3 units, &amp;4 skipped.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>112</MSGNR>
+     <TEXT>No data rows were loaded from selected local file(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>113</MSGNR>
+     <TEXT>No new email with a CSV attachment was found.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>114</MSGNR>
+     <TEXT>File selection was canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>115</MSGNR>
+     <TEXT>No file was selected or the file contains no valid data.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>116</MSGNR>
+     <TEXT>Email batch &amp;1: &amp;2 rows, &amp;3 attachments, &amp;4 skipped.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>117</MSGNR>
+     <TEXT>Cannot create HTTP client for Google Drive API.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>118</MSGNR>
+     <TEXT>Google Drive API returned HTTP &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>119</MSGNR>
+     <TEXT>No supported file owned by this Drive user was found.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>120</MSGNR>
+     <TEXT>Google Drive selection canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>121</MSGNR>
+     <TEXT>Refreshing Google Drive file list...</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>122</MSGNR>
+     <TEXT>Select exactly one Google Drive file.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>123</MSGNR>
+     <TEXT>Google Drive file selected. Press Upload/Ingest to parse.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>124</MSGNR>
+     <TEXT>Please select a Google Drive file first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>125</MSGNR>
+     <TEXT>Drive batch &amp;1: &amp;2 rows, &amp;3 files, &amp;4 skipped.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>126</MSGNR>
+     <TEXT>REST source URL is empty.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>127</MSGNR>
+     <TEXT>Cannot create HTTP client.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>128</MSGNR>
+     <TEXT>Loaded &amp;1 row(s) from the REST source.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>129</MSGNR>
+     <TEXT>REST source returned HTTP 200 but produced no data row.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>130</MSGNR>
+     <TEXT>REST source request failed (HTTP &amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>131</MSGNR>
+     <TEXT>No NEW Gmail webhook inbound message found.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>132</MSGNR>
+     <TEXT>Webhook bridge finished. Messages processed: &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>133</MSGNR>
+     <TEXT>Unknown inbound source: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>134</MSGNR>
+     <TEXT>Select one dashboard session before opening View Session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>135</MSGNR>
+     <TEXT>Session &amp;1 has no staging data to display.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>136</MSGNR>
+     <TEXT>Cannot persist Gmail rows into SAP staging.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>137</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>138</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>139</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>150</MSGNR>
+     <TEXT>No usable header columns were found in the file.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>151</MSGNR>
+     <TEXT>Exact template confirmed: &amp;1 / &amp;2 v&amp;3.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>152</MSGNR>
+     <TEXT>Unique contract confirmed: &amp;1 / &amp;2 v&amp;3.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>153</MSGNR>
+     <TEXT>Cannot parse Excel workbook &amp;1: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>154</MSGNR>
+     <TEXT>All Uploads: &amp;1 recent rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>155</MSGNR>
+     <TEXT>My Uploads: &amp;1 file/source rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>156</MSGNR>
+     <TEXT>Source &amp;1 loaded session &amp;2; see Preview Data.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>157</MSGNR>
+     <TEXT>&amp;1: session &amp;2 loaded &amp;3 rows; &amp;4 row(s) are already READY.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>158</MSGNR>
+     <TEXT>&amp;1 session &amp;2 loaded &amp;3 rows; Preview Data is ready.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>180</MSGNR>
+     <TEXT>Select an exact transaction/session context before Refresh.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>181</MSGNR>
+     <TEXT>Select an exact session/batch before Refresh.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>200</MSGNR>
+     <TEXT>Enter a transaction code to record.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>201</MSGNR>
+     <TEXT>Recording &amp;1 started; complete one real sample transaction.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>202</MSGNR>
+     <TEXT>Recording returned &amp;1 instead of &amp;2; onboarding blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>203</MSGNR>
+     <TEXT>Recording returned no rows; onboarding did not start.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>204</MSGNR>
+     <TEXT>Cannot read SHDB file; SY-SUBRC=&amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>205</MSGNR>
+     <TEXT>No script for &amp;1 / &amp;2 v&amp;3; import exact SHDB recording.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>206</MSGNR>
+     <TEXT>My Import is empty; use All Import or import a recording.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>207</MSGNR>
+     <TEXT>All Import is empty. Import or start a recording first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>250</MSGNR>
+     <TEXT>Transaction context missing; resolve an ACTIVE profile.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>251</MSGNR>
+     <TEXT>Apps Script returned HTML, not CSV; verify /exec deployment.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>252</MSGNR>
+     <TEXT>Apps Script CSV has no valid rows; check the template.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>253</MSGNR>
+     <TEXT>Google Drive Apps Script CSV loaded &amp;1 row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>254</MSGNR>
+     <TEXT>Business Input Contract v&amp;1 is locked; fields preserved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>255</MSGNR>
+     <TEXT>Mapping &amp;1 v&amp;2 already matches; no new version created.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>256</MSGNR>
+     <TEXT>Create Mapping Draft canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>257</MSGNR>
+     <TEXT>No generic FIELDnn slots found in ZBDC_STAGING_BUP.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>258</MSGNR>
+     <TEXT>ZBDC_STAGING_BUP must contain FIELD01 for the business key.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>259</MSGNR>
+     <TEXT>No dynamic business fields; Mapping Draft not created.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>260</MSGNR>
+     <TEXT>Mapping Draft could not be saved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>261</MSGNR>
+     <TEXT>Select Mapping rows to remove from the Field Guide.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>262</MSGNR>
+     <TEXT>BUSINESS_KEY cannot be removed from the template.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>263</MSGNR>
+     <TEXT>No Mapping row was removed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>264</MSGNR>
+     <TEXT>Removed &amp;1 Field Guide candidates; replay unchanged.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>265</MSGNR>
+     <TEXT>No removed Mapping field exists in this review session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>266</MSGNR>
+     <TEXT>Restored &amp;1 field(s) to the Field Guide candidate.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>267</MSGNR>
+     <TEXT>ACTIVE/INACTIVE profiles are immutable; create a version.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>268</MSGNR>
+     <TEXT>Certified contract &amp;1 v&amp;2 is immutable; create a candidate.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>269</MSGNR>
+     <TEXT>Mapping changed in another session; refresh before saving.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>270</MSGNR>
+     <TEXT>Mapping rows could not be saved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>271</MSGNR>
+     <TEXT>Script reload failed; Mapping save was canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>272</MSGNR>
+     <TEXT>Mapping &amp;1 / &amp;2 v&amp;3 saved and synchronized as MAPPED.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>273</MSGNR>
+     <TEXT>Profile insert failed for &amp;1 / &amp;2 v&amp;3; refresh and retry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>274</MSGNR>
+     <TEXT>Profile Registry is missing. Save the mapping first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>275</MSGNR>
+     <TEXT>Only MAPPED/TESTING profiles can replay; status is &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>276</MSGNR>
+     <TEXT>Profile could not be moved to TESTING.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>277</MSGNR>
+     <TEXT>Profile &amp;1 v&amp;2 is TESTING, not ACTIVE. &amp;3</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>278</MSGNR>
+     <TEXT>Select exactly one template delivery method.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>279</MSGNR>
+     <TEXT>Dynamic template is empty; Drive upload blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>280</MSGNR>
+     <TEXT>N8N_GDRIVE_UPLOAD_TEMPLATE_URL must use HTTPS.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>281</MSGNR>
+     <TEXT>Could not Base64-encode the dynamic template package.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>282</MSGNR>
+     <TEXT>Cannot create Google Drive request ID: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>283</MSGNR>
+     <TEXT>Cannot calculate template content hash: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>284</MSGNR>
+     <TEXT>Template content hash is empty; upload blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>285</MSGNR>
+     <TEXT>Cannot create HTTP client for the Drive webhook.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>286</MSGNR>
+     <TEXT>Google Drive request send failed (RC &amp;1, Request &amp;2).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>287</MSGNR>
+     <TEXT>Google Drive response receive failed (RC &amp;1, Request &amp;2).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>288</MSGNR>
+     <TEXT>Google Drive upload failed HTTP &amp;1 (Request &amp;2): &amp;3</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>289</MSGNR>
+     <TEXT>Invalid JSON from Google Drive adapter (Request &amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>290</MSGNR>
+     <TEXT>Google Drive upload rejected (Request &amp;1): &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>291</MSGNR>
+     <TEXT>Google Drive response requestId mismatch (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>292</MSGNR>
+     <TEXT>Google Drive response action mismatch (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>293</MSGNR>
+     <TEXT>Invalid Google Drive operation (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>294</MSGNR>
+     <TEXT>Google Drive adapter returned no fileId (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>295</MSGNR>
+     <TEXT>Google Drive adapter returned a different fileName (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>296</MSGNR>
+     <TEXT>Google Drive content hash verification failed (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>297</MSGNR>
+     <TEXT>Google Drive MIME verification failed (Request &amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>298</MSGNR>
+     <TEXT>Google Drive file size verification failed (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>299</MSGNR>
+     <TEXT>Google Drive contract hash verification failed (&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>300</MSGNR>
+     <TEXT>Dynamic template &amp;1 and opened in Google Drive. Request &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>301</MSGNR>
+     <TEXT>Dynamic template &amp;1 in Google Drive. File ID &amp;2. Request &amp;3.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>302</MSGNR>
+     <TEXT>Generate Template failed: Mapping context unresolved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>303</MSGNR>
+     <TEXT>Current profile is not registered. Save the mapping first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>304</MSGNR>
+     <TEXT>Template generation failed: Mapping contract incomplete.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>305</MSGNR>
+     <TEXT>The CSV template could not be created.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>306</MSGNR>
+     <TEXT>CSV template conversion for Drive failed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>307</MSGNR>
+     <TEXT>CSV Save dialog failed to open (SY-SUBRC=&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>308</MSGNR>
+     <TEXT>Template save canceled; no file was written.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>309</MSGNR>
+     <TEXT>The CSV template could not be written to the frontend.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>310</MSGNR>
+     <TEXT>The data-only XLSX package could not be created.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>311</MSGNR>
+     <TEXT>Generate Template: Save dialog failed to open (SY-SUBRC=&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>312</MSGNR>
+     <TEXT>The XLSX template could not be written to the frontend.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>313</MSGNR>
+     <TEXT>Cannot build the generic script editor field catalog.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>314</MSGNR>
+     <TEXT>Import contract selection canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>315</MSGNR>
+     <TEXT>Select exactly one import contract row.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>316</MSGNR>
+     <TEXT>Selected import contract is invalid; refresh and retry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>317</MSGNR>
+     <TEXT>Selected import contract no longer exists; refresh.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>318</MSGNR>
+     <TEXT>Selected import contract is BLOCKED; choose another.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>319</MSGNR>
+     <TEXT>Selected &amp;1 / &amp;2 v&amp;3; context pinned (&amp;4 steps).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>320</MSGNR>
+     <TEXT>N8N_GMAIL_REQUEST_URL must use HTTPS.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>321</MSGNR>
+     <TEXT>N8N_GMAIL_HEADER_NAME contains invalid characters.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>322</MSGNR>
+     <TEXT>N8N_GMAIL_HEADER_VALUE has an invalid control character.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>323</MSGNR>
+     <TEXT>N8N_GMAIL_TIMEOUT_SEC must be numeric.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>324</MSGNR>
+     <TEXT>N8N_GMAIL_TIMEOUT_SEC must be between 1 and 600 seconds.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>325</MSGNR>
+     <TEXT>N8N_GMAIL_FORM_TTL_HOURS must be numeric.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>326</MSGNR>
+     <TEXT>N8N_GMAIL_FORM_TTL_HOURS must be between 1 and 720.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>327</MSGNR>
+     <TEXT>Gmail data-entry request canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>328</MSGNR>
+     <TEXT>Recipient email was not returned by the popup.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>329</MSGNR>
+     <TEXT>Enter exactly one valid recipient email address.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>330</MSGNR>
+     <TEXT>Cannot create Gmail request identity: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>331</MSGNR>
+     <TEXT>Cannot determine timestamp for Gmail form expiry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>332</MSGNR>
+     <TEXT>Cannot calculate Gmail form expiry: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>333</MSGNR>
+     <TEXT>Generated Gmail form expiry is invalid.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>334</MSGNR>
+     <TEXT>Dynamic Gmail form schema is empty; request blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>335</MSGNR>
+     <TEXT>Invalid dynamic form field name &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>336</MSGNR>
+     <TEXT>Dynamic Gmail form contains no usable fields.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>337</MSGNR>
+     <TEXT>Cannot serialize Gmail form request: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>338</MSGNR>
+     <TEXT>Internal Gmail form request JSON is incomplete.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>339</MSGNR>
+     <TEXT>Cannot create HTTP client for the n8n Gmail request webhook.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>340</MSGNR>
+     <TEXT>Gmail data-entry request failed HTTP &amp;1: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>341</MSGNR>
+     <TEXT>Gmail data-entry request sent. Request &amp;1; fields &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>342</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>400</MSGNR>
+     <TEXT>No runtime BDCDATA was generated for &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>401</MSGNR>
+     <TEXT>Unresolved table-control placeholder remains in &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>402</MSGNR>
+     <TEXT>Could not calculate executable BDCDATA SHA-256.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>403</MSGNR>
+     <TEXT>BDC fidelity failed: sanitizer changed row count &amp;1 -&gt; &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>404</MSGNR>
+     <TEXT>Runtime BDC row &amp;1 disappeared after sanitizer.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>405</MSGNR>
+     <TEXT>SM35 fidelity mismatch: stored row &amp;1 is missing.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>406</MSGNR>
+     <TEXT>SM35 preflight failed: document group is empty.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>407</MSGNR>
+     <TEXT>SM35 preflight failed: BDCDATA preparation failed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>408</MSGNR>
+     <TEXT>SM35 preflight failed: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>409</MSGNR>
+     <TEXT>No exact staging context is loaded for validation.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>410</MSGNR>
+     <TEXT>Validation results not persisted; no commit was made.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>411</MSGNR>
+     <TEXT>Validation completed with &amp;1 error row(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>412</MSGNR>
+     <TEXT>Validation completed; all non-terminal rows are READY.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>413</MSGNR>
+     <TEXT>Validation-rule registry could not be read: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>414</MSGNR>
+     <TEXT>Rule &amp;1 requires CHECK_TABLE and CHECK_FIELD1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>415</MSGNR>
+     <TEXT>Active validation rule &amp;1 is invalid: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>416</MSGNR>
+     <TEXT>Lookup table/field is empty.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>417</MSGNR>
+     <TEXT>&amp;1 is not an active transparent table/view.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>418</MSGNR>
+     <TEXT>Field &amp;1 is not active in &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>419</MSGNR>
+     <TEXT>Validation rule &amp;1 could not execute: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>420</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>500</MSGNR>
+     <TEXT>Exact Session ID is required.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>501</MSGNR>
+     <TEXT>The exact session has no READY staging rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>502</MSGNR>
+     <TEXT>No executable staging row is available.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>503</MSGNR>
+     <TEXT>Session &amp;1 has no mapping context; execution blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>504</MSGNR>
+     <TEXT>No eligible row is available for processing.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>505</MSGNR>
+     <TEXT>Cannot lock processing scope: session ID is empty.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>506</MSGNR>
+     <TEXT>Batch &amp;1 is processed by &amp;2; retry after it finishes.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>507</MSGNR>
+     <TEXT>Batch lock failed for &amp;1 (SY-SUBRC=&amp;2).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>508</MSGNR>
+     <TEXT>Engine plan prepared for &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>509</MSGNR>
+     <TEXT>Chunk committed after &amp;1 group(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>510</MSGNR>
+     <TEXT>An execution request is already active.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>511</MSGNR>
+     <TEXT>Certification requires one exact READY group from Staging.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>512</MSGNR>
+     <TEXT>Certification needs one READY group; current scope has &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>513</MSGNR>
+     <TEXT>Processing stopped as requested.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>514</MSGNR>
+     <TEXT>All READY rows have been processed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>515</MSGNR>
+     <TEXT>Stop requested; stop occurs after current business group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>516</MSGNR>
+     <TEXT>Selected &amp;1 READY group(s). Press Run Selected.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>517</MSGNR>
+     <TEXT>ALV row selection cleared.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>518</MSGNR>
+     <TEXT>Queue already processes &amp;1/&amp;2; remaining groups continue.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>519</MSGNR>
+     <TEXT>Finished: &amp;1 error, &amp;2 warning, &amp;3 success / &amp;4 groups.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>520</MSGNR>
+     <TEXT>Finished: &amp;1/&amp;2 groups reached terminal state.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>521</MSGNR>
+     <TEXT>Returned: &amp;1/&amp;2 groups done; READY groups remain.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>522</MSGNR>
+     <TEXT>Active execution monitor state is missing or unsupported.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>523</MSGNR>
+     <TEXT>Queue is stopped; clear STOP before executing again.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>524</MSGNR>
+     <TEXT>No staging context loaded; select a Staging session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>525</MSGNR>
+     <TEXT>No READY group remains; duplicate execution was blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>526</MSGNR>
+     <TEXT>Stopped after current group: &amp;1/&amp;2 final results.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>527</MSGNR>
+     <TEXT>Completed: &amp;1 error, &amp;2 warning, &amp;3 success / &amp;4 groups.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>528</MSGNR>
+     <TEXT>Completed: &amp;1/&amp;2 groups reached terminal state.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>529</MSGNR>
+     <TEXT>Execution has issues; review Error Detail or Fix Guide.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>530</MSGNR>
+     <TEXT>Execution complete; lifecycle and SAP Object synchronized.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>531</MSGNR>
+     <TEXT>READY groups remain; retry or refresh as needed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>532</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>533</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>550</MSGNR>
+     <TEXT>Live monitor stopped; use Refresh Queue for final result.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>551</MSGNR>
+     <TEXT>SM35 finished with issues; review Error Detail or log.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>552</MSGNR>
+     <TEXT>SM35 terminal results were reconciled for &amp;1/&amp;2 group(s).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>553</MSGNR>
+     <TEXT>SM35 refreshed; &amp;1 groups await protocol reconciliation.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>554</MSGNR>
+     <TEXT>An execution request is already running.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>555</MSGNR>
+     <TEXT>SM35 monitor timeout must be between 1 and 300 seconds.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>556</MSGNR>
+     <TEXT>No READY group for SM35; duplicate queueing blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>557</MSGNR>
+     <TEXT>SM35 processing requires Batch Input Session mode.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>558</MSGNR>
+     <TEXT>Batch-input session created for &amp;1 group(s). Check SM35.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>559</MSGNR>
+     <TEXT>Opening SM35 Monitor in a new SAP session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>560</MSGNR>
+     <TEXT>Opening SM35 Monitor in a new SAP session for &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>561</MSGNR>
+     <TEXT>New SAP session unavailable; opening SM35 here.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>562</MSGNR>
+     <TEXT>SM35 opened separately; process it, then Refresh Queue.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>600</MSGNR>
+     <TEXT>No SAP Object was captured for this row.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>601</MSGNR>
+     <TEXT>SAP Object &amp;1 has no exact persisted result.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>602</MSGNR>
+     <TEXT>SAP Object &amp;1 has no immutable verification contract.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>603</MSGNR>
+     <TEXT>SAP Object &amp;1 has no frozen verification contract.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>604</MSGNR>
+     <TEXT>SAP Object &amp;1 fails its frozen verification contract.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>605</MSGNR>
+     <TEXT>Frozen review route for SAP Object &amp;1 could not be opened.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>606</MSGNR>
+     <TEXT>Review route &amp;1/&amp;2 for SAP Object &amp;3 could not be opened.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>607</MSGNR>
+     <TEXT>SAP Object &amp;1 is DB-proven; review route ambiguous: &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>608</MSGNR>
+     <TEXT>SAP Object &amp;1 is DB-proven; no unique review route.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>609</MSGNR>
+     <TEXT>SAP Object &amp;1 is DB-proven; no deterministic review route.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>610</MSGNR>
+     <TEXT>Select one group to view message details.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>611</MSGNR>
+     <TEXT>No dashboard data available for current session yet.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>612</MSGNR>
+     <TEXT>Dashboard refresh could not reload the HTML view.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>613</MSGNR>
+     <TEXT>Enter the source/staging field to replace.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>614</MSGNR>
+     <TEXT>Field &amp;1 does not exist in staging.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>615</MSGNR>
+     <TEXT>Mass replace saved for &amp;1 row(s) in the failed-group scope.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>616</MSGNR>
+     <TEXT>No result object is available for drilldown.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>617</MSGNR>
+     <TEXT>Dashboard session list is empty. Refresh dashboard first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>618</MSGNR>
+     <TEXT>No current session is available to open Execution Cockpit.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>619</MSGNR>
+     <TEXT>No staging rows were found for scope &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>620</MSGNR>
+     <TEXT>History setup rows reopened; SAP/SM35 states preserved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>621</MSGNR>
+     <TEXT>Select an edit scope in Cockpit before saving details.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>622</MSGNR>
+     <TEXT>Selected staging scope is invalid; nothing was saved.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>623</MSGNR>
+     <TEXT>No uploaded field changed; nothing was written.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>624</MSGNR>
+     <TEXT>Saved &amp;1 audited field change(s). &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>625</MSGNR>
+     <TEXT>Unsaved staging changes were discarded.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>626</MSGNR>
+     <TEXT>Select cockpit groups before opening Change Audit.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>627</MSGNR>
+     <TEXT>Change Audit unavailable: ZBDC_CHG_BUP is not installed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>628</MSGNR>
+     <TEXT>No manual changes for selected staging rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>629</MSGNR>
+     <TEXT>Open SAP Object &amp;1 in a display transaction, then return.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>630</MSGNR>
+     <TEXT>Transaction &amp;1 does not exist; review route not certified.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>631</MSGNR>
+     <TEXT>In &amp;1, open SAP Object &amp;2 read-only, then return.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>650</MSGNR>
+     <TEXT>No cockpit log is available to export.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>651</MSGNR>
+     <TEXT>BDC cockpit log exported to Excel (.xls).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>652</MSGNR>
+     <TEXT>Excel export failed (SY-SUBRC=&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>653</MSGNR>
+     <TEXT>Load corrected data in Preview Data, then return to Staging.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>654</MSGNR>
+     <TEXT>Correction saved; validate again before retrying.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>655</MSGNR>
+     <TEXT>No session log is available to export.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>656</MSGNR>
+     <TEXT>Exported full session log to Excel: &amp;1 log rows.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>657</MSGNR>
+     <TEXT>Export session log failed SY-SUBRC=&amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>658</MSGNR>
+     <TEXT>Retry unavailable: SAP not started; certify first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>659</MSGNR>
+     <TEXT>Retry blocked: SAP Object &amp;1 exists; do not replay.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>660</MSGNR>
+     <TEXT>Select one ERROR/WARNING/SKIPPED group before Retry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>661</MSGNR>
+     <TEXT>Retry blocked: group &amp;1 has non-retryable status &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>662</MSGNR>
+     <TEXT>Selected group is not eligible for retry.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>663</MSGNR>
+     <TEXT>Retry context must contain exactly one business group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>664</MSGNR>
+     <TEXT>Retry context has no staging row.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>665</MSGNR>
+     <TEXT>Retry blocked: frozen execution context reload failed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>666</MSGNR>
+     <TEXT>Retry preparation could not update selected staging group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>667</MSGNR>
+     <TEXT>Retry queue prepared for the selected failed group.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>668</MSGNR>
+     <TEXT>Retry/correction worklist refreshed.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>680</MSGNR>
+     <TEXT>No AI session selected. Select an ERROR session first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>681</MSGNR>
+     <TEXT>No ERROR/WARNING session exists for AI Log.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>682</MSGNR>
+     <TEXT>No AI Fix Guide; run Rule-based Diagnose or Gemini AI.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>683</MSGNR>
+     <TEXT>AI Fix Guide exported to &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>684</MSGNR>
+     <TEXT>AI Fix Guide export failed (SY-SUBRC=&amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>685</MSGNR>
+     <TEXT>No ERROR/WARNING log for external AI; showing current scope.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>686</MSGNR>
+     <TEXT>AI response is unreadable; rule-based diagnosis is shown.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>687</MSGNR>
+     <TEXT>External AI analysis completed for session &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>688</MSGNR>
+     <TEXT>Rule-based diagnostic created from ZBDC_RESULT_BUP logs.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>689</MSGNR>
+     <TEXT>AI KB archive empty; run Rule-based Diagnose or Gemini AI.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>690</MSGNR>
+     <TEXT>Cannot create AI KB grid; check CC_KB_GRID on 0750.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>691</MSGNR>
+     <TEXT>AI Log requires one selected ERROR/WARNING session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>692</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>700</MSGNR>
+     <TEXT>Runtime config saved. Connector config skipped: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>701</MSGNR>
+     <TEXT>Runtime and connector config saved; upload unchanged.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>702</MSGNR>
+     <TEXT>Drive file selected from config; press Upload/Ingest.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>703</MSGNR>
+     <TEXT>Google Drive Web App URL is missing in configuration.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>704</MSGNR>
+     <TEXT>GDRIVE_API_FILES_URL is missing or invalid.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>705</MSGNR>
+     <TEXT>Google Drive authorization expired or lacks Drive access.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>706</MSGNR>
+     <TEXT>Drive token/API key missing. Google Drive download canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>707</MSGNR>
+     <TEXT>GDRIVE_URL is missing. Maintain Apps Script /exec URL first.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>708</MSGNR>
+     <TEXT>Cannot create HTTP client for Apps Script CSV endpoint.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>709</MSGNR>
+     <TEXT>Apps Script CSV returned HTTP 403; check deployment.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>710</MSGNR>
+     <TEXT>Apps Script CSV endpoint HTTP &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>711</MSGNR>
+     <TEXT>Apps Script CSV endpoint returned empty response.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>712</MSGNR>
+     <TEXT>Mapping context incomplete; TCODE/Profile/Version required.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>713</MSGNR>
+     <TEXT>Exact script context &amp;1/&amp;2 v&amp;3 is missing or ambiguous.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>714</MSGNR>
+     <TEXT>Selected Mapping conflicts with immutable Script ID.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>715</MSGNR>
+     <TEXT>Selected Mapping conflicts with current contract hash.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>716</MSGNR>
+     <TEXT>Missing required config &amp;1 in ZBDC_CONFIG_BUP.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>717</MSGNR>
+     <TEXT>GDRIVE_SCRIPT_URL is not a trusted Apps Script /exec URL.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>718</MSGNR>
+     <TEXT>Cannot open the Google Drive authorization page.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>719</MSGNR>
+     <TEXT>Google Drive action canceled before authorization.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>720</MSGNR>
+     <TEXT>Google Drive authorization canceled.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>721</MSGNR>
+     <TEXT>Authorization code is missing.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>722</MSGNR>
+     <TEXT>Cannot create HTTP client for Google Drive token endpoint.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>723</MSGNR>
+     <TEXT>Google Drive token request could not be sent (RC &amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>724</MSGNR>
+     <TEXT>Google Drive token response could not be received (RC &amp;1).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>725</MSGNR>
+     <TEXT>Google Drive authorization code is invalid or expired.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>726</MSGNR>
+     <TEXT>Google Drive token response is invalid.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>727</MSGNR>
+     <TEXT>Drive access token invalid; request a new 6-digit code.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>728</MSGNR>
+     <TEXT>Drive payload has no access token; upload blocked.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>729</MSGNR>
+     <TEXT>Generated Gmail form token is invalid.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>730</MSGNR>
+     <TEXT>AI endpoint not configured; showing rule-based diagnosis.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>731</MSGNR>
+     <TEXT>AI endpoint call failed; rule-based diagnosis is shown.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>732</MSGNR>
+     <TEXT>AI endpoint HTTP &amp;1; using rule-based diagnosis.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>733</MSGNR>
+     <TEXT>Background job UI inactive; use runtime config or SM37.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>734</MSGNR>
+     <TEXT>Gemini AI is calling the endpoint for selected session.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>735</MSGNR>
+     <TEXT>Runtime config saved; upload/source data unchanged.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBDC</ARBGB>
+     <MSGNR>736</MSGNR>
+     <TEXT>&amp;1 Runtime config was not saved.</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,37 +1,32 @@
-*&---------------------------------------------------------------------*
-*& Include          ZBDC_MPE_M1_STAGE_BUP
-*& Purpose          M1 Staging - batch/session/staging/file log/duplicate
-*& Source split     FIX16 V5BR - logic moved from F01
-*&---------------------------------------------------------------------*
 
-*>>> FORM z16_start_ingest_batch - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-FORM z16_start_ingest_batch.
+*& Include ZBDC_MPE_M1_STAGE_BUP
+*& Purpose Exact staging, session, file and duplicate context
+*& no global-latest session selection
+
+FORM start_ingest_batch.
+  DATA: lv_demo_date_836 TYPE sy-datum,
+        lv_demo_time_836 TYPE sy-uzeit.
   CLEAR: gv_current_batch_prefix, gv_ingest_batch_prefix,
          gv_forced_session_id, gv_current_batch_count.
   REFRESH gt_current_sessions.
-  "V4S: compact batch prefix fits old CHAR20/CHAR22 SESSION_ID fields.
-  "Example batch: B20260709201500; file sessions: B20260709201500_001.
-  CONCATENATE 'B' sy-datum sy-uzeit INTO gv_ingest_batch_prefix.
+ "compact batch prefix fits old CHAR20/CHAR22 SESSION_ID fields.
+ "Example batch: B20260709201500; file sessions: B20260709201500_001.
+  PERFORM get_demo_now CHANGING lv_demo_date_836 lv_demo_time_836.
+  CONCATENATE 'B' lv_demo_date_836 lv_demo_time_836 INTO gv_ingest_batch_prefix.
   gv_current_batch_prefix = gv_ingest_batch_prefix.
 ENDFORM.
-*<<< END FORM z16_start_ingest_batch
 
-*>>> FORM z16_make_batch_session - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM z16_make_batch_session USING iv_index TYPE i
+FORM make_batch_session USING iv_index TYPE i
                             CHANGING cv_session_id TYPE zbdc_staging_bup-session_id.
   DATA lv_idx TYPE n LENGTH 3.
   IF gv_ingest_batch_prefix IS INITIAL.
-    PERFORM z16_start_ingest_batch.
+    PERFORM start_ingest_batch.
   ENDIF.
   lv_idx = iv_index.
   CONCATENATE gv_ingest_batch_prefix '_' lv_idx INTO cv_session_id.
 ENDFORM.
-*<<< END FORM z16_make_batch_session
 
-*>>> FORM z16_register_current_session - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM z16_register_current_session USING iv_session_id TYPE zbdc_staging_bup-session_id.
+FORM register_current_session USING iv_session_id TYPE zbdc_staging_bup-session_id.
   DATA: lv_exists TYPE zbdc_staging_bup-session_id,
         lv_batch  TYPE zbdc_staging_bup-session_id.
   IF iv_session_id IS INITIAL.
@@ -42,28 +37,22 @@ FORM z16_register_current_session USING iv_session_id TYPE zbdc_staging_bup-sess
     APPEND iv_session_id TO gt_current_sessions.
   ENDIF.
   IF gv_current_batch_prefix IS INITIAL.
-    PERFORM z16_batch_prefix_from_sid USING iv_session_id CHANGING lv_batch.
+    PERFORM batch_prefix_from_sid USING iv_session_id CHANGING lv_batch.
     gv_current_batch_prefix = lv_batch.
   ENDIF.
 ENDFORM.
-*<<< END FORM z16_register_current_session
 
-*>>> FORM z16_finish_ingest_batch - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM z16_finish_ingest_batch.
+FORM finish_ingest_batch.
   gv_current_batch_count = lines( gt_current_sessions ).
   IF gv_current_batch_prefix IS INITIAL AND gt_current_sessions IS NOT INITIAL.
     READ TABLE gt_current_sessions INTO DATA(lv_sid) INDEX 1.
     IF sy-subrc = 0.
-      PERFORM z16_batch_prefix_from_sid USING lv_sid CHANGING gv_current_batch_prefix.
+      PERFORM batch_prefix_from_sid USING lv_sid CHANGING gv_current_batch_prefix.
     ENDIF.
   ENDIF.
 ENDFORM.
-*<<< END FORM z16_finish_ingest_batch
 
-*>>> FORM z16_set_row_count_fields - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM z16_set_row_count_fields USING iv_rows TYPE i.
+FORM set_row_count_fields USING iv_rows TYPE i.
   WRITE iv_rows TO txtp_row_count LEFT-JUSTIFIED.
   txtp_row         = txtp_row_count.
   txtp_rows        = txtp_row_count.
@@ -76,106 +65,171 @@ FORM z16_set_row_count_fields USING iv_rows TYPE i.
   txtgv_total_rows = txtp_row_count.
   txtgv_tot_rows   = txtp_row_count.
 ENDFORM.
-*<<< END FORM z16_set_row_count_fields
 
-*>>> FORM z16_load_staging_by_batch - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
+FORM load_staging_by_batch
+  USING    iv_batch_prefix TYPE zbdc_staging_bup-session_id
+  CHANGING cv_count        TYPE i.
 
-FORM z16_load_staging_by_batch USING iv_batch_prefix TYPE zbdc_staging_bup-session_id
-                               CHANGING cv_count TYPE i.
-  DATA lv_like TYPE string.
-  CLEAR cv_count.
-  REFRESH: gt_staging, gt_staging_alv, gt_exec_disp.
-  IF iv_batch_prefix IS INITIAL.
+  DATA: lv_ok  TYPE abap_bool,
+        lv_msg TYPE string.
+
+  PERFORM load_exact_staging
+    USING    space iv_batch_prefix space
+    CHANGING cv_count lv_ok lv_msg.
+  IF lv_ok <> abap_true.
+    CLEAR cv_count.
+    IF lv_msg IS NOT INITIAL.
+      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    ENDIF.
+  ENDIF.
+ENDFORM.
+
+*& File/Sheet Helpers - code only, no DDIC setup
+
+
+FORM append_gmail_named_bup
+  USING it_keys TYPE string_table
+        it_vals TYPE string_table
+        iv_sid  TYPE zbdc_staging_bup-session_id
+        iv_idx  TYPE i.
+
+  DATA: ls_stg TYPE zbdc_staging_bup,
+        lt_map_all TYPE STANDARD TABLE OF zbdc_mapping_bup,
+        ls_map_candidate TYPE zbdc_mapping_bup,
+        ls_map_match TYPE zbdc_mapping_bup,
+        lt_target_seen TYPE SORTED TABLE OF zbdc_mapping_bup-staging_field
+                         WITH UNIQUE KEY table_line,
+        lv_key TYPE string,
+        lv_map_src TYPE string,
+        lv_value TYPE string,
+        lv_staged_check TYPE string,
+        lv_col_index TYPE i,
+        lv_match_count TYPE i.
+  FIELD-SYMBOLS <lv_target> TYPE any.
+
+  CLEAR gv_ingest_error_msg.
+
+  IF iv_sid IS INITIAL.
+    gv_ingest_error_msg = 'GMAIL_STAGING_CONTEXT_MISSING: session ID is empty.'.
     RETURN.
   ENDIF.
-  lv_like = iv_batch_prefix && '%'.
-  SELECT *
-    FROM zbdc_staging_bup
-    INTO TABLE @gt_staging
-    WHERE session_id LIKE @lv_like.
-  SORT gt_staging BY session_id ASCENDING row_index ASCENDING.
-  cv_count = lines( gt_staging ).
-  gv_current_batch_prefix = iv_batch_prefix.
-ENDFORM.
-*<<< END FORM z16_load_staging_by_batch
 
-*>>> FORM z16_resolve_batch_from_session - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM z16_resolve_batch_from_session USING iv_session_id TYPE zbdc_staging_bup-session_id
-                                    CHANGING cv_batch_prefix TYPE zbdc_staging_bup-session_id.
-  PERFORM z16_batch_prefix_from_sid USING iv_session_id CHANGING cv_batch_prefix.
-ENDFORM.
-
-
-*&---------------------------------------------------------------------*
-*& V4T File/Sheet Helpers - code only, no DDIC setup
-*&---------------------------------------------------------------------*
-*<<< END FORM z16_resolve_batch_from_session
-
-*>>> FORM APPEND_STAGING_FROM_COLS_BUP - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM APPEND_STAGING_FROM_COLS_BUP USING IT_COLS TYPE STRING_TABLE IV_SID TYPE ZBDC_STAGING_BUP-SESSION_ID IV_IDX TYPE I IV_SOURCE TYPE STRING.
-  DATA: LS_STG TYPE ZBDC_STAGING_BUP,
-        LV_MIN TYPE I,
-        LV_CNT TYPE I,
-        LV_PREF TYPE CHAR10.
-  FIELD-SYMBOLS <COL> TYPE STRING.
-
-  LV_CNT = LINES( IT_COLS ).
-  PERFORM GET_MIN_COLS_BY_TCODE_BUP USING P_TRANSACTION CHANGING LV_MIN.
-  CLEAR LS_STG.
-  LS_STG-SESSION_ID = IV_SID.
-  LS_STG-ROW_INDEX  = IV_IDX.
-  LS_STG-TCODE      = P_TRANSACTION.
-  LS_STG-STATUS     = GC_ST_READY.
-  IF P_TRANSACTION = 'MIGO'. LV_PREF = 'MIGO'. ELSE. LV_PREF = 'PO'. ENDIF.
-  LS_STG-RECORD_KEY = |{ LV_PREF }{ IV_IDX }|.
-
-  READ TABLE IT_COLS INDEX 1 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD01 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 2 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD02 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 3 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD03 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 4 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD04 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 5 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD05 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 6 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD06 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 7 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD07 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 8 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD08 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 9 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD09 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 10 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD10 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 11 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD11 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 12 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD12 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 13 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD13 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 14 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD14 = <COL>. ENDIF.
-  READ TABLE IT_COLS INDEX 15 ASSIGNING <COL>. IF SY-SUBRC = 0. LS_STG-FIELD15 = <COL>. ENDIF.
-
-  IF LV_CNT < LV_MIN.
-    LS_STG-STATUS = GC_ST_ERROR.
-    LS_STG-ERROR_MSG = |Invalid { P_TRANSACTION } webhook row: expected at least { LV_MIN } columns, got { LV_CNT }.|.
-  ELSEIF P_TRANSACTION = 'MIGO'.
-    IF LS_STG-FIELD01 IS INITIAL OR LS_STG-FIELD04 IS INITIAL OR LS_STG-FIELD05 IS INITIAL OR LS_STG-FIELD07 IS INITIAL.
-      LS_STG-STATUS = GC_ST_ERROR.
-      LS_STG-ERROR_MSG = 'Missing MIGO mandatory field: movement/material/quantity/plant'.
-    ENDIF.
-  ELSE.
-    IF LS_STG-FIELD02 IS INITIAL OR LS_STG-FIELD06 IS INITIAL OR LS_STG-FIELD08 IS INITIAL.
-      LS_STG-STATUS = GC_ST_ERROR.
-      LS_STG-ERROR_MSG = 'Missing ME21N mandatory field: vendor/material/plant'.
-    ENDIF.
+  IF lines( it_keys ) <> lines( it_vals ) OR it_keys IS INITIAL.
+    gv_ingest_error_msg =
+      |GMAIL_STAGING_SCHEMA_INVALID: keys={ lines( it_keys ) }, values={ lines( it_vals ) }.|.
+    RETURN.
   ENDIF.
-  APPEND LS_STG TO GT_STAGING.
-ENDFORM.
-*<<< END FORM APPEND_STAGING_FROM_COLS_BUP
 
-*>>> FORM update_session_summary - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
+  SELECT * FROM zbdc_mapping_bup
+    INTO TABLE @lt_map_all
+    WHERE tcode        = @p_transaction
+      AND profile_name = @txtp_profile_name
+      AND profile_ver  = @gv_profile_ver.
+
+  IF lt_map_all IS INITIAL.
+    gv_ingest_error_msg =
+      |GMAIL_MAPPING_UNAVAILABLE: no exact Mapping exists for { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }.|.
+    RETURN.
+  ENDIF.
+
+  CLEAR ls_stg.
+  ls_stg-session_id = iv_sid.
+  ls_stg-row_index  = iv_idx.
+  ls_stg-tcode      = p_transaction.
+  ls_stg-status     = 'STAGED'.
+
+  LOOP AT it_keys INTO lv_key.
+    lv_col_index = sy-tabix.
+    CLEAR: ls_map_match, lv_match_count, lv_value, lv_staged_check.
+
+    LOOP AT lt_map_all INTO ls_map_candidate.
+      lv_map_src = ls_map_candidate-source_column.
+      TRANSLATE lv_map_src TO UPPER CASE.
+      CONDENSE lv_map_src NO-GAPS.
+      REPLACE ALL OCCURRENCES OF '*' IN lv_map_src WITH ''.
+      REPLACE ALL OCCURRENCES OF '"' IN lv_map_src WITH ''.
+
+      IF lv_map_src <> lv_key.
+        CONTINUE.
+      ENDIF.
+
+      IF lv_match_count = 0.
+        ls_map_match = ls_map_candidate.
+        lv_match_count = 1.
+      ELSEIF ls_map_candidate-staging_field = ls_map_match-staging_field
+         AND ls_map_candidate-bdc_field     = ls_map_match-bdc_field.
+        "Equivalent duplicate repository row; same exact runtime identity.
+        CONTINUE.
+      ELSE.
+        lv_match_count = lv_match_count + 1.
+      ENDIF.
+    ENDLOOP.
+
+    IF lv_match_count = 0.
+      gv_ingest_error_msg =
+        |GMAIL_MAPPING_SOURCE_MISSING: submitted source { lv_key } has no exact Mapping row for { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }.|.
+      RETURN.
+    ELSEIF lv_match_count > 1.
+      gv_ingest_error_msg =
+        |GMAIL_MAPPING_SOURCE_AMBIGUOUS: submitted source { lv_key } maps to more than one runtime field.|.
+      RETURN.
+    ENDIF.
+
+    READ TABLE lt_target_seen
+      WITH TABLE KEY table_line = ls_map_match-staging_field
+      TRANSPORTING NO FIELDS.
+    IF sy-subrc = 0.
+      gv_ingest_error_msg =
+        |GMAIL_MAPPING_TARGET_COLLISION: more than one source column targets { ls_map_match-staging_field }.|.
+      RETURN.
+    ENDIF.
+    INSERT ls_map_match-staging_field INTO TABLE lt_target_seen.
+
+    READ TABLE it_vals INTO lv_value INDEX lv_col_index.
+    IF sy-subrc <> 0.
+      gv_ingest_error_msg =
+        |GMAIL_ROW_VALUE_MISSING: source { lv_key } has no aligned value at column { lv_col_index }.|.
+      RETURN.
+    ENDIF.
+
+    UNASSIGN <lv_target>.
+    ASSIGN COMPONENT ls_map_match-staging_field OF STRUCTURE ls_stg TO <lv_target>.
+    IF sy-subrc <> 0 OR <lv_target> IS NOT ASSIGNED.
+      gv_ingest_error_msg =
+        |GMAIL_STAGING_BIND_INVALID: { lv_key } -> { ls_map_match-staging_field } does not exist in ZBDC_STAGING_BUP.|.
+      RETURN.
+    ENDIF.
+
+    <lv_target> = lv_value.
+    lv_staged_check = <lv_target>.
+    IF lv_staged_check <> lv_value.
+      gv_ingest_error_msg =
+        |GMAIL_STAGING_VALUE_LOSS: { lv_key } could not round-trip through { ls_map_match-staging_field }.|.
+      UNASSIGN <lv_target>.
+      RETURN.
+    ENDIF.
+    UNASSIGN <lv_target>.
+
+  ENDLOOP.
+
+  ls_stg-record_key = ls_stg-field01.
+  "Whole-submission actual-data proof rejects invalid blanks atomically.
+  APPEND ls_stg TO gt_staging.
+ENDFORM.
+
 FORM update_session_summary USING iv_session_id TYPE zbdc_session_bup-session_id.
 
-  "STRICT REAL V4 LIFECYCLE SUMMARY
-  "Rebuild ZBDC_SESSION_BUP only from persisted evidence:
-  "ZBDC_STAGING_BUP statuses, ZBDC_RESULT_BUP logs, and ingestion evidence.
-  "No current-user/current-time fallback for old sessions.
+ "STRICT REAL V4 LIFECYCLE SUMMARY
+ "Rebuild ZBDC_SESSION_BUP only from persisted evidence:
+ "ZBDC_STAGING_BUP statuses, ZBDC_RESULT_BUP logs, and ingestion evidence.
+ "No current-user/current-time fallback for old sessions.
 
   TYPES: BEGIN OF ty_sum_group,
-           record_key TYPE zbdc_staging_bup-record_key,
-           status     TYPE char20,
+           record_key   TYPE zbdc_staging_bup-record_key,
+           status       TYPE char20,
+           has_staging  TYPE abap_bool,
+           result_set   TYPE abap_bool,
+           result_attempt TYPE zbdc_result_bup-attempt_no,
          END OF ty_sum_group.
 
   DATA: ls_sess      TYPE zbdc_session_bup,
@@ -236,6 +290,7 @@ FORM update_session_summary USING iv_session_id TYPE zbdc_session_bup-session_id
     ENDIF.
 
     IF <ls_group> IS ASSIGNED.
+      <ls_group>-has_staging = abap_true.
       IF ls_stg-status = gc_st_error OR ls_stg-status = 'ERROR'.
         <ls_group>-status = 'ERROR'.
       ELSEIF ( ls_stg-status = gc_st_warning OR ls_stg-status = 'WARNING' )
@@ -260,6 +315,13 @@ FORM update_session_summary USING iv_session_id TYPE zbdc_session_bup-session_id
       ENDIF.
     ENDIF.
   ENDLOOP.
+
+  "Current lifecycle is owned by current staging. Result rows are immutable
+  "attempt history/evidence and must never let an old ERROR override a later
+  "SUCCESS/READY staging state. For legacy result-only groups, consume only
+  "the newest persisted lifecycle-bearing result row.
+  SORT lt_result BY record_key row_index attempt_no DESCENDING
+                    created_at DESCENDING step DESCENDING.
 
   LOOP AT lt_result INTO ls_res.
     IF ls_res-created_at IS NOT INITIAL.
@@ -293,22 +355,46 @@ FORM update_session_summary USING iv_session_id TYPE zbdc_session_bup-session_id
     ENDIF.
 
     IF <ls_group> IS ASSIGNED.
-      IF ls_res-exec_status = 'ERROR' OR ls_res-msg_type = 'E'.
-        <ls_group>-status = 'ERROR'.
-      ELSEIF ( ls_res-msg_type = 'W' OR ls_res-exec_status = 'WARNING' )
-         AND <ls_group>-status <> 'ERROR'.
-        <ls_group>-status = 'WARNING'.
-      ELSEIF ( ls_res-exec_status = gc_st_success
-            OR ls_res-exec_status = 'SUCCESS'
-            OR ( ls_res-msg_type = 'S' AND ls_res-sap_object_id IS NOT INITIAL ) )
-         AND <ls_group>-status <> 'ERROR'
-         AND <ls_group>-status <> 'WARNING'.
+      "If current staging exists, it is the lifecycle authority. Historical
+      "attempt evidence remains in ZBDC_RESULT_BUP but cannot repaint the
+      "group/session back to ERROR after a later successful retry.
+      IF <ls_group>-has_staging = abap_true.
+        CONTINUE.
+      ENDIF.
+
+      "Legacy/result-only fallback: lock to the newest persisted attempt for
+      "this group. Never fall back to an older ERROR merely because the newest
+      "attempt currently has only informational/queue evidence.
+      IF <ls_group>-result_attempt IS INITIAL.
+        <ls_group>-result_attempt = ls_res-attempt_no.
+      ELSEIF ls_res-attempt_no <> <ls_group>-result_attempt.
+        CONTINUE.
+      ENDIF.
+
+      IF <ls_group>-result_set = abap_true.
+        CONTINUE.
+      ENDIF.
+
+      IF ls_res-exec_status = gc_st_success OR
+         ls_res-exec_status = 'SUCCESS'.
         <ls_group>-status = 'SUCCESS'.
-      ELSEIF ls_res-exec_status = gc_st_sm35q
-         AND <ls_group>-status <> 'ERROR'
-         AND <ls_group>-status <> 'WARNING'
-         AND <ls_group>-status <> 'SUCCESS'.
+        <ls_group>-result_set = abap_true.
+      ELSEIF ls_res-exec_status = 'ERROR' OR
+             ls_res-msg_type = 'E' OR
+             ls_res-msg_type = 'A' OR
+             ls_res-msg_type = 'X'.
+        <ls_group>-status = 'ERROR'.
+        <ls_group>-result_set = abap_true.
+      ELSEIF ls_res-exec_status = 'WARNING' OR
+             ls_res-msg_type = 'W'.
+        <ls_group>-status = 'WARNING'.
+        <ls_group>-result_set = abap_true.
+      ELSEIF ls_res-exec_status = gc_st_sm35q OR
+             ls_res-exec_status = 'SM35QUEUE' OR
+             ls_res-exec_status = 'QUEUED_SM35' OR
+             ls_res-exec_status = 'SM35RUN'.
         <ls_group>-status = gc_st_sm35q.
+        <ls_group>-result_set = abap_true.
       ENDIF.
     ENDIF.
   ENDLOOP.
@@ -399,17 +485,12 @@ FORM update_session_summary USING iv_session_id TYPE zbdc_session_bup-session_id
   ENDIF.
 
   MODIFY zbdc_session_bup FROM ls_sess.
-  COMMIT WORK AND WAIT.
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
 *& upd_all_rt_sess_sum
 *& Sync dashboard evidence after Upload / Validate / Execute / Resubmit.
-*&---------------------------------------------------------------------*
-*<<< END FORM update_session_summary
 
-*>>> FORM upd_all_rt_sess_sum - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
 FORM upd_all_rt_sess_sum.
   DATA: lt_sid TYPE SORTED TABLE OF zbdc_session_bup-session_id WITH UNIQUE KEY table_line,
         lv_sid TYPE zbdc_session_bup-session_id,
@@ -426,138 +507,661 @@ FORM upd_all_rt_sess_sum.
   ENDLOOP.
 ENDFORM.
 
-
-
-*&---------------------------------------------------------------------*
 *& 0300 UX helpers - Preview File/Data and upload summary
-*&---------------------------------------------------------------------*
-*<<< END FORM upd_all_rt_sess_sum
 
-*>>> FORM GET_0100_SELECTED_SESSION - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
+FORM save_preview_session
+  USING    iv_session_id TYPE zbdc_session_bup-session_id
+  CHANGING cv_ok         TYPE abap_bool
+           cv_message    TYPE string.
 
+  DATA: ls_session    TYPE zbdc_session_bup,
+        lv_ts         TYPE tzntstmps,
+        lv_has_owner  TYPE abap_bool.
 
-
-FORM GET_0100_SELECTED_SESSION CHANGING CV_SESSION_ID TYPE ZBDC_RESULT_BUP-SESSION_ID.
-  DATA LV_ROW_IDX TYPE I.
-
-  CLEAR CV_SESSION_ID.
-
-  "Try selected row first.
-  IF GO_GRID_0100 IS BOUND.
-    TRY.
-        CL_GUI_CFW=>FLUSH( ).
-        DATA(LO_SELECTIONS_0100) = GO_GRID_0100->GET_SELECTIONS( ).
-        DATA(LT_ROWS_0100)       = LO_SELECTIONS_0100->GET_SELECTED_ROWS( ).
-        IF LT_ROWS_0100 IS NOT INITIAL.
-          READ TABLE LT_ROWS_0100 INTO LV_ROW_IDX INDEX 1.
-          READ TABLE GT_SESSIONS INTO DATA(LS_SESS_0100) INDEX LV_ROW_IDX.
-          IF SY-SUBRC = 0.
-            CV_SESSION_ID = LS_SESS_0100-SESSION_ID.
-          ENDIF.
-        ENDIF.
-      CATCH CX_ROOT.
-        CLEAR CV_SESSION_ID.
-    ENDTRY.
-  ENDIF.
-
-  "Fallback: newest row on dashboard, so toolbar buttons still feel responsive.
-  IF CV_SESSION_ID IS INITIAL.
-    READ TABLE GT_SESSIONS INTO DATA(LS_FIRST_SESS_0100) INDEX 1.
-    IF SY-SUBRC = 0.
-      CV_SESSION_ID = LS_FIRST_SESS_0100-SESSION_ID.
-    ENDIF.
-  ENDIF.
-ENDFORM.
-*<<< END FORM GET_0100_SELECTED_SESSION
-
-*>>> FORM LOAD_STAGING_BY_SESSION - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM LOAD_STAGING_BY_SESSION USING IV_SESSION_ID TYPE ZBDC_STAGING_BUP-SESSION_ID
-                             CHANGING CV_COUNT TYPE I.
-  DATA LS_FIRST TYPE ZBDC_STAGING_BUP.
-
-  CLEAR CV_COUNT.
-  REFRESH: GT_STAGING, GT_STAGING_ALV, GT_EXEC_DISP.
-
-  IF IV_SESSION_ID IS INITIAL.
+  CLEAR: cv_ok, cv_message.
+  IF iv_session_id IS INITIAL.
+    cv_message = 'Session ID is missing; preview context cannot be saved.'.
     RETURN.
   ENDIF.
 
-  SELECT *
-    FROM ZBDC_STAGING_BUP
-    INTO TABLE @GT_STAGING
-    WHERE SESSION_ID = @IV_SESSION_ID.
+  CLEAR ls_session.
+  SELECT SINGLE *
+    FROM zbdc_session_bup
+    INTO @ls_session
+    WHERE session_id = @iv_session_id.
 
-  SORT GT_STAGING BY ROW_INDEX ASCENDING.
-
-  READ TABLE GT_STAGING INTO LS_FIRST INDEX 1.
-  IF SY-SUBRC = 0.
-    P_TRANSACTION = LS_FIRST-TCODE.
-    PERFORM RESOLVE_PROFILE_BY_TCODE USING LS_FIRST-TCODE.
+  IF sy-subrc <> 0.
+    CLEAR ls_session.
+    ls_session-session_id = iv_session_id.
+    GET TIME STAMP FIELD lv_ts.
+    ls_session-start_time = lv_ts.
+    ls_session-created_by = sy-uname.
   ENDIF.
 
-  CV_COUNT = LINES( GT_STAGING ).
-ENDFORM.
-*<<< END FORM LOAD_STAGING_BY_SESSION
-
-*>>> FORM LOAD_LATEST_STAGING_FOR_TCODE - moved from Z_BDC_MASS_PO_ENTRY_F01_BUP
-
-FORM LOAD_LATEST_STAGING_FOR_TCODE USING IV_TCODE TYPE CHAR20
-                                   CHANGING CV_COUNT TYPE I.
-  DATA: lv_tcode        TYPE char20,
-        lv_latest_sess  TYPE zbdc_staging_bup-session_id,
-        lv_batch_prefix TYPE zbdc_staging_bup-session_id,
-        lv_like         TYPE string.
-
-  CLEAR cv_count.
-  lv_tcode = iv_tcode.
-  TRANSLATE lv_tcode TO UPPER CASE.
-  CONDENSE lv_tcode NO-GAPS.
-  IF lv_tcode IS INITIAL.
-    lv_tcode = 'ME21N'.
+  lv_has_owner = abap_false.
+  IF ls_session-tcode IS NOT INITIAL OR
+     ls_session-profile_name IS NOT INITIAL OR
+     ls_session-profile_ver IS NOT INITIAL.
+    lv_has_owner = abap_true.
   ENDIF.
 
-  p_transaction = lv_tcode.
-  PERFORM resolve_profile_by_tcode USING lv_tcode.
-
-  REFRESH: gt_staging, gt_staging_alv, gt_exec_disp.
-
-  IF gv_current_batch_prefix IS NOT INITIAL.
-    PERFORM z16_load_staging_by_batch USING gv_current_batch_prefix CHANGING cv_count.
-    IF cv_count > 0.
+  IF lv_has_owner = abap_true.
+    IF ls_session-tcode        <> p_transaction OR
+       ls_session-profile_name <> txtp_profile_name OR
+       ls_session-profile_ver  <> gv_profile_ver.
+      cv_message = |Session { iv_session_id } already owns another preview/execution context.|.
       RETURN.
     ENDIF.
   ENDIF.
 
-  CLEAR lv_latest_sess.
-  SELECT MAX( session_id )
-    FROM zbdc_file_lg_bup
-    INTO @lv_latest_sess.
+  ls_session-tcode        = p_transaction.
+  ls_session-profile_name = txtp_profile_name.
+  ls_session-profile_ver  = gv_profile_ver.
+  CLEAR: ls_session-script_id, ls_session-contract_hash.
 
-  IF lv_latest_sess IS NOT INITIAL.
-    PERFORM z16_resolve_batch_from_session USING lv_latest_sess CHANGING lv_batch_prefix.
-    IF lv_batch_prefix IS NOT INITIAL.
-      PERFORM z16_load_staging_by_batch USING lv_batch_prefix CHANGING cv_count.
-      IF cv_count > 0.
-        RETURN.
-      ENDIF.
-    ENDIF.
+  IF ls_session-start_time IS INITIAL.
+    GET TIME STAMP FIELD lv_ts.
+    ls_session-start_time = lv_ts.
+  ENDIF.
+  IF ls_session-created_by IS INITIAL OR ls_session-created_by = 'UNKNOWN'.
+    ls_session-created_by = sy-uname.
   ENDIF.
 
-  CLEAR lv_latest_sess.
-  SELECT MAX( session_id )
-    FROM zbdc_staging_bup
-    INTO @lv_latest_sess
-    WHERE tcode = @lv_tcode
-      AND ( status = @gc_st_ready OR status = @gc_st_staged OR status = @gc_st_error OR status = @gc_st_warning ).
-
-  IF lv_latest_sess IS INITIAL.
+  MODIFY zbdc_session_bup FROM @ls_session.
+  IF sy-subrc <> 0.
+    cv_message = |Preview context could not be saved for session { iv_session_id }.|.
     RETURN.
   ENDIF.
 
-  PERFORM z16_resolve_batch_from_session USING lv_latest_sess CHANGING lv_batch_prefix.
-  IF lv_batch_prefix IS NOT INITIAL AND lv_batch_prefix <> lv_latest_sess.
-    lv_like = lv_batch_prefix && '%'.
+  cv_ok = abap_true.
+  cv_message = |Preview context saved: { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }; execution remains gated.|.
+ENDFORM.
+
+FORM freeze_session_contract
+  USING    iv_session_id TYPE zbdc_session_bup-session_id
+  CHANGING cv_ok         TYPE abap_bool
+           cv_message    TYPE string.
+
+  DATA: ls_profile        TYPE zbdc_prof_bup,
+        ls_script         TYPE zbdc_script_bup,
+        ls_cert           TYPE zbdc_cert_bup,
+        ls_session        TYPE zbdc_session_bup,
+        lv_map_found      TYPE zbdc_mapping_bup-profile_name,
+        lv_script_status  TYPE zbdc_script_bup-status,
+        lv_cert_status    TYPE zbdc_cert_bup-cert_status,
+        lv_ts             TYPE tzntstmps,
+        lv_has_frozen     TYPE abap_bool.
+
+  CLEAR: cv_ok, cv_message.
+
+ "freeze the exact executable contract at ingestion time.
+ "The session owns one immutable TCODE/Profile/Version/Script/Hash tuple.
+ "No TCODE-specific branch and no later 'latest profile' lookup is allowed.
+  IF iv_session_id IS INITIAL.
+    cv_message = 'Session ID is missing; executable contract cannot be frozen.'.
+    RETURN.
+  ENDIF.
+
+  IF p_transaction IS INITIAL OR
+     txtp_profile_name IS INITIAL OR
+     gv_profile_ver IS INITIAL.
+    cv_message = 'Resolved TCODE/Profile/Version is missing at ingestion time.'.
+    RETURN.
+  ENDIF.
+
+ "Freeze only an exact existing registry snapshot. Version ordering is not
+ "used as identity and no latest/highest fallback is allowed.
+
+  SELECT SINGLE *
+    FROM zbdc_prof_bup
+    INTO @ls_profile
+    WHERE tcode        = @p_transaction
+      AND profile_name = @txtp_profile_name
+      AND profile_ver  = @gv_profile_ver.
+  IF sy-subrc <> 0.
+    cv_message = |Exact profile contract { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver } does not exist; no version fallback is allowed.|.
+    RETURN.
+  ENDIF.
+
+  CASE ls_profile-status.
+    WHEN 'ACTIVE'.
+ "Productive contracts remain strict: only the already certified immutable
+ "Script/Mapping tuple may be frozen into a new ingestion session.
+      lv_script_status = 'ACTIVE'.
+      lv_cert_status   = 'CERTIFIED'.
+
+    WHEN 'TESTING'.
+ "Ingestion consumes an already prepared exact test contract. It never
+ "builds certification evidence or advances profile lifecycle.
+      lv_script_status = 'TEST_READY'.
+      lv_cert_status   = 'PENDING_TEST'.
+
+    WHEN 'MAPPED' OR 'DRAFT'.
+ "generated templates from onboarding may be uploaded for
+ "Preview Data before the runtime Script/Hash proof is complete.
+ "Do not create an executable frozen contract here; save only the
+ "exact TCODE/Profile/Version preview owner. CT/BISM remains gated by
+ "resolve_session_context and the runtime proof checks.
+      PERFORM save_preview_session
+        USING    iv_session_id
+        CHANGING cv_ok cv_message.
+      RETURN.
+
+    WHEN OTHERS.
+      cv_message = |Profile { txtp_profile_name } v{ gv_profile_ver } is not executable (status { ls_profile-status }).|.
+      RETURN.
+  ENDCASE.
+
+ "certification is the immutable manifest of the exact executable
+ "Script/Hash pair. Never rediscover the Script with SELECT SINGLE by
+ "TCODE/Profile/Version/Status because historical duplicate headers may exist
+ "for the same logical version and an arbitrary legacy row may have a blank
+ "CONTRACT_HASH. Resolve the manifest first, then address Script by SCRIPT_ID.
+  SELECT SINGLE profile_name
+    FROM zbdc_mapping_bup
+    INTO @lv_map_found
+    WHERE tcode        = @p_transaction
+      AND profile_name = @txtp_profile_name
+      AND profile_ver  = @gv_profile_ver.
+  IF sy-subrc <> 0.
+    cv_message = |Exact Mapping contract is missing for { txtp_profile_name } v{ gv_profile_ver }.|.
+    RETURN.
+  ENDIF.
+
+  CLEAR ls_cert.
+  SELECT SINGLE *
+    FROM zbdc_cert_bup
+    INTO @ls_cert
+    WHERE tcode        = @p_transaction
+      AND profile_name = @txtp_profile_name
+      AND profile_ver  = @gv_profile_ver
+      AND cert_status  = @lv_cert_status.
+  IF sy-subrc <> 0 OR
+     ls_cert-script_id IS INITIAL OR
+     ls_cert-contract_hash IS INITIAL.
+    IF ls_profile-status = 'TESTING'.
+ "a TESTING template may be previewed even if the runtime
+ "manifest/proof is not ready yet. Upload/Preview must not fail with
+ "a missing frozen-context error; execution still requires Script/Hash.
+      PERFORM save_preview_session
+        USING    iv_session_id
+        CHANGING cv_ok cv_message.
+      RETURN.
+    ENDIF.
+    cv_message = |Exact certification manifest (Script/Hash) is missing for { txtp_profile_name } v{ gv_profile_ver }.|.
+    RETURN.
+  ENDIF.
+
+  IF lv_cert_status = 'CERTIFIED' AND
+     ls_cert-last_test_status <> 'CERTIFIED'.
+    cv_message = |Certified profile { txtp_profile_name } v{ gv_profile_ver } has no certified test proof.|.
+    RETURN.
+  ENDIF.
+
+  CLEAR ls_script.
+  SELECT SINGLE *
+    FROM zbdc_script_bup
+    INTO @ls_script
+    WHERE script_id    = @ls_cert-script_id
+      AND tcode        = @p_transaction
+      AND profile_name = @txtp_profile_name
+      AND profile_ver  = @gv_profile_ver
+      AND status       = @lv_script_status.
+  IF sy-subrc <> 0.
+    cv_message = |Exact Script { ls_cert-script_id } referenced by certification is missing or has the wrong lifecycle status.|.
+    RETURN.
+  ENDIF.
+
+  IF ls_script-contract_hash IS INITIAL OR
+     ls_script-contract_hash <> ls_cert-contract_hash.
+    cv_message = |Exact Script/Certification hash mismatch for { txtp_profile_name } v{ gv_profile_ver }.|.
+    RETURN.
+  ENDIF.
+
+  CLEAR ls_session.
+  SELECT SINGLE *
+    FROM zbdc_session_bup
+    INTO @ls_session
+    WHERE session_id = @iv_session_id.
+
+  IF sy-subrc <> 0.
+    CLEAR ls_session.
+    ls_session-session_id = iv_session_id.
+    GET TIME STAMP FIELD lv_ts.
+    ls_session-start_time = lv_ts.
+    ls_session-created_by = sy-uname.
+  ENDIF.
+
+  lv_has_frozen = abap_false.
+  IF ls_session-tcode IS NOT INITIAL OR
+     ls_session-profile_name IS NOT INITIAL OR
+     ls_session-profile_ver IS NOT INITIAL OR
+     ls_session-script_id IS NOT INITIAL OR
+     ls_session-contract_hash IS NOT INITIAL.
+    lv_has_frozen = abap_true.
+  ENDIF.
+
+  IF lv_has_frozen = abap_true.
+ "preserve immutable ownership, but allow a legacy/preview session
+ "that already owns the exact same TCODE/Profile/Version to COMPLETE blank
+ "Script/Hash proof fields from the exact certification manifest. Any
+ "nonblank conflicting owner/proof value still blocks mutation.
+    IF ( ls_session-tcode IS NOT INITIAL AND
+         ls_session-tcode <> p_transaction ) OR
+       ( ls_session-profile_name IS NOT INITIAL AND
+         ls_session-profile_name <> txtp_profile_name ) OR
+       ( ls_session-profile_ver IS NOT INITIAL AND
+         ls_session-profile_ver <> gv_profile_ver ) OR
+       ( ls_session-script_id IS NOT INITIAL AND
+         ls_session-script_id <> ls_script-script_id ) OR
+       ( ls_session-contract_hash IS NOT INITIAL AND
+         ls_session-contract_hash <> ls_script-contract_hash ).
+      cv_message = |Session { iv_session_id } already owns a different frozen contract; mutation is blocked.|.
+      RETURN.
+    ENDIF.
+
+    IF ls_session-tcode         = p_transaction AND
+       ls_session-profile_name  = txtp_profile_name AND
+       ls_session-profile_ver   = gv_profile_ver AND
+       ls_session-script_id     = ls_script-script_id AND
+       ls_session-contract_hash = ls_script-contract_hash.
+      cv_ok = abap_true.
+      cv_message = |Frozen contract already verified for session { iv_session_id }.|.
+      RETURN.
+    ENDIF.
+ "Otherwise this is the same exact owner with one or more blank proof
+ "components. Fall through and fill only the proven exact tuple below.
+  ENDIF.
+
+  ls_session-tcode         = p_transaction.
+  ls_session-profile_name  = txtp_profile_name.
+  ls_session-profile_ver   = gv_profile_ver.
+  ls_session-script_id     = ls_script-script_id.
+  ls_session-contract_hash = ls_script-contract_hash.
+
+  IF ls_session-start_time IS INITIAL.
+    GET TIME STAMP FIELD lv_ts.
+    ls_session-start_time = lv_ts.
+  ENDIF.
+  IF ls_session-created_by IS INITIAL OR ls_session-created_by = 'UNKNOWN'.
+    ls_session-created_by = sy-uname.
+  ENDIF.
+
+  MODIFY zbdc_session_bup FROM @ls_session.
+  IF sy-subrc <> 0.
+    cv_message = |Frozen session contract could not be persisted for { iv_session_id }.|.
+    RETURN.
+  ENDIF.
+
+  cv_ok = abap_true.
+  cv_message = |Frozen exact contract: { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }.|.
+ENDFORM.
+
+FORM resolve_session_context
+  USING    iv_session_id TYPE zbdc_staging_bup-session_id
+  CHANGING cv_tcode      TYPE zbdc_prof_bup-tcode
+           cv_profile    TYPE zbdc_prof_bup-profile_name
+           cv_ver        TYPE zbdc_prof_bup-profile_ver
+           cv_found      TYPE abap_bool.
+
+  DATA: ls_session   TYPE zbdc_session_bup,
+        ls_profile   TYPE zbdc_prof_bup,
+        ls_script    TYPE zbdc_script_bup,
+        lv_map_found TYPE zbdc_mapping_bup-profile_name.
+
+  CLEAR: cv_tcode, cv_profile, cv_ver, cv_found,
+         gv_runtime_script_id, gv_runtime_contract_hash,
+         gs_runtime_cert, gv_runtime_cert_loaded.
+
+  IF iv_session_id IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  SELECT SINGLE *
+    FROM zbdc_session_bup
+    INTO @ls_session
+    WHERE session_id = @iv_session_id.
+
+ "EXEC_ONLY: the ingestion session must own one exact immutable execution
+ "tuple. Certification/Object metadata is deliberately outside this gate.
+  IF sy-subrc <> 0 OR
+     ls_session-tcode IS INITIAL OR
+     ls_session-profile_name IS INITIAL OR
+     ls_session-profile_ver IS INITIAL OR
+     ls_session-script_id IS INITIAL OR
+     ls_session-contract_hash IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  SELECT SINGLE *
+    FROM zbdc_prof_bup
+    INTO @ls_profile
+    WHERE tcode        = @ls_session-tcode
+      AND profile_name = @ls_session-profile_name
+      AND profile_ver  = @ls_session-profile_ver.
+  IF sy-subrc <> 0.
+    RETURN.
+  ENDIF.
+
+  SELECT SINGLE *
+    FROM zbdc_script_bup
+    INTO @ls_script
+    WHERE script_id     = @ls_session-script_id
+      AND tcode         = @ls_session-tcode
+      AND profile_name  = @ls_session-profile_name
+      AND profile_ver   = @ls_session-profile_ver
+      AND contract_hash = @ls_session-contract_hash.
+  IF sy-subrc <> 0 OR
+     ls_script-script_id IS INITIAL OR
+     ls_script-status = 'RESERVED' OR
+     ( ls_script-status = 'INACTIVE' AND
+       ls_script-recording_name = 'BLOCKED_IMPORT' ).
+    RETURN.
+  ENDIF.
+
+  SELECT SINGLE profile_name
+    FROM zbdc_mapping_bup
+    INTO @lv_map_found
+    WHERE tcode        = @ls_session-tcode
+      AND profile_name = @ls_session-profile_name
+      AND profile_ver  = @ls_session-profile_ver.
+  IF sy-subrc <> 0.
+    RETURN.
+  ENDIF.
+
+  cv_tcode   = ls_session-tcode.
+  cv_profile = ls_session-profile_name.
+  cv_ver     = ls_session-profile_ver.
+  cv_found   = abap_true.
+
+  p_transaction             = cv_tcode.
+  txtp_profile_name         = cv_profile.
+  gv_profile_ver            = cv_ver.
+  gv_runtime_script_id      = ls_session-script_id.
+  gv_runtime_contract_hash  = ls_session-contract_hash.
+
+ "Keep SAP Object/certification state explicitly empty during CT/BISM-only
+ "execution so no later helper can accidentally turn it into an executor gate.
+  CLEAR: gs_runtime_cert, gv_runtime_cert_loaded.
+ENDFORM.
+
+FORM apply_first_staging_ctx.
+  DATA: ls_first   TYPE zbdc_staging_bup,
+        lv_tcode   TYPE zbdc_prof_bup-tcode,
+        lv_profile TYPE zbdc_prof_bup-profile_name,
+        lv_ver     TYPE zbdc_prof_bup-profile_ver,
+        lv_found   TYPE abap_bool.
+
+  READ TABLE gt_staging INTO ls_first INDEX 1.
+  IF sy-subrc <> 0.
+    RETURN.
+  ENDIF.
+
+  PERFORM resolve_session_context
+    USING    ls_first-session_id
+    CHANGING lv_tcode lv_profile lv_ver lv_found.
+
+  IF lv_found <> abap_true.
+    p_transaction = ls_first-tcode.
+    CLEAR: txtp_profile_name, gv_profile_ver.
+  ENDIF.
+ENDFORM.
+
+FORM verify_loaded_ctx
+  USING    iv_expected_tcode TYPE char20
+  CHANGING cv_ok             TYPE abap_bool
+           cv_message        TYPE string.
+
+  TYPES: BEGIN OF ty_ctx,
+           session_id    TYPE zbdc_session_bup-session_id,
+           tcode         TYPE zbdc_session_bup-tcode,
+           profile_name  TYPE zbdc_session_bup-profile_name,
+           profile_ver   TYPE zbdc_session_bup-profile_ver,
+           script_id     TYPE zbdc_session_bup-script_id,
+           contract_hash TYPE zbdc_session_bup-contract_hash,
+         END OF ty_ctx.
+
+  DATA: lv_expected     TYPE char20,
+        lt_sid          TYPE SORTED TABLE OF zbdc_staging_bup-session_id
+                        WITH UNIQUE KEY table_line,
+        ls_ctx          TYPE ty_ctx,
+        ls_ref          TYPE ty_ctx,
+        lv_ctx_tcode    TYPE zbdc_prof_bup-tcode,
+        lv_ctx_profile  TYPE zbdc_prof_bup-profile_name,
+        lv_ctx_ver      TYPE zbdc_prof_bup-profile_ver,
+        lv_ctx_found    TYPE abap_bool,
+        lv_row_tcode    TYPE char20,
+        lv_prof_status  TYPE zbdc_prof_bup-status,
+        lv_preview_ctx  TYPE abap_bool.
+
+  CLEAR: cv_ok, cv_message, lv_preview_ctx.
+  lv_expected = iv_expected_tcode.
+  TRANSLATE lv_expected TO UPPER CASE.
+  CONDENSE lv_expected NO-GAPS.
+
+  IF gt_staging IS INITIAL.
+    cv_message = 'No staging rows are loaded.'.
+    RETURN.
+  ENDIF.
+
+  LOOP AT gt_staging INTO DATA(ls_stg).
+    IF ls_stg-session_id IS INITIAL.
+      cv_message = 'A staging row has no session identity.'.
+      RETURN.
+    ENDIF.
+
+    lv_row_tcode = ls_stg-tcode.
+    TRANSLATE lv_row_tcode TO UPPER CASE.
+    CONDENSE lv_row_tcode NO-GAPS.
+    IF lv_expected IS NOT INITIAL AND lv_row_tcode <> lv_expected.
+      cv_message =
+        |Loaded staging contains TCODE { lv_row_tcode }, expected { lv_expected }.|.
+      RETURN.
+    ENDIF.
+    INSERT ls_stg-session_id INTO TABLE lt_sid.
+  ENDLOOP.
+
+  LOOP AT lt_sid INTO DATA(lv_sid).
+    CLEAR ls_ctx.
+    SELECT SINGLE session_id, tcode, profile_name, profile_ver,
+                  script_id, contract_hash
+      FROM zbdc_session_bup
+      INTO CORRESPONDING FIELDS OF @ls_ctx
+      WHERE session_id = @lv_sid.
+
+    IF sy-subrc <> 0 OR
+       ls_ctx-tcode IS INITIAL OR
+       ls_ctx-profile_name IS INITIAL OR
+       ls_ctx-profile_ver IS INITIAL.
+      cv_message =
+        |Session { lv_sid } has no TCODE/Profile/Version context.|.
+      RETURN.
+    ENDIF.
+
+    IF ls_ctx-script_id IS INITIAL OR
+       ls_ctx-contract_hash IS INITIAL.
+      CLEAR lv_prof_status.
+      SELECT SINGLE status
+        FROM zbdc_prof_bup
+        INTO @lv_prof_status
+        WHERE tcode        = @ls_ctx-tcode
+          AND profile_name = @ls_ctx-profile_name
+          AND profile_ver  = @ls_ctx-profile_ver.
+      IF sy-subrc = 0 AND
+         ( lv_prof_status = 'DRAFT' OR
+           lv_prof_status = 'MAPPED' OR
+           lv_prof_status = 'TESTING' ).
+ "Preview Data may use a non-executable onboarding context.
+ "Runtime execution still requires Script/Hash through z30_resolve*.
+        lv_preview_ctx = abap_true.
+      ELSE.
+        cv_message =
+          |Session { lv_sid } has no frozen TCODE/Profile/Version/Script/Hash context.|.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    IF ls_ref-session_id IS INITIAL.
+      ls_ref = ls_ctx.
+    ELSEIF ls_ctx-tcode         <> ls_ref-tcode OR
+           ls_ctx-profile_name  <> ls_ref-profile_name OR
+           ls_ctx-profile_ver   <> ls_ref-profile_ver OR
+           ls_ctx-script_id     <> ls_ref-script_id OR
+           ls_ctx-contract_hash <> ls_ref-contract_hash.
+      cv_message =
+        |Loaded scope mixes immutable contracts ({ ls_ref-session_id } and { ls_ctx-session_id }).|.
+      RETURN.
+    ENDIF.
+  ENDLOOP.
+
+  IF lv_expected IS NOT INITIAL AND ls_ref-tcode <> lv_expected.
+    cv_message = |Frozen context TCODE { ls_ref-tcode } does not match { lv_expected }.|.
+    RETURN.
+  ENDIF.
+
+  IF lv_preview_ctx = abap_true.
+    p_transaction     = ls_ref-tcode.
+    txtp_profile_name = ls_ref-profile_name.
+    gv_profile_ver    = ls_ref-profile_ver.
+    cv_ok = abap_true.
+    cv_message =
+      |Verified preview context { ls_ref-tcode }/{ ls_ref-profile_name } v{ ls_ref-profile_ver }; execution remains gated.|.
+    RETURN.
+  ENDIF.
+
+  PERFORM resolve_session_context
+    USING    ls_ref-session_id
+    CHANGING lv_ctx_tcode lv_ctx_profile lv_ctx_ver lv_ctx_found.
+  IF lv_ctx_found <> abap_true.
+    cv_message =
+      |Frozen contract for session { ls_ref-session_id } is not runnable/certified.|.
+    RETURN.
+  ENDIF.
+
+  cv_ok = abap_true.
+  cv_message =
+    |Verified exact context { ls_ref-tcode }/{ ls_ref-profile_name } v{ ls_ref-profile_ver }.|.
+ENDFORM.
+
+*& Staging review must not keep synthetic setup-gate failures
+
+*& The Staging button is a review boundary, not an execution monitor. A
+*& previous preflight block such as "Profile setup incomplete" is not a data
+*& validation failure and must not make every freshly loaded group look like
+*& a BDC/SAP error whenever the user re-opens Staging. Keep real SAP/data
+*& errors intact; reset only synthetic runtime-setup gate messages.
+
+FORM is_setup_gate_msg
+  USING    iv_text TYPE any
+  CHANGING cv_gate TYPE abap_bool.
+
+  DATA lv_text TYPE string.
+
+  CLEAR cv_gate.
+  lv_text = iv_text.
+  TRANSLATE lv_text TO UPPER CASE.
+
+  IF lv_text CS 'PROFILE SETUP'
+     OR lv_text CS 'NOT CERTIFIED'
+     OR lv_text CS 'FROZEN CERTIFIED SESSION CONTRACT'
+     OR lv_text CS 'RUNTIME PROOF CONTRACT'
+     OR lv_text CS 'OBJECT PROOF CONTRACT'
+     OR lv_text CS 'BEFORE SAP REPLAY'
+     OR lv_text CS 'CERTIFIED RUNTIME CONTRACT'
+     OR lv_text CS 'CERTIFY THE OBJECT PROOF'.
+    cv_gate = abap_true.
+  ENDIF.
+ENDFORM.
+
+FORM reset_stage_setup_gate
+  CHANGING cv_reset TYPE i.
+
+  DATA: lt_stage_upd  TYPE STANDARD TABLE OF zbdc_staging_bup,
+        lt_result     TYPE STANDARD TABLE OF zbdc_result_bup,
+        lt_result_del TYPE STANDARD TABLE OF zbdc_result_bup,
+        lt_sid        TYPE SORTED TABLE OF zbdc_staging_bup-session_id
+                      WITH UNIQUE KEY table_line,
+        lv_text       TYPE string,
+        lv_gate       TYPE abap_bool,
+        lv_sid        TYPE zbdc_staging_bup-session_id.
+
+  FIELD-SYMBOLS: <ls_stage> TYPE zbdc_staging_bup,
+                 <ls_res>   TYPE zbdc_result_bup.
+
+  CLEAR cv_reset.
+
+  LOOP AT gt_staging ASSIGNING <ls_stage>.
+    CLEAR: lv_text, lv_gate.
+    CONCATENATE <ls_stage>-error_msg <ls_stage>-last_error
+      INTO lv_text SEPARATED BY space.
+    PERFORM is_setup_gate_msg USING lv_text CHANGING lv_gate.
+
+    IF lv_gate = abap_true
+       AND ( <ls_stage>-status = gc_st_error OR <ls_stage>-status = 'ERROR' ).
+      <ls_stage>-status = gc_st_ready.
+      CLEAR: <ls_stage>-error_msg,
+             <ls_stage>-last_error.
+      APPEND <ls_stage> TO lt_stage_upd.
+      INSERT <ls_stage>-session_id INTO TABLE lt_sid.
+      cv_reset = cv_reset + 1.
+    ENDIF.
+  ENDLOOP.
+
+  IF lt_stage_upd IS NOT INITIAL.
+    MODIFY zbdc_staging_bup FROM TABLE lt_stage_upd.
+  ENDIF.
+
+  LOOP AT lt_sid INTO lv_sid.
+    SELECT *
+      FROM zbdc_result_bup
+      APPENDING TABLE @lt_result
+      WHERE session_id = @lv_sid.
+  ENDLOOP.
+
+  LOOP AT lt_result ASSIGNING <ls_res>.
+    CLEAR: lv_text, lv_gate.
+    CONCATENATE <ls_res>-message <ls_res>-exec_status
+      INTO lv_text SEPARATED BY space.
+    PERFORM is_setup_gate_msg USING lv_text CHANGING lv_gate.
+    IF lv_gate = abap_true.
+      APPEND <ls_res> TO lt_result_del.
+    ENDIF.
+  ENDLOOP.
+
+  IF lt_result_del IS NOT INITIAL.
+    DELETE zbdc_result_bup FROM TABLE lt_result_del.
+  ENDIF.
+
+  IF lt_stage_upd IS NOT INITIAL OR lt_result_del IS NOT INITIAL.
+    COMMIT WORK AND WAIT.
+  ENDIF.
+ENDFORM.
+
+FORM load_exact_staging
+  USING    iv_session_id   TYPE zbdc_staging_bup-session_id
+           iv_batch_prefix TYPE zbdc_staging_bup-session_id
+           iv_tcode        TYPE char20
+  CHANGING cv_count        TYPE i
+           cv_ok           TYPE abap_bool
+           cv_message      TYPE string.
+
+  DATA: lv_tcode TYPE char20,
+        lv_like  TYPE string.
+
+  CLEAR: cv_count, cv_ok, cv_message.
+  REFRESH: gt_staging, gt_staging_alv, gt_exec_disp.
+
+  lv_tcode = iv_tcode.
+  TRANSLATE lv_tcode TO UPPER CASE.
+  CONDENSE lv_tcode NO-GAPS.
+
+  IF iv_session_id IS INITIAL AND iv_batch_prefix IS INITIAL.
+    cv_message = 'Exact staging context is required: select a session or batch first.'.
+    RETURN.
+  ENDIF.
+
+  IF iv_batch_prefix IS NOT INITIAL.
+    lv_like = iv_batch_prefix && '%'.
     SELECT *
       FROM zbdc_staging_bup
       INTO TABLE @gt_staging
@@ -566,10 +1170,79 @@ FORM LOAD_LATEST_STAGING_FOR_TCODE USING IV_TCODE TYPE CHAR20
     SELECT *
       FROM zbdc_staging_bup
       INTO TABLE @gt_staging
-      WHERE session_id = @lv_latest_sess.
+      WHERE session_id = @iv_session_id.
   ENDIF.
 
   SORT gt_staging BY session_id ASCENDING row_index ASCENDING.
   cv_count = lines( gt_staging ).
+  IF cv_count <= 0.
+    cv_message = 'The selected exact session/batch has no staging rows.'.
+    RETURN.
+  ENDIF.
+
+  PERFORM verify_loaded_ctx
+    USING    lv_tcode
+    CHANGING cv_ok cv_message.
+  IF cv_ok <> abap_true.
+    REFRESH: gt_staging, gt_staging_alv, gt_exec_disp.
+    CLEAR cv_count.
+    RETURN.
+  ENDIF.
+
+ "V17.9.3.4 scope stability: GT_CURRENT_SESSIONS is context, not history.
+ "Rebuild it from the rows that were JUST loaded so a previous upload/batch
+ "can never make the next 0400 PBO expand back into an older session set.
+  REFRESH gt_current_sessions.
+  LOOP AT gt_staging INTO DATA(ls_scope_stg_934).
+    READ TABLE gt_current_sessions
+      WITH KEY table_line = ls_scope_stg_934-session_id
+      TRANSPORTING NO FIELDS.
+    IF sy-subrc <> 0 AND ls_scope_stg_934-session_id IS NOT INITIAL.
+      APPEND ls_scope_stg_934-session_id TO gt_current_sessions.
+    ENDIF.
+  ENDLOOP.
+  SORT gt_current_sessions.
+  gv_current_batch_count = lines( gt_current_sessions ).
+
+  "Root scope invariant: batch rendering is explicit state created only by
+  "LOAD_STAGING_BY_BATCH. Resolving a batch prefix from one exact session
+  "must never make a later 0400 PBO widen back into an older/multi-session
+  "scope.
+  CLEAR gv_0400_batch_scope.
+  IF iv_batch_prefix IS NOT INITIAL AND gv_current_batch_count > 1.
+    gv_0400_batch_scope = abap_true.
+  ENDIF.
+
+  IF iv_batch_prefix IS NOT INITIAL.
+    gv_current_batch_prefix = iv_batch_prefix.
+  ELSE.
+    PERFORM batch_prefix_from_sid
+      USING    iv_session_id
+      CHANGING gv_current_batch_prefix.
+  ENDIF.
+
+  READ TABLE gt_staging INTO DATA(ls_first) INDEX 1.
+  IF sy-subrc = 0.
+    txtp_session_id = ls_first-session_id.
+    txtp_sess       = ls_first-session_id.
+  ENDIF.
+  cv_count = lines( gt_staging ).
 ENDFORM.
-*<<< END FORM LOAD_LATEST_STAGING_FOR_TCODE
+
+FORM load_staging_by_session
+  USING    iv_session_id TYPE zbdc_staging_bup-session_id
+  CHANGING cv_count      TYPE i.
+
+  DATA: lv_ok  TYPE abap_bool,
+        lv_msg TYPE string.
+
+  PERFORM load_exact_staging
+    USING    iv_session_id space space
+    CHANGING cv_count lv_ok lv_msg.
+  IF lv_ok <> abap_true.
+    CLEAR cv_count.
+    IF lv_msg IS NOT INITIAL.
+      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    ENDIF.
+  ENDIF.
+ENDFORM.

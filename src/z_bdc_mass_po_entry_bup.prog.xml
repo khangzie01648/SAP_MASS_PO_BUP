@@ -19,7 +19,7 @@
       <TYPE>N</TYPE>
       <NEXTSCREEN>0100</NEXTSCREEN>
       <LINES>027</LINES>
-      <COLUMNS>126</COLUMNS>
+      <COLUMNS>206</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -30,13 +30,13 @@
        <TYPE>CUST_CTRL</TYPE>
        <NAME>CC_ALV_CONTAINER</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>008</LINE>
+       <LINE>011</LINE>
        <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <HEIGHT>018</HEIGHT>
+       <LENGTH>205</LENGTH>
+       <HEIGHT>015</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>018</C_LINE_MIN>
+       <C_LINE_MIN>008</C_LINE_MIN>
        <C_COLN_MIN>057</C_COLN_MIN>
       </RPY_DYCATT>
      </CONTAINERS>
@@ -45,13 +45,13 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
-       <NAME>FRM_STATS</NAME>
-       <TEXT>__________________________________________________________________________________________________________________</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <VISLENGTH>115</VISLENGTH>
-       <HEIGHT>005</HEIGHT>
+       <NAME>RM_STATS</NAME>
+       <TEXT>____________________________________________________________________________________________________________________________________</TEXT>
+       <LINE>003</LINE>
+       <COLUMN>031</COLUMN>
+       <LENGTH>149</LENGTH>
+       <VISLENGTH>149</VISLENGTH>
+       <HEIGHT>007</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
@@ -61,8 +61,8 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT001</NAME>
        <TEXT>Sessions:</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>004</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>033</COLUMN>
        <LENGTH>009</LENGTH>
        <VISLENGTH>009</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -76,8 +76,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_TOTAL_SESSIONS</NAME>
        <TEXT>__________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>015</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>045</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -92,11 +92,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Total_POs:_</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>039</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
+       <TEXT>Total_Groups:</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>071</COLUMN>
+       <LENGTH>013</LENGTH>
+       <VISLENGTH>013</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -108,8 +108,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_PROCESSED_POS</NAME>
        <TEXT>__________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>053</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>087</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -125,8 +125,8 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT003</NAME>
        <TEXT>Success:__</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>077</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>112</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -140,8 +140,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_SUCCESS_COUNT</NAME>
        <TEXT>________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>091</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>125</COLUMN>
        <LENGTH>008</LENGTH>
        <VISLENGTH>008</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -157,8 +157,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_SUCCESS_PCT</NAME>
        <TEXT>_____</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>101</COLUMN>
+       <LINE>004</LINE>
+       <COLUMN>136</COLUMN>
        <LENGTH>005</LENGTH>
        <VISLENGTH>005</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -174,8 +174,8 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT004</NAME>
        <TEXT>Warning:_</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>004</COLUMN>
+       <LINE>007</LINE>
+       <COLUMN>033</COLUMN>
        <LENGTH>009</LENGTH>
        <VISLENGTH>009</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -188,11 +188,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_WARNING_COUNT</NAME>
-       <TEXT>________</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>015</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
+       <TEXT>__________</TEXT>
+       <LINE>007</LINE>
+       <COLUMN>045</COLUMN>
+       <LENGTH>010</LENGTH>
+       <VISLENGTH>010</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <OUTPUT_FLD>X</OUTPUT_FLD>
@@ -206,8 +206,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_WARNING_PCT</NAME>
        <TEXT>_____</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>025</COLUMN>
+       <LINE>007</LINE>
+       <COLUMN>058</COLUMN>
        <LENGTH>005</LENGTH>
        <VISLENGTH>005</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -223,8 +223,8 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT005</NAME>
        <TEXT>Error:____</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>077</COLUMN>
+       <LINE>007</LINE>
+       <COLUMN>112</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -238,8 +238,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_ERROR_COUNT</NAME>
        <TEXT>________</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>091</COLUMN>
+       <LINE>007</LINE>
+       <COLUMN>125</COLUMN>
        <LENGTH>008</LENGTH>
        <VISLENGTH>008</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -255,8 +255,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTGV_ERROR_PCT</NAME>
        <TEXT>_____</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>101</COLUMN>
+       <LINE>007</LINE>
+       <COLUMN>136</COLUMN>
        <LENGTH>005</LENGTH>
        <VISLENGTH>005</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -265,447 +265,6 @@
        <OUTPUTONLY>X</OUTPUTONLY>
        <REQU_ENTRY>N</REQU_ENTRY>
        <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <NAME>OK_CODE</NAME>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0200</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Inbound Connection Sources Configuration</DESCRIPT>
-      <TYPE>N</TYPE>
-      <NEXTSCREEN>0200</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>132</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>RADIOGROUP</TYPE>
-       <NAME>%A_RB_MODE_N</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>010</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>059</LENGTH>
-       <HEIGHT>001</HEIGHT>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>RADIOGROUP</TYPE>
-       <NAME>%A_RB_UPD_A</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>012</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>031</LENGTH>
-       <HEIGHT>001</HEIGHT>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>FRAME</TYPE>
-       <NAME>FRM_SFTP</NAME>
-       <TEXT>Inbound_Endpoint_(SFTP)________________________________________________________</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>080</LENGTH>
-       <VISLENGTH>080</VISLENGTH>
-       <HEIGHT>005</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT001</NAME>
-       <TEXT>Host:_____</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>010</LENGTH>
-       <VISLENGTH>010</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_SFTP_HOST</NAME>
-       <TEXT>______________________________________________________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>054</LENGTH>
-       <VISLENGTH>054</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Port:_____</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>010</LENGTH>
-       <VISLENGTH>010</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_SFTP_PORT</NAME>
-       <TEXT>______________________________________________________</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>054</LENGTH>
-       <VISLENGTH>054</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>FRAME</TYPE>
-       <NAME>FRM_BDC</NAME>
-       <TEXT>BDC_Engine_Parameters__________________________________________________________</TEXT>
-       <LINE>008</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>080</LENGTH>
-       <VISLENGTH>080</VISLENGTH>
-       <HEIGHT>009</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT005</NAME>
-       <TEXT>BDC_Mode:_____</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT006</NAME>
-       <TEXT>Update_Mode:__</TEXT>
-       <LINE>012</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT007</NAME>
-       <TEXT>Batch_Size:___</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_BATCH_SIZE</NAME>
-       <TEXT>___________________</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>019</LENGTH>
-       <VISLENGTH>019</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <NAME>OK_CODE</NAME>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
-       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
-       <TYPE>RADIO</TYPE>
-       <NAME>RB_MODE_N</NAME>
-       <TEXT>N_-_No_display__</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>018</LENGTH>
-       <VISLENGTH>018</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
-       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
-       <TYPE>RADIO</TYPE>
-       <NAME>RB_MODE_E</NAME>
-       <TEXT>E_-_Errors_only_</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>041</COLUMN>
-       <LENGTH>018</LENGTH>
-       <VISLENGTH>018</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
-       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
-       <TYPE>RADIO</TYPE>
-       <NAME>RB_MODE_A</NAME>
-       <TEXT>A_-_All_screens</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>062</COLUMN>
-       <LENGTH>017</LENGTH>
-       <VISLENGTH>017</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
-       <CONT_NAME>%A_RB_UPD_A</CONT_NAME>
-       <TYPE>RADIO</TYPE>
-       <NAME>RB_UPD_A</NAME>
-       <TEXT>A_-_Async___</TEXT>
-       <LINE>012</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
-       <CONT_NAME>%A_RB_UPD_A</CONT_NAME>
-       <TYPE>RADIO</TYPE>
-       <NAME>RB_UPD_S</NAME>
-       <TEXT>S_-_Sync____</TEXT>
-       <LINE>012</LINE>
-       <COLUMN>037</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0250</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Background Job Scheduler Control Panel</DESCRIPT>
-      <TYPE>N</TYPE>
-      <NEXTSCREEN>0250</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>122</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>CUST_CTRL</TYPE>
-       <NAME>CC_JOB_GRID</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>009</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>113</LENGTH>
-       <HEIGHT>016</HEIGHT>
-       <C_RESIZE_V>X</C_RESIZE_V>
-       <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>008</C_LINE_MIN>
-       <C_COLN_MIN>056</C_COLN_MIN>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>FRAME</TYPE>
-       <NAME>FRM_SCHEDULER</NAME>
-       <TEXT>JOB_CONFIGURATION_________________________________________________________________________________________________</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <VISLENGTH>115</VISLENGTH>
-       <HEIGHT>006</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT001</NAME>
-       <TEXT>Job_Name:__</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>P_JOB_NAME</NAME>
-       <TEXT>______________________________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>017</COLUMN>
-       <LENGTH>030</LENGTH>
-       <VISLENGTH>030</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Start_Time:</TEXT>
-       <LINE>004</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>P_JOB_TIME</NAME>
-       <TEXT>__________</TEXT>
-       <LINE>004</LINE>
-       <COLUMN>017</COLUMN>
-       <LENGTH>010</LENGTH>
-       <VISLENGTH>010</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>TIMS</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT003</NAME>
-       <TEXT>Frequency:_</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>P_FREQ</NAME>
-       <TEXT>_______________</TEXT>
-       <DROPDOWN>L</DROPDOWN>
-       <LINE>005</LINE>
-       <COLUMN>017</COLUMN>
-       <LENGTH>015</LENGTH>
-       <VISLENGTH>017</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>FRAME</TYPE>
-       <NAME>FRM_JOBS_LIST</NAME>
-       <TEXT>ACTIVE_BACKGROUND_JOBS____________________________________________________________________________________________</TEXT>
-       <LINE>008</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <VISLENGTH>115</VISLENGTH>
-       <HEIGHT>018</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
@@ -729,8 +288,8 @@
       <DESCRIPT>Excel Ingestion &amp; Validation</DESCRIPT>
       <TYPE>N</TYPE>
       <NEXTSCREEN>0300</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>125</COLUMNS>
+      <LINES>030</LINES>
+      <COLUMNS>207</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -741,31 +300,145 @@
        <TYPE>STRIP_CTRL</TYPE>
        <NAME>TS_PREVIEW</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>006</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
+       <LINE>002</LINE>
+       <COLUMN>089</COLUMN>
+       <LENGTH>090</LENGTH>
        <HEIGHT>018</HEIGHT>
       </RPY_DYCATT>
       <RPY_DYCATT>
        <TYPE>SUBSCREEN</TYPE>
        <NAME>G_SUB_DYNPRO</NAME>
        <ELEMENT_OF>TS_PREVIEW</ELEMENT_OF>
-       <LINE>008</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>110</LENGTH>
+       <LINE>004</LINE>
+       <COLUMN>090</COLUMN>
+       <LENGTH>088</LENGTH>
        <HEIGHT>015</HEIGHT>
        <C_SCROLL_V>X</C_SCROLL_V>
        <C_SCROLL_H>X</C_SCROLL_H>
+      </RPY_DYCATT>
+      <RPY_DYCATT>
+       <TYPE>RADIOGROUP</TYPE>
+       <NAME>%A_RB_EXEC_CT</NAME>
+       <ELEMENT_OF>SCREEN</ELEMENT_OF>
+       <LINE>003</LINE>
+       <COLUMN>006</COLUMN>
+       <LENGTH>073</LENGTH>
+       <HEIGHT>001</HEIGHT>
+      </RPY_DYCATT>
+      <RPY_DYCATT>
+       <TYPE>RADIOGROUP</TYPE>
+       <NAME>%A_RB_MODE_N</NAME>
+       <ELEMENT_OF>SCREEN</ELEMENT_OF>
+       <LINE>008</LINE>
+       <COLUMN>020</COLUMN>
+       <LENGTH>059</LENGTH>
+       <HEIGHT>001</HEIGHT>
+      </RPY_DYCATT>
+      <RPY_DYCATT>
+       <TYPE>RADIOGROUP</TYPE>
+       <NAME>%A_RB_UPD_A</NAME>
+       <ELEMENT_OF>SCREEN</ELEMENT_OF>
+       <LINE>010</LINE>
+       <COLUMN>020</COLUMN>
+       <LENGTH>031</LENGTH>
+       <HEIGHT>001</HEIGHT>
       </RPY_DYCATT>
      </CONTAINERS>
      <FIELDS>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>FRAME</TYPE>
+       <NAME>FRM_EXEC_MODE</NAME>
+       <TEXT>Execution_Mode___________________________________________________________________</TEXT>
+       <LINE>002</LINE>
+       <COLUMN>002</COLUMN>
+       <LENGTH>082</LENGTH>
+       <VISLENGTH>082</VISLENGTH>
+       <HEIGHT>003</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>FRAME</TYPE>
+       <NAME>FRM_BDC</NAME>
+       <TEXT>BDC_Engine_Parameters____________________________________________________________</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>002</COLUMN>
+       <LENGTH>082</LENGTH>
+       <VISLENGTH>082</VISLENGTH>
+       <HEIGHT>009</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT005</NAME>
+       <TEXT>BDC_Mode:_____</TEXT>
+       <LINE>008</LINE>
+       <COLUMN>004</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT006</NAME>
+       <TEXT>Update_Mode:__</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>004</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT007</NAME>
+       <TEXT>Batch_Size:___</TEXT>
+       <LINE>012</LINE>
+       <COLUMN>004</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_BATCH_SIZE</NAME>
+       <TEXT>___________________</TEXT>
+       <LINE>012</LINE>
+       <COLUMN>020</COLUMN>
+       <LENGTH>019</LENGTH>
+       <VISLENGTH>019</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+       <_--32_DIMENS>X</_--32_DIMENS>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT001</NAME>
        <TEXT>File_Path:__</TEXT>
-       <LINE>002</LINE>
+       <LINE>016</LINE>
        <COLUMN>002</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
@@ -781,10 +454,10 @@
        <NAME>TXTP_FILE_PATH</NAME>
        <TEXT>________________________________________________________________________________</TEXT>
        <ROLLING>X</ROLLING>
-       <LINE>002</LINE>
+       <LINE>016</LINE>
        <COLUMN>016</COLUMN>
        <LENGTH>080</LENGTH>
-       <VISLENGTH>079</VISLENGTH>
+       <VISLENGTH>051</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <UP_LOWER>X</UP_LOWER>
@@ -801,10 +474,10 @@
        <TEXT>Browse____</TEXT>
        <ICON_NAME>ICON_OPEN_FOLDER</ICON_NAME>
        <WITH_ICON>X</WITH_ICON>
-       <LINE>002</LINE>
-       <COLUMN>097</COLUMN>
+       <LINE>016</LINE>
+       <COLUMN>070</COLUMN>
        <LENGTH>015</LENGTH>
-       <VISLENGTH>010</VISLENGTH>
+       <VISLENGTH>013</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <PUSH_FCODE>FC_BROWSE</PUSH_FCODE>
        <FORMAT>CHAR</FORMAT>
@@ -816,7 +489,7 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT002</NAME>
        <TEXT>File_Size:__</TEXT>
-       <LINE>004</LINE>
+       <LINE>018</LINE>
        <COLUMN>002</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
@@ -830,7 +503,7 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTP_FILE_SIZE</NAME>
        <TEXT>____________</TEXT>
-       <LINE>004</LINE>
+       <LINE>018</LINE>
        <COLUMN>016</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
@@ -846,8 +519,8 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT003</NAME>
        <TEXT>Rows_Loaded:</TEXT>
-       <LINE>004</LINE>
-       <COLUMN>044</COLUMN>
+       <LINE>018</LINE>
+       <COLUMN>041</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -860,8 +533,8 @@
        <TYPE>TEMPLATE</TYPE>
        <NAME>TXTP_ROW_COUNT</NAME>
        <TEXT>____________</TEXT>
-       <LINE>004</LINE>
-       <COLUMN>058</COLUMN>
+       <LINE>018</LINE>
+       <COLUMN>055</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -918,6 +591,125 @@
        <REQU_ENTRY>N</REQU_ENTRY>
        <REF_FIELD>G_SUB_DYNPRO</REF_FIELD>
       </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_EXEC_CT</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_EXEC_CT</NAME>
+       <TEXT>Call_Transaction_Mode</TEXT>
+       <LINE>003</LINE>
+       <COLUMN>006</COLUMN>
+       <LENGTH>023</LENGTH>
+       <VISLENGTH>023</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>EXM</GROUP1>
+       <PUSH_FCODE>EXBI</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_EXEC_CT</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_EXEC_BI</NAME>
+       <TEXT>Batch_Input_Session_Mode</TEXT>
+       <LINE>003</LINE>
+       <COLUMN>053</COLUMN>
+       <LENGTH>026</LENGTH>
+       <VISLENGTH>026</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>EXM</GROUP1>
+       <PUSH_FCODE>EXBI</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_MODE_N</NAME>
+       <TEXT>N_-_No_display__</TEXT>
+       <LINE>008</LINE>
+       <COLUMN>020</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>BDM</GROUP1>
+       <PUSH_FCODE>BDMA</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_MODE_E</NAME>
+       <TEXT>E_-_Errors_only_</TEXT>
+       <LINE>008</LINE>
+       <COLUMN>041</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>BDM</GROUP1>
+       <PUSH_FCODE>BDMA</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_MODE_N</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_MODE_A</NAME>
+       <TEXT>A_-_All_screens</TEXT>
+       <LINE>008</LINE>
+       <COLUMN>062</COLUMN>
+       <LENGTH>017</LENGTH>
+       <VISLENGTH>017</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>BDM</GROUP1>
+       <PUSH_FCODE>BDMA</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_UPD_A</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_UPD_A</NAME>
+       <TEXT>A_-_Async___</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>020</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>UPD</GROUP1>
+       <PUSH_FCODE>UPDS</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>RADIOGROUP</CONT_TYPE>
+       <CONT_NAME>%A_RB_UPD_A</CONT_NAME>
+       <TYPE>RADIO</TYPE>
+       <NAME>RB_UPD_S</NAME>
+       <TEXT>S_-_Sync____</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>037</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <GROUP1>UPD</GROUP1>
+       <PUSH_FCODE>UPDS</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
      </FIELDS>
     </item>
     <item>
@@ -925,7 +717,7 @@
       <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
       <SCREEN>0301</SCREEN>
       <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Excel Data Preview Subscreen</DESCRIPT>
+      <DESCRIPT>Excel Data Subscreen</DESCRIPT>
       <TYPE>I</TYPE>
       <NEXTSCREEN>0301</NEXTSCREEN>
       <LINES>027</LINES>
@@ -969,7 +761,7 @@
       <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
       <SCREEN>0302</SCREEN>
       <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Validation Errors Subscreen</DESCRIPT>
+      <DESCRIPT>Excel Files Subscreen</DESCRIPT>
       <TYPE>I</TYPE>
       <NEXTSCREEN>0302</NEXTSCREEN>
       <LINES>027</LINES>
@@ -1017,7 +809,7 @@
       <TYPE>N</TYPE>
       <NEXTSCREEN>0350</NEXTSCREEN>
       <LINES>027</LINES>
-      <COLUMNS>123</COLUMNS>
+      <COLUMNS>124</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -1089,37 +881,6 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Execution_Mode:_</TEXT>
-       <LINE>004</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>016</LENGTH>
-       <VISLENGTH>016</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>P_BDC_MODE</NAME>
-       <TEXT>____________________</TEXT>
-       <DROPDOWN>L</DROPDOWN>
-       <LINE>004</LINE>
-       <COLUMN>023</COLUMN>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>022</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_MAPPING</NAME>
        <TEXT>COLUMN_MAPPING____________________________________________________________________________________________________</TEXT>
@@ -1154,7 +915,7 @@
       <TYPE>N</TYPE>
       <NEXTSCREEN>0400</NEXTSCREEN>
       <LINES>027</LINES>
-      <COLUMNS>123</COLUMNS>
+      <COLUMNS>118</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -1210,32 +971,17 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Filter:_____</TEXT>
+       <TYPE>PUSH</TYPE>
+       <NAME>BTN_CHGHIST</NAME>
+       <TEXT>Change_History</TEXT>
        <LINE>002</LINE>
-       <COLUMN>052</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
+       <COLUMN>040</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
        <HEIGHT>001</HEIGHT>
+       <PUSH_FCODE>ZSTGAUD</PUSH_FCODE>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>P_STATUS</NAME>
-       <TEXT>______________________</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>066</COLUMN>
-       <LENGTH>022</LENGTH>
-       <VISLENGTH>022</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
@@ -1274,7 +1020,7 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT004</NAME>
-       <TEXT>OK:_____</TEXT>
+       <TEXT>Success:</TEXT>
        <LINE>004</LINE>
        <COLUMN>022</COLUMN>
        <LENGTH>008</LENGTH>
@@ -1306,7 +1052,7 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT005</NAME>
-       <TEXT>Err:____</TEXT>
+       <TEXT>Error:__</TEXT>
        <LINE>004</LINE>
        <COLUMN>052</COLUMN>
        <LENGTH>008</LENGTH>
@@ -1340,7 +1086,7 @@
        <NAME>%#AUTOTEXT006</NAME>
        <TEXT>Warning:</TEXT>
        <LINE>004</LINE>
-       <COLUMN>072</COLUMN>
+       <COLUMN>075</COLUMN>
        <LENGTH>008</LENGTH>
        <VISLENGTH>008</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -1355,7 +1101,7 @@
        <NAME>TXTGV_WAR</NAME>
        <TEXT>______</TEXT>
        <LINE>004</LINE>
-       <COLUMN>082</COLUMN>
+       <COLUMN>085</COLUMN>
        <LENGTH>006</LENGTH>
        <VISLENGTH>006</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -1662,828 +1408,13 @@
     <item>
      <HEADER>
       <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0550</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Detail Edit &amp; Resubmit Popup</DESCRIPT>
-      <TYPE>M</TYPE>
-      <NEXTSCREEN>0550</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>123</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>STRIP_CTRL</TYPE>
-       <NAME>TS_DETAILS</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>004</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>086</LENGTH>
-       <HEIGHT>008</HEIGHT>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>SUBSCREEN</TYPE>
-       <NAME>SUB_DETAILS</NAME>
-       <ELEMENT_OF>TS_DETAILS</ELEMENT_OF>
-       <LINE>006</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>084</LENGTH>
-       <HEIGHT>005</HEIGHT>
-       <C_SCROLL_V>X</C_SCROLL_V>
-       <C_SCROLL_H>X</C_SCROLL_H>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>CUST_CTRL</TYPE>
-       <NAME>CC_LOG_CONTAINER</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>014</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>083</LENGTH>
-       <HEIGHT>009</HEIGHT>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT001</NAME>
-       <TEXT>PO_Key:_</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PO_KEY</NAME>
-       <TEXT>____________________</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>012</COLUMN>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Status:</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>046</COLUMN>
-       <LENGTH>007</LENGTH>
-       <VISLENGTH>007</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT003</NAME>
-       <TEXT>FIELD_ERROR</TEXT>
-       <LINE>002</LINE>
-       <COLUMN>055</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>FRAME</TYPE>
-       <NAME>FRM_LOG</NAME>
-       <TEXT>BDC_STEP_FAIL_LOG_____________________________________________________________________</TEXT>
-       <LINE>013</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>087</LENGTH>
-       <VISLENGTH>087</VISLENGTH>
-       <HEIGHT>011</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <NAME>OK_CODE</NAME>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
-       <CONT_NAME>TS_DETAILS</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>TABH</NAME>
-       <TEXT>Header_Info_</TEXT>
-       <ICON_NAME>ICON_HEADER</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>017</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>TABH</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <REF_FIELD>SUB_DETAILS</REF_FIELD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
-       <CONT_NAME>TS_DETAILS</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>TABI</NAME>
-       <TEXT>Item_Info___</TEXT>
-       <ICON_NAME>ICON_DETAIL</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>001</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>017</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>TABI</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <REF_FIELD>SUB_DETAILS</REF_FIELD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0551</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Header Data Subscreen</DESCRIPT>
-      <TYPE>I</TYPE>
-      <NEXTSCREEN>0551</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>122</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT001</NAME>
-       <TEXT>Vendor:_____</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_VENDOR</NAME>
-       <TEXT>?____________</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>013</LENGTH>
-       <VISLENGTH>013</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Doc_Type:___</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>036</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_DOC_TYPE</NAME>
-       <TEXT>?_______</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>050</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT003</NAME>
-       <TEXT>Purch_Org:__</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PURCH_ORG</NAME>
-       <TEXT>?_______</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT004</NAME>
-       <TEXT>Purch_Group:</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>036</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PURCH_GRP</NAME>
-       <TEXT>?_______</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>050</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT005</NAME>
-       <TEXT>Currency:___</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_CURRENCY</NAME>
-       <TEXT>?_______</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT006</NAME>
-       <TEXT>Payment_Term</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>036</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PAYMENT</NAME>
-       <TEXT>?_______</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>050</COLUMN>
-       <LENGTH>008</LENGTH>
-       <VISLENGTH>008</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT007</NAME>
-       <TEXT>Doc_Date____</TEXT>
-       <LINE>007</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_DOC_DATE</NAME>
-       <TEXT>?____________</TEXT>
-       <LINE>007</LINE>
-       <COLUMN>016</COLUMN>
-       <LENGTH>013</LENGTH>
-       <VISLENGTH>013</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0552</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Item Data Subscreen</DESCRIPT>
-      <TYPE>I</TYPE>
-      <NEXTSCREEN>0552</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>122</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_EBELP</NAME>
-       <TEXT>Item_No:______</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_ITEM_NO</NAME>
-       <TEXT>?_______________________</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>017</COLUMN>
-       <LENGTH>024</LENGTH>
-       <VISLENGTH>024</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_MENGE</NAME>
-       <TEXT>Quantity:__</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_QUANTITY</NAME>
-       <TEXT>?_________________________</TEXT>
-       <LINE>001</LINE>
-       <COLUMN>086</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_PSTYP</NAME>
-       <TEXT>Item_Category:</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_ITEM_CAT</NAME>
-       <TEXT>________________________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>017</COLUMN>
-       <LENGTH>024</LENGTH>
-       <VISLENGTH>024</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_MEINS</NAME>
-       <TEXT>UOM:___</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>007</LENGTH>
-       <VISLENGTH>007</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_UOM</NAME>
-       <TEXT>?_____________________________</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>082</COLUMN>
-       <LENGTH>030</LENGTH>
-       <VISLENGTH>030</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_EEIND</NAME>
-       <TEXT>Delivery_Date:</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>014</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_DEL_DATE</NAME>
-       <TEXT>?______________________</TEXT>
-       <LINE>005</LINE>
-       <COLUMN>089</COLUMN>
-       <LENGTH>023</LENGTH>
-       <VISLENGTH>023</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_MATNR</NAME>
-       <TEXT>Material:__</TEXT>
-       <LINE>008</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_MATERIAL</NAME>
-       <TEXT>?_________________________________________________________________________________________________</TEXT>
-       <LINE>008</LINE>
-       <COLUMN>014</COLUMN>
-       <LENGTH>098</LENGTH>
-       <VISLENGTH>098</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_TXZ01</NAME>
-       <TEXT>Short_Text:</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_SH_TEXT</NAME>
-       <TEXT>__________________________________________________________________________________________________</TEXT>
-       <LINE>010</LINE>
-       <COLUMN>014</COLUMN>
-       <LENGTH>098</LENGTH>
-       <VISLENGTH>098</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_WERKS</NAME>
-       <TEXT>Plant:______</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PLANT</NAME>
-       <TEXT>?_________________________</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>015</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_NETPR</NAME>
-       <TEXT>Net_Price:_</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_NET_PRICE</NAME>
-       <TEXT>?_________________________</TEXT>
-       <LINE>014</LINE>
-       <COLUMN>086</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-       <REQU_ENTRY>O</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_LGORT</NAME>
-       <TEXT>Storage_Loc:</TEXT>
-       <LINE>016</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>012</LENGTH>
-       <VISLENGTH>012</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_STOR_LOC</NAME>
-       <TEXT>__________________________</TEXT>
-       <LINE>016</LINE>
-       <COLUMN>015</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_PEINH</NAME>
-       <TEXT>Price_Unit:</TEXT>
-       <LINE>016</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PR_UNIT</NAME>
-       <TEXT>__________________________</TEXT>
-       <LINE>016</LINE>
-       <COLUMN>086</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>LBL_MWSKZ</NAME>
-       <TEXT>Tax_Code:__</TEXT>
-       <LINE>018</LINE>
-       <COLUMN>073</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <LABELLEFT>X</LABELLEFT>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_TAX_CODE</NAME>
-       <TEXT>__________________________</TEXT>
-       <LINE>018</LINE>
-       <COLUMN>086</COLUMN>
-       <LENGTH>026</LENGTH>
-       <VISLENGTH>026</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-       <OUTPUT_FLD>X</OUTPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
       <SCREEN>0560</SCREEN>
       <LANGUAGE>E</LANGUAGE>
       <DESCRIPT>Mass Field Replacer Popup</DESCRIPT>
       <TYPE>M</TYPE>
       <NEXTSCREEN>0560</NEXTSCREEN>
       <LINES>011</LINES>
-      <COLUMNS>079</COLUMNS>
+      <COLUMNS>080</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -2496,9 +1427,41 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT004</NAME>
+       <TEXT>:Business_Group:_</TEXT>
+       <LINE>002</LINE>
+       <COLUMN>002</COLUMN>
+       <LENGTH>017</LENGTH>
+       <VISLENGTH>017</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>P_BUS_GROUP</NAME>
+       <TEXT>?______________________________</TEXT>
+       <DROPDOWN>L</DROPDOWN>
+       <LINE>002</LINE>
+       <COLUMN>021</COLUMN>
+       <LENGTH>031</LENGTH>
+       <VISLENGTH>031</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <PUSH_FCODE>GRPCHG</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+       <REQU_ENTRY>O</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT001</NAME>
        <TEXT>Field_to_Replace:</TEXT>
-       <LINE>002</LINE>
+       <LINE>004</LINE>
        <COLUMN>002</COLUMN>
        <LENGTH>017</LENGTH>
        <VISLENGTH>017</VISLENGTH>
@@ -2514,11 +1477,12 @@
        <NAME>P_FLD_NAME</NAME>
        <TEXT>?________________________</TEXT>
        <DROPDOWN>L</DROPDOWN>
-       <LINE>002</LINE>
+       <LINE>004</LINE>
        <COLUMN>021</COLUMN>
        <LENGTH>025</LENGTH>
        <VISLENGTH>031</VISLENGTH>
        <HEIGHT>001</HEIGHT>
+       <PUSH_FCODE>FLDCHG___</PUSH_FCODE>
        <FORMAT>CHAR</FORMAT>
        <INPUT_FLD>X</INPUT_FLD>
        <OUTPUT_FLD>X</OUTPUT_FLD>
@@ -2530,7 +1494,7 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT002</NAME>
        <TEXT>Old_Value:</TEXT>
-       <LINE>004</LINE>
+       <LINE>006</LINE>
        <COLUMN>002</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
@@ -2544,8 +1508,9 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
        <NAME>P_OLD_VAL</NAME>
-       <TEXT>______________________________________</TEXT>
-       <LINE>004</LINE>
+       <TEXT>?_____________________________________</TEXT>
+       <DROPDOWN>L</DROPDOWN>
+       <LINE>006</LINE>
        <COLUMN>014</COLUMN>
        <LENGTH>038</LENGTH>
        <VISLENGTH>038</VISLENGTH>
@@ -2554,7 +1519,7 @@
        <UP_LOWER>X</UP_LOWER>
        <INPUT_FLD>X</INPUT_FLD>
        <OUTPUT_FLD>X</OUTPUT_FLD>
-       <_--32_DIMENS>X</_--32_DIMENS>
+       <REQU_ENTRY>O</REQU_ENTRY>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
@@ -2562,7 +1527,7 @@
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT003</NAME>
        <TEXT>New_Value:</TEXT>
-       <LINE>006</LINE>
+       <LINE>008</LINE>
        <COLUMN>002</COLUMN>
        <LENGTH>010</LENGTH>
        <VISLENGTH>010</VISLENGTH>
@@ -2576,11 +1541,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
        <NAME>P_NEW_VAL</NAME>
-       <TEXT>?_______________________</TEXT>
-       <LINE>006</LINE>
+       <TEXT>?_____________________________________</TEXT>
+       <LINE>008</LINE>
        <COLUMN>014</COLUMN>
-       <LENGTH>024</LENGTH>
-       <VISLENGTH>024</VISLENGTH>
+       <LENGTH>038</LENGTH>
+       <VISLENGTH>038</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <UP_LOWER>X</UP_LOWER>
@@ -2594,13 +1559,13 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>PUSH</TYPE>
        <NAME>BTN_REPLACE</NAME>
-       <TEXT>Replace_All____</TEXT>
+       <TEXT>Apply_Correction___</TEXT>
        <ICON_NAME>ICON_EXECUTE_OBJECT</ICON_NAME>
        <WITH_ICON>X</WITH_ICON>
-       <LINE>008</LINE>
-       <COLUMN>013</COLUMN>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>018</VISLENGTH>
+       <LINE>010</LINE>
+       <COLUMN>023</COLUMN>
+       <LENGTH>024</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <PUSH_FCODE>RPAL</PUSH_FCODE>
        <FORMAT>CHAR</FORMAT>
@@ -2609,263 +1574,8 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>BTN_CANCEL</NAME>
-       <TEXT>Cancel___</TEXT>
-       <ICON_NAME>ICON_CANCEL</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>008</LINE>
-       <COLUMN>041</COLUMN>
-       <LENGTH>014</LENGTH>
-       <VISLENGTH>010</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>CANC</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>OKCODE</TYPE>
        <NAME>OK_CODE</NAME>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0600</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>BDC Batch Execution Results Dashboard</DESCRIPT>
-      <TYPE>N</TYPE>
-      <NEXTSCREEN>0600</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>122</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>STRIP_CTRL</TYPE>
-       <NAME>TS_RESULTS</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <HEIGHT>020</HEIGHT>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>SUBSCREEN</TYPE>
-       <NAME>G_RESULT_SUB</NAME>
-       <ELEMENT_OF>TS_RESULTS</ELEMENT_OF>
-       <LINE>004</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>110</LENGTH>
-       <HEIGHT>017</HEIGHT>
-       <C_SCROLL_V>X</C_SCROLL_V>
-       <C_SCROLL_H>X</C_SCROLL_H>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <NAME>OK_CODE</NAME>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
-       <CONT_NAME>TS_RESULTS</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>TAB_SUMMARY</NAME>
-       <TEXT>Session_Summary</TEXT>
-       <ICON_NAME>ICON_GRAPHICS</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>018</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>TAB_SUMMARY</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <REF_FIELD>G_RESULT_SUB</REF_FIELD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
-       <CONT_NAME>TS_RESULTS</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>TAB_RECORD</NAME>
-       <TEXT>Per-Record_ALV</TEXT>
-       <ICON_NAME>ICON_LIST</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>001</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>019</LENGTH>
-       <VISLENGTH>017</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>TAB_RECORD</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <REF_FIELD>G_RESULT_SUB</REF_FIELD>
-      </RPY_DYFATC>
-      <RPY_DYFATC>
-       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
-       <CONT_NAME>TS_RESULTS</CONT_NAME>
-       <TYPE>PUSH</TYPE>
-       <NAME>TAB_MSG</NAME>
-       <TEXT>BDC_Message_Log</TEXT>
-       <ICON_NAME>ICON_PROTOCOL</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
-       <LINE>001</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>018</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>TAB_MSG</PUSH_FCODE>
-       <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
-       <REF_FIELD>G_RESULT_SUB</REF_FIELD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0601</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Session Summary Subscreen</DESCRIPT>
-      <TYPE>I</TYPE>
-      <NEXTSCREEN>0601</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>121</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>CUST_CTRL</TYPE>
-       <NAME>CC_SUMMARY_CONTAINER</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>108</LENGTH>
-       <HEIGHT>016</HEIGHT>
-       <C_RESIZE_V>X</C_RESIZE_V>
-       <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>008</C_LINE_MIN>
-       <C_COLN_MIN>054</C_COLN_MIN>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0602</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>Per-Record ALV Subscreen</DESCRIPT>
-      <TYPE>I</TYPE>
-      <NEXTSCREEN>0602</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>121</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>CUST_CTRL</TYPE>
-       <NAME>CC_RECORD_CONTAINER</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>108</LENGTH>
-       <HEIGHT>016</HEIGHT>
-       <C_RESIZE_V>X</C_RESIZE_V>
-       <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>008</C_LINE_MIN>
-       <C_COLN_MIN>054</C_COLN_MIN>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
-       <TEXT>____________________</TEXT>
-       <LENGTH>020</LENGTH>
-       <VISLENGTH>020</VISLENGTH>
-       <HEIGHT>001</HEIGHT>
-       <FORMAT>CHAR</FORMAT>
-       <INPUT_FLD>X</INPUT_FLD>
-      </RPY_DYFATC>
-     </FIELDS>
-    </item>
-    <item>
-     <HEADER>
-      <PROGRAM>Z_BDC_MASS_PO_ENTRY_BUP</PROGRAM>
-      <SCREEN>0603</SCREEN>
-      <LANGUAGE>E</LANGUAGE>
-      <DESCRIPT>BDC Message Log Subscreen</DESCRIPT>
-      <TYPE>I</TYPE>
-      <NEXTSCREEN>0603</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>121</COLUMNS>
-     </HEADER>
-     <CONTAINERS>
-      <RPY_DYCATT>
-       <TYPE>SCREEN</TYPE>
-       <NAME>SCREEN</NAME>
-      </RPY_DYCATT>
-      <RPY_DYCATT>
-       <TYPE>CUST_CTRL</TYPE>
-       <NAME>CC_MSG_CONTAINER</NAME>
-       <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>001</LINE>
-       <COLUMN>001</COLUMN>
-       <LENGTH>108</LENGTH>
-       <HEIGHT>016</HEIGHT>
-       <C_RESIZE_V>X</C_RESIZE_V>
-       <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>008</C_LINE_MIN>
-       <C_COLN_MIN>054</C_COLN_MIN>
-      </RPY_DYCATT>
-     </CONTAINERS>
-     <FIELDS>
-      <RPY_DYFATC>
-       <CONT_TYPE>SCREEN</CONT_TYPE>
-       <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>OKCODE</TYPE>
        <TEXT>____________________</TEXT>
        <LENGTH>020</LENGTH>
        <VISLENGTH>020</VISLENGTH>
@@ -2883,8 +1593,8 @@
       <DESCRIPT>Result Details Drill-Down Dashboard</DESCRIPT>
       <TYPE>N</TYPE>
       <NEXTSCREEN>0650</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>122</COLUMNS>
+      <LINES>030</LINES>
+      <COLUMNS>207</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -2892,26 +1602,22 @@
        <NAME>SCREEN</NAME>
       </RPY_DYCATT>
       <RPY_DYCATT>
-       <TYPE>SUBSCREEN</TYPE>
-       <NAME>SUB_PO_FIELDS</NAME>
+       <TYPE>CUST_CTRL</TYPE>
+       <NAME>CC_GROUP_CONTAINER</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
        <LINE>010</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>072</LENGTH>
-       <HEIGHT>005</HEIGHT>
-       <C_RESIZE_V>X</C_RESIZE_V>
-       <C_RESIZE_H>X</C_RESIZE_H>
-       <C_LINE_MIN>002</C_LINE_MIN>
-       <C_COLN_MIN>036</C_COLN_MIN>
+       <COLUMN>010</COLUMN>
+       <LENGTH>087</LENGTH>
+       <HEIGHT>016</HEIGHT>
       </RPY_DYCATT>
       <RPY_DYCATT>
        <TYPE>CUST_CTRL</TYPE>
        <NAME>CC_LOG_CONTAINER</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>018</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>072</LENGTH>
-       <HEIGHT>006</HEIGHT>
+       <LINE>010</LINE>
+       <COLUMN>110</COLUMN>
+       <LENGTH>088</LENGTH>
+       <HEIGHT>016</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
        <C_LINE_MIN>003</C_LINE_MIN>
@@ -2924,11 +1630,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_OVERVIEW</NAME>
-       <TEXT>RECORD_OVERVIEW__________________________________________________________</TEXT>
+       <TEXT>INVESTIGATION_CONTEXT______________________________________________________________</TEXT>
        <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>074</LENGTH>
-       <VISLENGTH>074</VISLENGTH>
+       <COLUMN>062</COLUMN>
+       <LENGTH>084</LENGTH>
+       <VISLENGTH>084</VISLENGTH>
        <HEIGHT>006</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -2938,11 +1644,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT001</NAME>
-       <TEXT>PO_Key:____</TEXT>
+       <TEXT>Selected_Group:</TEXT>
        <LINE>003</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
+       <COLUMN>064</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -2952,10 +1658,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_PO_KEY</NAME>
+       <NAME>TXTP_RESULT_GROUP</NAME>
        <TEXT>____________________</TEXT>
        <LINE>003</LINE>
-       <COLUMN>017</COLUMN>
+       <COLUMN>081</COLUMN>
        <LENGTH>020</LENGTH>
        <VISLENGTH>020</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -2969,11 +1675,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT002</NAME>
-       <TEXT>Status:__</TEXT>
+       <TEXT>Status:_______</TEXT>
        <LINE>003</LINE>
-       <COLUMN>042</COLUMN>
-       <LENGTH>009</LENGTH>
-       <VISLENGTH>009</VISLENGTH>
+       <COLUMN>109</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -2981,29 +1687,28 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
-       <TYPE>TEXT</TYPE>
-       <NAME>%#AUTOTEXT003</NAME>
-       <TEXT>SUCCESS___</TEXT>
-       <ICON_NAME>ICON_GREEN_LIGHT</ICON_NAME>
-       <WITH_ICON>X</WITH_ICON>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_RESULT_STATUS</NAME>
+       <TEXT>_______________</TEXT>
        <LINE>003</LINE>
-       <COLUMN>053</COLUMN>
+       <COLUMN>125</COLUMN>
        <LENGTH>015</LENGTH>
        <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
-       <REQU_ENTRY>N</REQU_ENTRY>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT004</NAME>
-       <TEXT>Session_ID:</TEXT>
+       <TEXT>Session_ID:____</TEXT>
        <LINE>004</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
+       <COLUMN>064</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -3013,10 +1718,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_SESSION_ID</NAME>
+       <NAME>TXTP_RESULT_SESSION</NAME>
        <TEXT>____________________</TEXT>
        <LINE>004</LINE>
-       <COLUMN>017</COLUMN>
+       <COLUMN>081</COLUMN>
        <LENGTH>020</LENGTH>
        <VISLENGTH>020</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3030,11 +1735,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT005</NAME>
-       <TEXT>EBELN:___</TEXT>
+       <TEXT>SAP_Object:___</TEXT>
        <LINE>004</LINE>
-       <COLUMN>042</COLUMN>
-       <LENGTH>009</LENGTH>
-       <VISLENGTH>009</VISLENGTH>
+       <COLUMN>109</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -3044,10 +1749,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_EBELN</NAME>
+       <NAME>TXTP_SAP_OBJECT_ID</NAME>
        <TEXT>_______________</TEXT>
        <LINE>004</LINE>
-       <COLUMN>053</COLUMN>
+       <COLUMN>125</COLUMN>
        <LENGTH>015</LENGTH>
        <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3061,11 +1766,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT006</NAME>
-       <TEXT>Created:___</TEXT>
+       <TEXT>Created_Time:__</TEXT>
        <LINE>005</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
+       <COLUMN>064</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -3075,10 +1780,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_CREATED_AT</NAME>
+       <NAME>TXTP_RESULT_CREATED</NAME>
        <TEXT>____________________</TEXT>
        <LINE>005</LINE>
-       <COLUMN>017</COLUMN>
+       <COLUMN>081</COLUMN>
        <LENGTH>020</LENGTH>
        <VISLENGTH>020</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3092,11 +1797,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT007</NAME>
-       <TEXT>Durat.:__</TEXT>
+       <TEXT>Group_Size:___</TEXT>
        <LINE>005</LINE>
-       <COLUMN>042</COLUMN>
-       <LENGTH>009</LENGTH>
-       <VISLENGTH>009</VISLENGTH>
+       <COLUMN>109</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -3106,10 +1811,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_DURAT</NAME>
+       <NAME>TXTP_RESULT_ROW_ATTEMPT</NAME>
        <TEXT>_______________</TEXT>
        <LINE>005</LINE>
-       <COLUMN>053</COLUMN>
+       <COLUMN>125</COLUMN>
        <LENGTH>015</LENGTH>
        <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3123,11 +1828,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEXT</TYPE>
        <NAME>%#AUTOTEXT008</NAME>
-       <TEXT>BDC_Mode:__</TEXT>
+       <TEXT>Executor:______</TEXT>
        <LINE>006</LINE>
-       <COLUMN>004</COLUMN>
-       <LENGTH>011</LENGTH>
-       <VISLENGTH>011</VISLENGTH>
+       <COLUMN>064</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
@@ -3137,10 +1842,10 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
-       <NAME>TXTP_BDC_MODE</NAME>
+       <NAME>TXTP_RESULT_EXECUTOR</NAME>
        <TEXT>____________________</TEXT>
        <LINE>006</LINE>
-       <COLUMN>017</COLUMN>
+       <COLUMN>081</COLUMN>
        <LENGTH>020</LENGTH>
        <VISLENGTH>020</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3152,14 +1857,43 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT009</NAME>
+       <TEXT>TCode:________</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>109</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_RESULT_TCODE</NAME>
+       <TEXT>_______________</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>125</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
-       <NAME>FRM_PO_DATA</NAME>
-       <TEXT>PO_DATA_FIELDS___________________________________________________________</TEXT>
+       <NAME>FRM_GROUPS</NAME>
+       <TEXT>RESULT_GROUPS____________________________________________________________________________</TEXT>
        <LINE>009</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>074</LENGTH>
-       <VISLENGTH>074</VISLENGTH>
-       <HEIGHT>007</HEIGHT>
+       <COLUMN>009</COLUMN>
+       <LENGTH>090</LENGTH>
+       <VISLENGTH>090</VISLENGTH>
+       <HEIGHT>018</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
@@ -3168,12 +1902,12 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_LOG</NAME>
-       <TEXT>EXECUTION_LOG____________________________________________________________</TEXT>
-       <LINE>017</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>074</LENGTH>
-       <VISLENGTH>074</VISLENGTH>
-       <HEIGHT>008</HEIGHT>
+       <TEXT>EXACT_EXECUTION_EVIDENCE_________________________________________________________________</TEXT>
+       <LINE>009</LINE>
+       <COLUMN>109</COLUMN>
+       <LENGTH>090</LENGTH>
+       <VISLENGTH>090</VISLENGTH>
+       <HEIGHT>018</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
@@ -3550,8 +2284,8 @@
       <DESCRIPT>AI Error Analyst &amp; Automated Diagnostics</DESCRIPT>
       <TYPE>N</TYPE>
       <NEXTSCREEN>0700</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>077</COLUMNS>
+      <LINES>030</LINES>
+      <COLUMNS>207</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -3562,10 +2296,10 @@
        <TYPE>CUST_CTRL</TYPE>
        <NAME>CC_PATTERN_CONTAINER</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>007</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>034</LENGTH>
-       <HEIGHT>016</HEIGHT>
+       <LINE>011</LINE>
+       <COLUMN>010</COLUMN>
+       <LENGTH>090</LENGTH>
+       <HEIGHT>017</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
        <C_LINE_MIN>008</C_LINE_MIN>
@@ -3575,10 +2309,10 @@
        <TYPE>CUST_CTRL</TYPE>
        <NAME>CC_TEXT_CONTAINER</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
-       <LINE>007</LINE>
-       <COLUMN>040</COLUMN>
-       <LENGTH>034</LENGTH>
-       <HEIGHT>016</HEIGHT>
+       <LINE>011</LINE>
+       <COLUMN>109</COLUMN>
+       <LENGTH>090</LENGTH>
+       <HEIGHT>017</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
        <C_LINE_MIN>008</C_LINE_MIN>
@@ -3590,13 +2324,177 @@
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
-       <NAME>FRM_PATTERN</NAME>
-       <TEXT>Error_Pattern_Summary______________</TEXT>
+       <NAME>FRM_AI_CONTEXT</NAME>
+       <TEXT>ANALYSIS_CONTEXT_____________________________________________________________________________________________</TEXT>
+       <LINE>002</LINE>
+       <COLUMN>053</COLUMN>
+       <LENGTH>110</LENGTH>
+       <VISLENGTH>110</VISLENGTH>
+       <HEIGHT>006</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT005</NAME>
+       <TEXT>Tcode:_________</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>055</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_AI_TCODE</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>072</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT003</NAME>
+       <TEXT>Session_ID:_____</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>121</COLUMN>
+       <LENGTH>016</LENGTH>
+       <VISLENGTH>016</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_AI_SESSION</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>139</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT004</NAME>
+       <TEXT>Business_Group:</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>055</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_AI_GROUP</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>072</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT006</NAME>
+       <TEXT>Issues_Found:__</TEXT>
        <LINE>006</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>036</LENGTH>
-       <VISLENGTH>036</VISLENGTH>
-       <HEIGHT>018</HEIGHT>
+       <COLUMN>055</COLUMN>
+       <LENGTH>015</LENGTH>
+       <VISLENGTH>015</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_AI_EVIDENCE</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>072</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT007</NAME>
+       <TEXT>Evidence_From:</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>121</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_AI_SOURCE</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>006</LINE>
+       <COLUMN>139</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>FRAME</TYPE>
+       <NAME>FRM_PATTERN</NAME>
+       <TEXT>ISSUE_LANDSCAPE____________________________________________________________________________</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>009</COLUMN>
+       <LENGTH>092</LENGTH>
+       <VISLENGTH>092</VISLENGTH>
+       <HEIGHT>019</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
@@ -3605,12 +2503,12 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_TEXT</NAME>
-       <TEXT>AI_Fix_Suggestions_________________</TEXT>
-       <LINE>006</LINE>
-       <COLUMN>039</COLUMN>
-       <LENGTH>036</LENGTH>
-       <VISLENGTH>036</VISLENGTH>
-       <HEIGHT>018</HEIGHT>
+       <TEXT>DIAGNOSIS_&amp;_FIX_GUIDE______________________________________________________________________</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>108</COLUMN>
+       <LENGTH>092</LENGTH>
+       <VISLENGTH>092</VISLENGTH>
+       <HEIGHT>019</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
@@ -3636,8 +2534,8 @@
       <DESCRIPT>AI Knowledge Base Archive &amp; Search</DESCRIPT>
       <TYPE>N</TYPE>
       <NEXTSCREEN>0750</NEXTSCREEN>
-      <LINES>027</LINES>
-      <COLUMNS>121</COLUMNS>
+      <LINES>030</LINES>
+      <COLUMNS>206</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -3649,9 +2547,9 @@
        <NAME>CC_KB_GRID</NAME>
        <ELEMENT_OF>SCREEN</ELEMENT_OF>
        <LINE>009</LINE>
-       <COLUMN>003</COLUMN>
-       <LENGTH>113</LENGTH>
-       <HEIGHT>016</HEIGHT>
+       <COLUMN>005</COLUMN>
+       <LENGTH>122</LENGTH>
+       <HEIGHT>020</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
        <C_LINE_MIN>008</C_LINE_MIN>
@@ -3664,9 +2562,9 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_SEARCH</NAME>
-       <TEXT>SEARCH_ARCHIVE____________________________________________________________________________________________________</TEXT>
+       <TEXT>SEARCH_AND_FILTER_________________________________________________________________________________________________</TEXT>
        <LINE>002</LINE>
-       <COLUMN>002</COLUMN>
+       <COLUMN>047</COLUMN>
        <LENGTH>115</LENGTH>
        <VISLENGTH>115</VISLENGTH>
        <HEIGHT>005</HEIGHT>
@@ -3680,7 +2578,7 @@
        <NAME>%#AUTOTEXT001</NAME>
        <TEXT>Search_Term:</TEXT>
        <LINE>003</LINE>
-       <COLUMN>004</COLUMN>
+       <COLUMN>049</COLUMN>
        <LENGTH>012</LENGTH>
        <VISLENGTH>012</VISLENGTH>
        <HEIGHT>001</HEIGHT>
@@ -3693,11 +2591,11 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>TEMPLATE</TYPE>
        <NAME>P_SEARCH</NAME>
-       <TEXT>____________________________________________________________</TEXT>
+       <TEXT>________________________</TEXT>
        <LINE>003</LINE>
-       <COLUMN>020</COLUMN>
-       <LENGTH>060</LENGTH>
-       <VISLENGTH>060</VISLENGTH>
+       <COLUMN>063</COLUMN>
+       <LENGTH>024</LENGTH>
+       <VISLENGTH>024</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <UP_LOWER>X</UP_LOWER>
@@ -3708,16 +2606,118 @@
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
        <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT002</NAME>
+       <TEXT>Tcode:_</TEXT>
+       <LINE>003</LINE>
+       <COLUMN>097</COLUMN>
+       <LENGTH>007</LENGTH>
+       <VISLENGTH>007</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_TCODE</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>003</LINE>
+       <COLUMN>106</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>PUSH</TYPE>
        <NAME>BTN_SEARCH</NAME>
-       <TEXT>Search</TEXT>
-       <LINE>003</LINE>
-       <COLUMN>082</COLUMN>
-       <LENGTH>006</LENGTH>
-       <VISLENGTH>006</VISLENGTH>
+       <TEXT>Search__</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>133</COLUMN>
+       <LENGTH>008</LENGTH>
+       <VISLENGTH>008</VISLENGTH>
        <HEIGHT>001</HEIGHT>
-       <PUSH_FCODE>SRCH</PUSH_FCODE>
+       <PUSH_FCODE>SEARCH</PUSH_FCODE>
        <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>PUSH</TYPE>
+       <NAME>BTN_RESET</NAME>
+       <TEXT>Reset___</TEXT>
+       <LINE>004</LINE>
+       <COLUMN>145</COLUMN>
+       <LENGTH>008</LENGTH>
+       <VISLENGTH>008</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <PUSH_FCODE>RESET</PUSH_FCODE>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT004</NAME>
+       <TEXT>SAP_Field:</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>049</COLUMN>
+       <LENGTH>010</LENGTH>
+       <VISLENGTH>010</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_FIELD</NAME>
+       <TEXT>________________________</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>063</COLUMN>
+       <LENGTH>024</LENGTH>
+       <VISLENGTH>024</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT005</NAME>
+       <TEXT>Status:</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>097</COLUMN>
+       <LENGTH>007</LENGTH>
+       <VISLENGTH>007</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_STATUS</NAME>
+       <TEXT>______________________</TEXT>
+       <LINE>005</LINE>
+       <COLUMN>106</COLUMN>
+       <LENGTH>022</LENGTH>
+       <VISLENGTH>022</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
        <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
       <RPY_DYFATC>
@@ -3725,14 +2725,318 @@
        <CONT_NAME>SCREEN</CONT_NAME>
        <TYPE>FRAME</TYPE>
        <NAME>FRM_RESULTS</NAME>
-       <TEXT>HISTORICAL_AI_DIAGNOSTIC_REPORTS__________________________________________________________________________________</TEXT>
+       <TEXT>KNOWN_ISSUE_PATTERNS_______________________________________________________________________________________________________</TEXT>
        <LINE>008</LINE>
-       <COLUMN>002</COLUMN>
-       <LENGTH>115</LENGTH>
-       <VISLENGTH>115</VISLENGTH>
-       <HEIGHT>018</HEIGHT>
+       <COLUMN>004</COLUMN>
+       <LENGTH>124</LENGTH>
+       <VISLENGTH>124</VISLENGTH>
+       <HEIGHT>022</HEIGHT>
        <FORMAT>CHAR</FORMAT>
        <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>FRAME</TYPE>
+       <NAME>FRM_KB_PROFILE</NAME>
+       <TEXT>KNOWLEDGE_PROFILE_________________________________________________________</TEXT>
+       <LINE>008</LINE>
+       <COLUMN>128</COLUMN>
+       <LENGTH>075</LENGTH>
+       <VISLENGTH>075</VISLENGTH>
+       <HEIGHT>022</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT007</NAME>
+       <TEXT>Pattern:__________</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_PATTERN</NAME>
+       <TEXT>___________________________________</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>035</LENGTH>
+       <VISLENGTH>035</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT008</NAME>
+       <TEXT>Tcode:____________</TEXT>
+       <LINE>011</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_PROFILE_TCODE</NAME>
+       <TEXT>__________________________</TEXT>
+       <LINE>011</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>026</LENGTH>
+       <VISLENGTH>026</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT009</NAME>
+       <TEXT>SAP_Field:________</TEXT>
+       <LINE>012</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_PROFILE_FIELD</NAME>
+       <TEXT>___________________________________</TEXT>
+       <LINE>012</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>035</LENGTH>
+       <VISLENGTH>035</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT010</NAME>
+       <TEXT>Sessions_Seen:____</TEXT>
+       <LINE>015</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_SESSIONS</NAME>
+       <TEXT>___________________________________</TEXT>
+       <LINE>015</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>035</LENGTH>
+       <VISLENGTH>035</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT011</NAME>
+       <TEXT>Total_Occurrences:</TEXT>
+       <LINE>016</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_OCCURRENCES</NAME>
+       <TEXT>__________________________</TEXT>
+       <LINE>016</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>026</LENGTH>
+       <VISLENGTH>026</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT012</NAME>
+       <TEXT>First_Seen:_______</TEXT>
+       <LINE>017</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_FIRST_SEEN</NAME>
+       <TEXT>___________________________________</TEXT>
+       <LINE>017</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>035</LENGTH>
+       <VISLENGTH>035</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT013</NAME>
+       <TEXT>Last_Seen:________</TEXT>
+       <LINE>018</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_LAST_SEEN</NAME>
+       <TEXT>___________________________________</TEXT>
+       <LINE>018</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>035</LENGTH>
+       <VISLENGTH>035</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT014</NAME>
+       <TEXT>Knowledge_Status:_</TEXT>
+       <LINE>021</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_KNOWLEDGE_STATUS</NAME>
+       <TEXT>__________________________</TEXT>
+       <LINE>021</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>026</LENGTH>
+       <VISLENGTH>026</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT015</NAME>
+       <TEXT>Resolution_Status:</TEXT>
+       <LINE>022</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_RESOLUTION_STATUS</NAME>
+       <TEXT>__________________________</TEXT>
+       <LINE>022</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>026</LENGTH>
+       <VISLENGTH>026</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT016</NAME>
+       <TEXT>Last_Verified_Fix:</TEXT>
+       <LINE>025</LINE>
+       <COLUMN>131</COLUMN>
+       <LENGTH>018</LENGTH>
+       <VISLENGTH>018</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>TXTP_KB_LAST_FIX</NAME>
+       <TEXT>________________________________________________</TEXT>
+       <LINE>025</LINE>
+       <COLUMN>152</COLUMN>
+       <LENGTH>048</LENGTH>
+       <VISLENGTH>048</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
@@ -3823,22 +3127,6 @@
       <INT_NOTE>Main Dashboard Toolbar</INT_NOTE>
      </RSMPE_STAT>
      <RSMPE_STAT>
-      <CODE>STATUS_0200</CODE>
-      <MODAL>D</MODAL>
-      <ACTCODE>000001</ACTCODE>
-      <PFKCODE>000001</PFKCODE>
-      <BUTCODE>0001</BUTCODE>
-      <INT_NOTE>Source Config Toolbar</INT_NOTE>
-     </RSMPE_STAT>
-     <RSMPE_STAT>
-      <CODE>STATUS_0250</CODE>
-      <MODAL>D</MODAL>
-      <ACTCODE>000010</ACTCODE>
-      <PFKCODE>000010</PFKCODE>
-      <BUTCODE>0001</BUTCODE>
-      <INT_NOTE>Job Scheduler Toolbar</INT_NOTE>
-     </RSMPE_STAT>
-     <RSMPE_STAT>
       <CODE>STATUS_0300</CODE>
       <MODAL>D</MODAL>
       <ACTCODE>000004</ACTCODE>
@@ -3871,27 +3159,11 @@
       <INT_NOTE>Active Execution Toolbar</INT_NOTE>
      </RSMPE_STAT>
      <RSMPE_STAT>
-      <CODE>STATUS_0550</CODE>
-      <MODAL>D</MODAL>
-      <ACTCODE>000006</ACTCODE>
-      <PFKCODE>000006</PFKCODE>
-      <BUTCODE>0001</BUTCODE>
-      <INT_NOTE>Popup Detail Edit Toolbar</INT_NOTE>
-     </RSMPE_STAT>
-     <RSMPE_STAT>
       <CODE>STATUS_0560</CODE>
       <MODAL>P</MODAL>
       <PFKCODE>000012</PFKCODE>
       <BUTCODE>0001</BUTCODE>
       <INT_NOTE>Mass Replacer Toolbar</INT_NOTE>
-     </RSMPE_STAT>
-     <RSMPE_STAT>
-      <CODE>STATUS_0600</CODE>
-      <MODAL>D</MODAL>
-      <ACTCODE>000007</ACTCODE>
-      <PFKCODE>000007</PFKCODE>
-      <BUTCODE>0001</BUTCODE>
-      <INT_NOTE>Results Dashboard Toolbar</INT_NOTE>
      </RSMPE_STAT>
      <RSMPE_STAT>
       <CODE>STATUS_0650</CODE>
@@ -3932,6 +3204,12 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Save</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>ACTIVATE</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Activate</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>ADDR</CODE>
@@ -3992,6 +3270,22 @@
       <TEXT_NAME>ICON_SYSTEM_COPY</TEXT_NAME>
       <ICON_ID>@2U@</ICON_ID>
       <FUN_TEXT>Copy Text</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>CRE_DRAFT</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Create Mapping Draft</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>DAS0500</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_DISPLAY</TEXT_NAME>
+      <ICON_ID>@10@</ICON_ID>
+      <FUN_TEXT>Dashboard</FUN_TEXT>
+      <ICON_TEXT>Dashboard</ICON_TEXT>
+      <INFO_TEXT>Open result dashboard</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>DELR</CODE>
@@ -4351,6 +3645,12 @@
       <FUN_TEXT>Gemini AI</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
+      <CODE>GENERATE</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Generate Template</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
       <CODE>GT02</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
@@ -4390,7 +3690,7 @@
       <CODE>GT07</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>AI Log</FUN_TEXT>
+      <FUN_TEXT>Result Investigation</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>GT08</CODE>
@@ -4408,7 +3708,7 @@
       <CODE>GT35</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Mapping</FUN_TEXT>
+      <FUN_TEXT>Mapping Config</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>GT61</CODE>
@@ -4427,6 +3727,18 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Message Detail</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>IMPORT</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Import Recording</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>IMP_SHDB</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Import SHDB</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>INSR</CODE>
@@ -4454,6 +3766,12 @@
       <TEXT_TYPE>S</TEXT_TYPE>
       <ICON_ID>@3R@</ICON_ID>
       <FUN_TEXT>Mapping Config</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>MAPPING</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <FUN_TEXT>Mapping Profile</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>ME23</CODE>
@@ -4484,6 +3802,16 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>New Upload</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>OPENSM35</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_DISPLAY</TEXT_NAME>
+      <ICON_ID>@10@</ICON_ID>
+      <FUN_TEXT>SM35 Monitor</FUN_TEXT>
+      <ICON_TEXT>SM35 Monitor</ICON_TEXT>
+      <INFO_TEXT>Open SM35 Batch Input Monitor</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>PREV</CODE>
@@ -4552,6 +3880,16 @@
       <FUN_TEXT>Retry Selected</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
+      <CODE>RUN0500</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_EXECUTE_OBJECT</TEXT_NAME>
+      <ICON_ID>@15@</ICON_ID>
+      <FUN_TEXT>Execute Now</FUN_TEXT>
+      <ICON_TEXT>Execute Now</ICON_TEXT>
+      <INFO_TEXT>Run selected READY records by CALL TRANSACTION</INFO_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
       <CODE>SAVE</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
@@ -4570,6 +3908,16 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Create SM35 Session</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>SM350500</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_BATCH</TEXT_NAME>
+      <ICON_ID>@EJ@</ICON_ID>
+      <FUN_TEXT>Run Batch Session</FUN_TEXT>
+      <ICON_TEXT>Run Batch Session</ICON_TEXT>
+      <INFO_TEXT>Create Batch Input Session for SM35</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>STOP</CODE>
@@ -4728,6 +4076,30 @@
       <PFNO>08</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
+      <PFK_CODE>000002</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>05</NO>
+      <PFNO>09</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000002</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>06</NO>
+      <PFNO>13</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000002</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>07</NO>
+      <PFNO>14</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000002</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>08</NO>
+      <PFNO>16</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
       <PFK_CODE>000003</PFK_CODE>
       <CODE>0001</CODE>
       <NO>01</NO>
@@ -4806,6 +4178,12 @@
       <PFNO>12</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
+      <PFK_CODE>000004</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>08</NO>
+      <PFNO>25</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
       <PFK_CODE>000005</PFK_CODE>
       <CODE>0001</CODE>
       <NO>01</NO>
@@ -4852,6 +4230,12 @@
       <CODE>0001</CODE>
       <NO>08</NO>
       <PFNO>18</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000005</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>09</NO>
+      <PFNO>22</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000006</PFK_CODE>
@@ -4977,43 +4361,37 @@
       <PFK_CODE>000009</PFK_CODE>
       <CODE>0001</CODE>
       <NO>01</NO>
-      <PFNO>05</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000009</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>02</NO>
-      <PFNO>06</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000009</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>03</NO>
-      <PFNO>07</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000009</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>04</NO>
       <PFNO>02</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000009</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>05</NO>
+      <NO>02</NO>
       <PFNO>03</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000009</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>06</NO>
+      <NO>03</NO>
       <PFNO>15</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000009</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>07</NO>
+      <NO>04</NO>
       <PFNO>12</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000009</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>05</NO>
+      <PFNO>08</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000009</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>06</NO>
+      <PFNO>09</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000010</PFK_CODE>
@@ -5066,19 +4444,19 @@
      <RSMPE_BUT>
       <PFK_CODE>000011</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>05</NO>
+      <NO>04</NO>
       <PFNO>03</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000011</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>06</NO>
+      <NO>05</NO>
       <PFNO>15</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000011</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>07</NO>
+      <NO>06</NO>
       <PFNO>12</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
@@ -5175,49 +4553,37 @@
       <PFK_CODE>000014</PFK_CODE>
       <CODE>0001</CODE>
       <NO>01</NO>
-      <PFNO>05</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000014</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>02</NO>
-      <PFNO>02</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000014</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>03</NO>
-      <PFNO>06</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000014</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>04</NO>
       <PFNO>07</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000014</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>05</NO>
-      <PFNO>08</PFNO>
+      <NO>02</NO>
+      <PFNO>16</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000014</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>06</NO>
+      <NO>03</NO>
       <PFNO>03</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000014</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>07</NO>
+      <NO>04</NO>
       <PFNO>15</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000014</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>08</NO>
+      <NO>05</NO>
       <PFNO>12</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000014</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>06</NO>
+      <PFNO>13</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000015</PFK_CODE>
@@ -5248,6 +4614,12 @@
       <CODE>0001</CODE>
       <NO>05</NO>
       <PFNO>13</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000015</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>06</NO>
+      <PFNO>16</PFNO>
      </RSMPE_BUT>
     </BUT>
     <PFK>
@@ -5349,14 +4721,38 @@
      </RSMPE_PFK>
      <RSMPE_PFK>
       <CODE>000002</CODE>
+      <PFNO>09</PFNO>
+      <FUNCODE>RUN0500</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000002</CODE>
       <PFNO>12</PFNO>
       <FUNCODE>CANCEL</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
       <CODE>000002</CODE>
+      <PFNO>13</PFNO>
+      <FUNCODE>SM350500</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000002</CODE>
+      <PFNO>14</PFNO>
+      <FUNCODE>OPENSM35</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000002</CODE>
       <PFNO>15</PFNO>
       <FUNCODE>EXIT</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000002</CODE>
+      <PFNO>16</PFNO>
+      <FUNCODE>DAS0500</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -5528,6 +4924,18 @@
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
+      <CODE>000004</CODE>
+      <PFNO>24</PFNO>
+      <FUNCODE>IMP_SHDB</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000004</CODE>
+      <PFNO>25</PFNO>
+      <FUNCODE>SAVE</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
       <CODE>000005</CODE>
       <PFNO>02</PFNO>
       <FUNCODE>VALID</FUNCODE>
@@ -5627,6 +5035,12 @@
       <CODE>000005</CODE>
       <PFNO>21</PFNO>
       <FUNCODE>VALS</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000005</CODE>
+      <PFNO>22</PFNO>
+      <FUNCODE>GT02</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -5789,6 +5203,18 @@
       <CODE>000009</CODE>
       <PFNO>07</PFNO>
       <FUNCODE>DELR</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000009</CODE>
+      <PFNO>08</PFNO>
+      <FUNCODE>IMPORT</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000009</CODE>
+      <PFNO>09</PFNO>
+      <FUNCODE>MAPPING</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -6015,8 +5441,26 @@
      </RSMPE_PFK>
      <RSMPE_PFK>
       <CODE>000014</CODE>
+      <PFNO>13</PFNO>
+      <FUNCODE>ACTIVATE</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000014</CODE>
+      <PFNO>14</PFNO>
+      <FUNCODE>CRE_DRAFT</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000014</CODE>
       <PFNO>15</PFNO>
       <FUNCODE>EXIT</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000014</CODE>
+      <PFNO>16</PFNO>
+      <FUNCODE>GENERATE</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -6240,82 +5684,6 @@
       <FUNCTION>VSESS</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>BACK</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>CANCEL</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>EXIT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>FC_TCONN</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>GT03</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>GT04</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>GT08</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>GT25</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>GT35</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>SAVE</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>TCON</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0200</STATUS>
-      <FUNCTION>TCONN</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>BACK</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>CANCEL</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>EXIT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>FC_START_J</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>FC_STOP_JO</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>SCHD</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0250</STATUS>
-      <FUNCTION>STOP</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
       <STATUS>STATUS_0300</STATUS>
       <FUNCTION>BACK</FUNCTION>
      </RSMPE_STAF>
@@ -6357,6 +5725,10 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0300</STATUS>
+      <FUNCTION>IMP_SHDB</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0300</STATUS>
       <FUNCTION>MAPG</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
@@ -6370,6 +5742,10 @@
      <RSMPE_STAF>
       <STATUS>STATUS_0300</STATUS>
       <FUNCTION>REFR</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0300</STATUS>
+      <FUNCTION>SAVE</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0300</STATUS>
@@ -6405,6 +5781,10 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0350</STATUS>
+      <FUNCTION>ACTIVATE</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0350</STATUS>
       <FUNCTION>ADDR</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
@@ -6417,11 +5797,19 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0350</STATUS>
+      <FUNCTION>CRE_DRAFT</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0350</STATUS>
       <FUNCTION>DELR</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0350</STATUS>
       <FUNCTION>EXIT</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0350</STATUS>
+      <FUNCTION>GENERATE</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0350</STATUS>
@@ -6489,6 +5877,10 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0400</STATUS>
+      <FUNCTION>GT02</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0400</STATUS>
       <FUNCTION>GT05</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
@@ -6529,6 +5921,10 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0500</STATUS>
+      <FUNCTION>DAS0500</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0500</STATUS>
       <FUNCTION>EXEC</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
@@ -6545,7 +5941,15 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0500</STATUS>
+      <FUNCTION>OPENSM35</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0500</STATUS>
       <FUNCTION>REFR</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0500</STATUS>
+      <FUNCTION>RUN0500</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0500</STATUS>
@@ -6553,35 +5957,11 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0500</STATUS>
+      <FUNCTION>SM350500</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0500</STATUS>
       <FUNCTION>STOP</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>CANC</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>CANCEL</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>FC_POP_CLO</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>FC_POP_RES</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>RSUB</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>SAVE</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0550</STATUS>
-      <FUNCTION>VALID</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0560</STATUS>
@@ -6614,54 +5994,6 @@
      <RSMPE_STAF>
       <STATUS>STATUS_0560</STATUS>
       <FUNCTION>VAGN</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>BACK</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>CANCEL</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>CHLG</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>EXIT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>EXPT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>FC_AI_ANAL</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>FC_EXPORT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>FC_RETRY_E</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>GT61</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>GT62</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>GT63</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0600</STATUS>
-      <FUNCTION>RETR</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0650</STATUS>
@@ -6785,7 +6117,15 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0800</STATUS>
+      <FUNCTION>IMPORT</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0800</STATUS>
       <FUNCTION>INSR</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0800</STATUS>
+      <FUNCTION>MAPPING</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0800</STATUS>
@@ -7083,14 +6423,6 @@
       <TEXT>Main Dashboard</TEXT>
      </RSMPE_TITT>
      <RSMPE_TITT>
-      <CODE>TITLE_0200</CODE>
-      <TEXT>Inbound Source Configuration</TEXT>
-     </RSMPE_TITT>
-     <RSMPE_TITT>
-      <CODE>TITLE_0250</CODE>
-      <TEXT>Background Job Scheduler Control Panel</TEXT>
-     </RSMPE_TITT>
-     <RSMPE_TITT>
       <CODE>TITLE_0300</CODE>
       <TEXT>Upload and Parse Excel Data</TEXT>
      </RSMPE_TITT>
@@ -7107,20 +6439,12 @@
       <TEXT>Active BDC Batch Execution</TEXT>
      </RSMPE_TITT>
      <RSMPE_TITT>
-      <CODE>TITLE_0550</CODE>
-      <TEXT>Detailed Data Edit - Row &amp;1</TEXT>
-     </RSMPE_TITT>
-     <RSMPE_TITT>
       <CODE>TITLE_0560</CODE>
       <TEXT>Mass Field Replacer Utility</TEXT>
      </RSMPE_TITT>
      <RSMPE_TITT>
-      <CODE>TITLE_0600</CODE>
-      <TEXT>Batch Execution Results &amp; Logs</TEXT>
-     </RSMPE_TITT>
-     <RSMPE_TITT>
       <CODE>TITLE_0650</CODE>
-      <TEXT>Execution Logs for PO Record &amp;1</TEXT>
+      <TEXT>Result Investigation</TEXT>
      </RSMPE_TITT>
      <RSMPE_TITT>
       <CODE>TITLE_0700</CODE>
