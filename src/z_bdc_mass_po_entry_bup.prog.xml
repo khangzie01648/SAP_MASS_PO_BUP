@@ -2302,7 +2302,6 @@
       <ICON_ID>@2R@</ICON_ID>
       <FUN_TEXT>Back</FUN_TEXT>
       <ICON_TEXT>Back</ICON_TEXT>
-      <INFO_TEXT>Back</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>CAN</CODE>
@@ -2418,7 +2417,6 @@
       <TYPE>E</TYPE>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Exit</FUN_TEXT>
-      <ICON_TEXT>Exit</ICON_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>EXPT</CODE>
@@ -2532,42 +2530,6 @@
       <FUN_TEXT>Mapping Config</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
-      <CODE>FC_GT0200</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Source Config</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>FC_GT0300</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Upload Excel</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>FC_GT0400</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Staging</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>FC_GT0500</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Execute</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>FC_GT0600</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Results</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>FC_GT0700</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>AI Log</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
       <CODE>FC_PLAY_RE</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
@@ -2661,7 +2623,6 @@
       <ICON_ID>@0W@</ICON_ID>
       <FUN_TEXT>Stop Execution</FUN_TEXT>
       <ICON_TEXT>Stop Execution</ICON_TEXT>
-      <INFO_TEXT>Stop Execution</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>FC_STOP_JO</CODE>
@@ -2722,18 +2683,6 @@
       <FUN_TEXT>Generate Template</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
-      <CODE>GT02</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Source Config</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>GT0200</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Source Config</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
       <CODE>GT03</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
@@ -2764,22 +2713,10 @@
       <FUN_TEXT>Result Investigation</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
-      <CODE>GT08</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>SHDB Editor</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
       <CODE>GT25</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Job Scheduler</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>GT35</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Mapping Config</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>GT61</CODE>
@@ -2835,7 +2772,6 @@
       <CODE>MAPG</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
-      <ICON_ID>@3R@</ICON_ID>
       <FUN_TEXT>Mapping Config</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
@@ -2861,18 +2797,6 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Message</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>NEWUP</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>New Upload</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>NEW_UPLOAD</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>New Upload</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>OPENSM35</CODE>
@@ -2909,18 +2833,6 @@
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Refresh</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>RESUB</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Resubmit</FUN_TEXT>
-     </RSMPE_FUNT>
-     <RSMPE_FUNT>
-      <CODE>RESUBMIT</CODE>
-      <TEXTNO>001</TEXTNO>
-      <TEXT_TYPE>S</TEXT_TYPE>
-      <FUN_TEXT>Resubmit</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>RETR</CODE>
@@ -3014,7 +2926,6 @@
       <CODE>TCONN</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
-      <ICON_ID>@GB@</ICON_ID>
       <FUN_TEXT>Test Connection</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
@@ -3033,7 +2944,6 @@
       <CODE>UPLD</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
-      <ICON_ID>@3F@</ICON_ID>
       <FUN_TEXT>Upload &amp; Ingest</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
@@ -3127,42 +3037,6 @@
       <CODE>0001</CODE>
       <NO>08</NO>
       <PFNO>16</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>01</NO>
-      <PFNO>02</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>02</NO>
-      <PFNO>05</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>03</NO>
-      <PFNO>06</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>04</NO>
-      <PFNO>07</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>05</NO>
-      <PFNO>08</PFNO>
-     </RSMPE_BUT>
-     <RSMPE_BUT>
-      <PFK_CODE>000003</PFK_CODE>
-      <CODE>0001</CODE>
-      <NO>06</NO>
-      <PFNO>09</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000004</PFK_CODE>
@@ -3390,20 +3264,8 @@
      </RSMPE_PFK>
      <RSMPE_PFK>
       <CODE>000001</CODE>
-      <PFNO>09</PFNO>
-      <FUNCODE>GT35</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000001</CODE>
       <PFNO>12</PFNO>
       <FUNCODE>CANCEL</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000001</CODE>
-      <PFNO>13</PFNO>
-      <FUNCODE>GT08</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -3438,44 +3300,8 @@
      </RSMPE_PFK>
      <RSMPE_PFK>
       <CODE>000003</CODE>
-      <PFNO>02</PFNO>
-      <FUNCODE>FC_GT0200</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
       <PFNO>03</PFNO>
       <FUNCODE>BACK</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
-      <PFNO>05</PFNO>
-      <FUNCODE>FC_GT0300</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
-      <PFNO>06</PFNO>
-      <FUNCODE>FC_GT0400</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
-      <PFNO>07</PFNO>
-      <FUNCODE>FC_GT0500</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
-      <PFNO>08</PFNO>
-      <FUNCODE>FC_GT0600</FUNCODE>
-      <FUNNO>001</FUNNO>
-     </RSMPE_PFK>
-     <RSMPE_PFK>
-      <CODE>000003</CODE>
-      <PFNO>09</PFNO>
-      <FUNCODE>FC_GT0700</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -3863,34 +3689,6 @@
      <RSMPE_STAF>
       <STATUS>STATUS_0100</STATUS>
       <FUNCTION>EXIT</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0200</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0300</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0400</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0500</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0600</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>FC_GT0700</FUNCTION>
-     </RSMPE_STAF>
-     <RSMPE_STAF>
-      <STATUS>STATUS_0100</STATUS>
-      <FUNCTION>GT0200</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0100</STATUS>
