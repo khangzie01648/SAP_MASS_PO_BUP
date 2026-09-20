@@ -18,10 +18,10 @@ METHOD IF_HTTP_EXTENSION~HANDLE_REQUEST.
 
   DATA: lv_body  TYPE string,
         lv_resp  TYPE string,
-        lv_id    TYPE zbdc_mail_inbox-inbox_id,
-        ls_inbox TYPE zbdc_mail_inbox,
+        lv_id    TYPE zbdc_mail_ib_bup-inbox_id,
+        ls_inbox TYPE zbdc_mail_ib_bup,
         lv_guid  TYPE guid_32,
-        lv_exist TYPE zbdc_mail_inbox-inbox_id.
+        lv_exist TYPE zbdc_mail_ib_bup-inbox_id.
 
   TYPES: BEGIN OF ty_payload,
            message_id TYPE string,
@@ -38,46 +38,83 @@ METHOD IF_HTTP_EXTENSION~HANDLE_REQUEST.
   lv_body = server->request->get_cdata( ).
 
   IF lv_body IS INITIAL.
-    server->response->set_status( code = 400 reason = 'Bad Request' ).
-    server->response->set_header_field( name = 'Content-Type' value = 'application/json' ).
-    server->response->set_cdata( '{"status":"error","msg":"empty body"}' ).
+    server->response->set_status(
+      code   = 400
+      reason = 'Bad Request' ).
+
+    server->response->set_header_field(
+      name  = 'Content-Type'
+      value = 'application/json' ).
+
+    server->response->set_cdata(
+      '{"status":"error","msg":"empty body"}' ).
+
     RETURN.
   ENDIF.
 
   " 2. Parse JSON
   /ui2/cl_json=>deserialize(
-    EXPORTING json = lv_body pretty_name = /ui2/cl_json=>pretty_mode-camel_case
-    CHANGING  data = ls_payload ).
+    EXPORTING
+      json        = lv_body
+      pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+    CHANGING
+      data        = ls_payload ).
 
-  IF ls_payload-filename IS INITIAL AND ls_payload-content IS INITIAL.
-    server->response->set_status( code = 400 reason = 'Bad Request' ).
-    server->response->set_header_field( name = 'Content-Type' value = 'application/json' ).
-    server->response->set_cdata( '{"status":"error","msg":"invalid payload"}' ).
+  IF ls_payload-filename IS INITIAL
+     AND ls_payload-content IS INITIAL.
+
+    server->response->set_status(
+      code   = 400
+      reason = 'Bad Request' ).
+
+    server->response->set_header_field(
+      name  = 'Content-Type'
+      value = 'application/json' ).
+
+    server->response->set_cdata(
+      '{"status":"error","msg":"invalid payload"}' ).
+
     RETURN.
   ENDIF.
 
-  " 2b. ===== IDEMPOTENCY TẦNG TRANSPORT: check Message-ID =====
+  " 2b. Idempotency tầng transport: check Message-ID
   IF ls_payload-message_id IS NOT INITIAL.
-    SELECT SINGLE inbox_id INTO lv_exist
-      FROM zbdc_mail_inbox
+
+    SELECT SINGLE inbox_id
+      INTO lv_exist
+      FROM zbdc_mail_ib_bup
       WHERE message_id = ls_payload-message_id.
 
     IF sy-subrc = 0.
-      server->response->set_status( code = 200 reason = 'OK' ).
-      server->response->set_header_field( name = 'Content-Type' value = 'application/json' ).
-      lv_resp = |{ '{' }"status":"skipped","reason":"duplicate_email","inbox_id":"{ lv_exist }"{ '}' }|.
+
+      server->response->set_status(
+        code   = 200
+        reason = 'OK' ).
+
+      server->response->set_header_field(
+        name  = 'Content-Type'
+        value = 'application/json' ).
+
+      lv_resp =
+        |{ '{' }"status":"skipped","reason":"duplicate_email","inbox_id":"{ lv_exist }"{ '}' }|.
+
       server->response->set_cdata( lv_resp ).
+
       RETURN.
     ENDIF.
+
   ENDIF.
 
   " 3. Sinh INBOX_ID (GUID)
   CALL FUNCTION 'GUID_CREATE'
-    IMPORTING ev_guid_32 = lv_guid.
+    IMPORTING
+      ev_guid_32 = lv_guid.
+
   lv_id = lv_guid.
 
-  " 4. Ghi ZBDC_MAIL_INBOX
+  " 4. Ghi ZBDC_MAIL_IB_BUP
   CLEAR ls_inbox.
+
   ls_inbox-inbox_id     = lv_id.
   ls_inbox-message_id   = ls_payload-message_id.
   ls_inbox-sender       = ls_payload-sender.
@@ -86,21 +123,39 @@ METHOD IF_HTTP_EXTENSION~HANDLE_REQUEST.
   ls_inbox-file_name    = ls_payload-filename.
   ls_inbox-file_content = ls_payload-content.
   ls_inbox-status       = 'NEW'.
+
   GET TIME STAMP FIELD ls_inbox-created_at.
 
-  INSERT zbdc_mail_inbox FROM ls_inbox.
+  INSERT zbdc_mail_ib_bup FROM ls_inbox.
 
   IF sy-subrc = 0.
+
     COMMIT WORK.
-    lv_resp = |{ '{' }"status":"success","inbox_id":"{ lv_id }","file":"{ ls_payload-filename }"{ '}' }|.
-    server->response->set_status( code = 200 reason = 'OK' ).
+
+    lv_resp =
+      |{ '{' }"status":"success","inbox_id":"{ lv_id }","file":"{ ls_payload-filename }"{ '}' }|.
+
+    server->response->set_status(
+      code   = 200
+      reason = 'OK' ).
+
   ELSE.
+
     ROLLBACK WORK.
-    lv_resp = '{"status":"error","msg":"db insert failed"}'.
-    server->response->set_status( code = 500 reason = 'Error' ).
+
+    lv_resp =
+      '{"status":"error","msg":"db insert failed"}'.
+
+    server->response->set_status(
+      code   = 500
+      reason = 'Error' ).
+
   ENDIF.
 
-  server->response->set_header_field( name = 'Content-Type' value = 'application/json' ).
+  server->response->set_header_field(
+    name  = 'Content-Type'
+    value = 'application/json' ).
+
   server->response->set_cdata( lv_resp ).
 
 ENDMETHOD.

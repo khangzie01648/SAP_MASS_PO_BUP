@@ -55,29 +55,6 @@ MODULE user_command_0100 INPUT.
   ENDCASE.
 ENDMODULE.
 
-MODULE exit_0300 INPUT.
-  DATA lv_exit_0300 TYPE sy-ucomm.
-
-  lv_exit_0300 = ok_code.
-  IF lv_exit_0300 IS INITIAL.
-    lv_exit_0300 = sy-ucomm.
-  ENDIF.
-
-  CASE lv_exit_0300.
-    WHEN 'EXIT' OR '&F15' OR 'F15' OR 'ENDE' OR 'FC_EXIT'.
-      CLEAR ok_code.
-      PERFORM clear_0300_runtime.
-      LEAVE PROGRAM.
-
-    WHEN 'BACK' OR '&F03' OR 'F03' OR 'RW' OR 'FC_BACK'
-      OR 'CANCEL' OR 'CANC' OR 'CLOSE' OR '&F12' OR 'F12' OR 'ECAN' OR 'FC_CANCEL'.
-      CLEAR ok_code.
-      PERFORM clear_0300_runtime.
-      SET SCREEN 0.
-      LEAVE SCREEN.
-  ENDCASE.
-ENDMODULE.
-
 MODULE user_command_0300 INPUT.
   DATA: lv_count_0300    TYPE i,
         lv_source_0300   TYPE char20,
