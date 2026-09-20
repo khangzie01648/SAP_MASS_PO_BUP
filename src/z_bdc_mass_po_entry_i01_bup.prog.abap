@@ -4,17 +4,13 @@
 *& Generate Template command routing diagnostics
 
 MODULE user_command_0100 INPUT.
-  DATA: lv_loaded_count_0100        TYPE i,
-      lv_row_idx           TYPE i,
-      lv_session_id        TYPE zbdc_staging_bup-session_id,
-      ls_dash_sel_fix      TYPE ty_dash_0100_disp,
-      lv_result_invest_ok TYPE abap_bool.
+  DATA lv_result_invest_ok TYPE abap_bool.
 
  "always consume the command that caused the CURRENT PAI first.
  "CL_GUI_CFW=>SET_NEW_OK_CODE (0100 live timer) updates SY-UCOMM while the
- "screen OK_CODE field can still contain an older toolbar command such as
- "GT05. Reading OK_CODE first therefore replayed Execution Monitor during
- "an unrelated passive-field focus/timer roundtrip.
+ "screen OK_CODE field can still contain an older toolbar command. Reading
+ "OK_CODE first could therefore replay a retired action during a passive
+ "field-focus/timer roundtrip.
   save_ok = sy-ucomm.
   IF save_ok IS INITIAL.
     save_ok = ok_code.
@@ -29,136 +25,10 @@ MODULE user_command_0100 INPUT.
 
 
 
-    WHEN 'GT25' OR 'JOB' OR 'SCHED'.
-
-      MESSAGE i733(zbdc).
-
-    WHEN 'GT03' OR 'FC_GOTO_0300' OR 'UPLOAD' OR 'INGEST'.
+    WHEN 'GT03'.
 
       PERFORM clear_0300_runtime.
       CALL SCREEN 0300.
-
-
-    WHEN 'GT04' OR 'STAGING' OR 'REVIEW' OR 'FC_GOTO_0400'.
-
-      CLEAR: lv_session_id,
-             lv_loaded_count_0100,
-             lv_row_idx,
-             ls_dash_sel_fix.
-
- " Open 0400 only by explicit user choice:
- " 1) selected dashboard row
- " 2) if SALV selection is not captured, show session picker popup
- " No auto MAX(session_id), no old TXTP_SESSION_ID reuse.
-
-      IF go_grid_0100 IS BOUND.
-
-        CALL METHOD cl_gui_cfw=>flush
-          EXCEPTIONS
-            OTHERS = 1.
-
-        DATA(lo_selections_0100) = go_grid_0100->get_selections( ).
-        DATA(lt_rows_0100)       = lo_selections_0100->get_selected_rows( ).
-
-        IF lt_rows_0100 IS NOT INITIAL.
-
-          READ TABLE lt_rows_0100 INTO lv_row_idx INDEX 1.
-
-          IF sy-subrc = 0 AND lv_row_idx > 0.
-
-            READ TABLE gt_dash_0100 INTO ls_dash_sel_fix INDEX lv_row_idx.
-
-            IF sy-subrc = 0 AND ls_dash_sel_fix-session_id IS NOT INITIAL.
-              lv_session_id = ls_dash_sel_fix-session_id.
-              CONDENSE lv_session_id.
-            ENDIF.
-
-          ENDIF.
-
-        ENDIF.
-
-      ENDIF.
-
- "If row selection is not captured, let user choose explicitly.
-      IF lv_session_id IS INITIAL.
-        PERFORM pick_0100_session CHANGING lv_session_id.
-      ENDIF.
-
-      IF lv_session_id IS INITIAL.
-        MESSAGE s037(zbdc) DISPLAY LIKE 'W'.
-        RETURN.
-      ENDIF.
-
-      PERFORM clear_0400_context.
-      txtp_session_id = lv_session_id.
-      txtp_sess       = lv_session_id.
-
-      CLEAR: gt_staging,
-             gt_staging_alv,
-             gt_exec_disp.
-
-      REFRESH: gt_staging,
-               gt_staging_alv,
-               gt_exec_disp.
-
-      IF go_exec_grid IS BOUND.
-        CALL METHOD go_exec_grid->free
-          EXCEPTIONS
-            OTHERS = 1.
-        CLEAR go_exec_grid.
-      ENDIF.
-
-      IF go_staging_grid IS BOUND.
-        CALL METHOD go_staging_grid->free
-          EXCEPTIONS
-            OTHERS = 1.
-        CLEAR go_staging_grid.
-      ENDIF.
-
-      IF go_container_0400 IS BOUND.
-        CALL METHOD go_container_0400->free
-          EXCEPTIONS
-            OTHERS = 1.
-
-        CLEAR: go_container_0400,
-               go_split_0400,
-               go_cont_head_0400,
-               go_cont_body_0400.
-      ENDIF.
-
-      CALL METHOD cl_gui_cfw=>flush
-        EXCEPTIONS
-          OTHERS = 1.
-
-      PERFORM load_staging_by_session
-        USING    lv_session_id
-        CHANGING lv_loaded_count_0100.
-
-      IF lv_loaded_count_0100 <= 0 OR gt_staging IS INITIAL.
-        MESSAGE s038(zbdc) WITH lv_session_id DISPLAY LIKE 'W'.
-        RETURN.
-      ENDIF.
-
-      gv_0400_view      = gc_view_cockpit.
-      gv_0400_edit_mode = space.
-
-      PERFORM freeze_0400_context USING lv_session_id.
-      PERFORM sync_0400_scope.
-      PERFORM prepare_alv_0400.
-      PERFORM build_exec_cockpit.
-      PERFORM update_0400_counters.
-
-      CALL SCREEN 0400.
-
-    WHEN 'GT05' OR 'EXECUTE' OR 'EXEC' OR 'FC_GOTO_0500'.
-
-      IF gt_staging IS INITIAL.
- "explicit fail-closed silent no-op. No exact loaded staging
- "scope means 0500 cannot be opened, but 0100 must not emit a warning.
-        RETURN.
-      ENDIF.
-
-      CALL SCREEN 0500.
 
 
     WHEN 'GT07'.
@@ -176,10 +46,6 @@ MODULE user_command_0100 INPUT.
       ENDIF.
 
       CALL SCREEN 0650.
-
-    WHEN 'GT08' OR 'SHDB' OR 'SCRIPT' OR 'FC_GOTO_0800'.
-
-      CALL SCREEN 0800.
 
     WHEN 'BACK' OR 'EXIT' OR 'CANCEL' OR 'CANC' OR '&F03' OR '&F12' OR '&F15'.
 
@@ -257,7 +123,8 @@ MODULE user_command_0300 INPUT.
   PERFORM capture_runtime
     CHANGING lv_policy_ok lv_policy_msg.
   IF lv_policy_ok <> abap_true.
-    MESSAGE lv_policy_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_policy_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -277,7 +144,7 @@ MODULE user_command_0300 INPUT.
       SET SCREEN 0.
       LEAVE SCREEN.
 
-    WHEN 'SAVE' OR '&DATA_SAVE' OR 'SAVE_NOTE' OR 'SVECFG'.
+    WHEN 'SAVE' OR '&DATA_SAVE' OR 'SVECFG'.
  "Save on 0300 belongs only to runtime execution config.
  "It must not upload, re-parse, change file path, switch preview tab,
  "or persist inbound/source fields.
@@ -309,18 +176,14 @@ MODULE user_command_0300 INPUT.
         ENDIF.
 
         IF lt_sel_rows_0300 IS INITIAL.
-          g_sub_dynpro = '0301'.
           ts_preview-activetab = 'TAB_FILES'.
-          MESSAGE 'Select one file from Preview Files or upload a file first.'
-            TYPE 'S' DISPLAY LIKE 'W'.
+          MESSAGE s793(zbdc) DISPLAY LIKE 'W'.
           RETURN.
         ENDIF.
 
         IF lines( lt_sel_rows_0300 ) > 1.
-          g_sub_dynpro = '0301'.
           ts_preview-activetab = 'TAB_FILES'.
-          MESSAGE 'Select only one file to preview.'
-            TYPE 'S' DISPLAY LIKE 'W'.
+          MESSAGE s794(zbdc) DISPLAY LIKE 'W'.
           RETURN.
         ENDIF.
 
@@ -335,16 +198,15 @@ MODULE user_command_0300 INPUT.
  "may create rows here. Local, Google Drive and Gmail must all cross the
  "same explicit Upload/Ingest boundary first. History rows are handled above
  "because they already represent a previously persisted ingestion.
-      g_sub_dynpro = '0301'.
       ts_preview-activetab = 'TAB_PREVIEW'.
 
       IF gt_staging IS INITIAL.
         PERFORM reset_0300_all_alv.
         IF txtp_file_path IS NOT INITIAL.
-          MESSAGE 'Press Upload/Ingest first. Preview Data is available only after a successful ingest.'
-            TYPE 'S' DISPLAY LIKE 'W'.
+          MESSAGE s795(zbdc) DISPLAY LIKE 'W'.
         ELSEIF gv_ingest_error_msg IS NOT INITIAL.
-          MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+          PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+          MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         ELSE.
           MESSAGE s042(zbdc) DISPLAY LIKE 'W'.
         ENDIF.
@@ -361,7 +223,6 @@ MODULE user_command_0300 INPUT.
  "a local file, a Drive file, or Gmail submission(s), but it never parses,
  "persists, or populates Preview Data. Upload/Ingest owns that boundary.
       PERFORM select_inbound_channel.
-      g_sub_dynpro = '0301'.
       ts_preview-activetab = 'TAB_PREVIEW'.
       FREE MEMORY ID 'ZBDC_0300_HISTORY_SCOPE'.
       PERFORM set_row_count_fields USING 0.
@@ -382,7 +243,6 @@ MODULE user_command_0300 INPUT.
         gv_file_scope = gc_file_scope_my.
       ENDIF.
       PERFORM prepare_preview_file.
-      g_sub_dynpro = '0301'.
       ts_preview-activetab = 'TAB_FILES'.
       PERFORM reset_0300_all_alv.
       DATA(lv_zm044_456_1) = lines( gt_files_preview ).
@@ -399,7 +259,6 @@ MODULE user_command_0300 INPUT.
  "re-parse files, clear current upload data, or alter runtime BDC config.
       gv_file_scope = gc_file_scope_my.
       PERFORM prepare_preview_file.
-      g_sub_dynpro = '0301'.
       ts_preview-activetab = 'TAB_FILES'.
       PERFORM reset_0300_all_alv.
       DATA(lv_zm045_472_1) = lines( gt_files_preview ).
@@ -414,7 +273,6 @@ MODULE user_command_0300 INPUT.
  "only; execution/retry still uses the explicit selected/current scope.
       gv_file_scope = gc_file_scope_all.
       PERFORM prepare_preview_file.
-      g_sub_dynpro = '0301'.
       ts_preview-activetab = 'TAB_FILES'.
       PERFORM reset_0300_all_alv.
       DATA(lv_zm046_486_1) = lines( gt_files_preview ).
@@ -481,15 +339,15 @@ MODULE user_command_0300 INPUT.
         PERFORM validate_staging
           CHANGING lv_validate_ok lv_validate_msg.
         IF lv_validate_ok <> abap_true.
-          MESSAGE lv_validate_msg TYPE 'S' DISPLAY LIKE 'E'.
+          PERFORM userize_ui_message USING lv_validate_msg CHANGING gv_ui_message.
+          MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
           RETURN.
         ENDIF.
-        MESSAGE lv_validate_msg TYPE 'S'.
-        g_sub_dynpro = '0301'.
-        PERFORM reset_0300_alv.
+        PERFORM userize_ui_message USING lv_validate_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S'.
       ENDIF.
 
-    WHEN 'GT04' OR 'STAGING' OR 'FC_UPLOAD_REVIEW' OR 'REVIEW'.
+    WHEN 'GT04'.
  "Staging reached from Preview Files is a historical review of
  "persisted lifecycle evidence. Do not revalidate that historical scope:
  "validate_staging intentionally resets every non-terminal row to
@@ -507,51 +365,22 @@ MODULE user_command_0300 INPUT.
           PERFORM validate_staging
             CHANGING lv_validate_ok lv_validate_msg.
           IF lv_validate_ok <> abap_true.
-            MESSAGE lv_validate_msg TYPE 'S' DISPLAY LIKE 'E'.
+            PERFORM userize_ui_message USING lv_validate_msg CHANGING gv_ui_message.
+            MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
             RETURN.
           ENDIF.
 
           "Duplicate Business Keys are not rejected during Preview. Staging
           "validates them now and opens 0400 with invalid groups marked ERROR.
           IF lv_validate_msg CS 'invalid duplicate Business Key group(s)'.
-            MESSAGE lv_validate_msg TYPE 'S' DISPLAY LIKE 'W'.
+            PERFORM userize_ui_message USING lv_validate_msg CHANGING gv_ui_message.
+            MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
           ENDIF.
         ENDIF.
 
         PERFORM open_0400_for_current_staging.
       ELSE.
         MESSAGE w052(zbdc).
-      ENDIF.
-
-    WHEN 'GT05' OR 'NEXT' OR 'FC_NEXT' OR 'EXEC' OR 'EXECUTE'.
-      "Execute is downstream of explicit ingestion. It must never parse or
-      "download an inbound source on behalf of the user.
-      IF gt_staging IS INITIAL.
-        IF txtp_file_path IS NOT INITIAL.
-          MESSAGE 'Press Upload/Ingest first. Execute requires persisted staging data.'
-            TYPE 'S' DISPLAY LIKE 'W'.
-        ELSEIF gv_ingest_error_msg IS NOT INITIAL.
-          MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
-        ELSE.
-          MESSAGE w053(zbdc).
-        ENDIF.
-      ELSE.
- "Execute has the same mandatory STAGED -> validation -> READY
- "boundary as the explicit Staging command. No inbound channel may
- "enter 0500 with rows that merely exist in memory.
-        PERFORM apply_first_staging_ctx.
-        CLEAR: lv_validate_ok, lv_validate_msg.
-        PERFORM validate_staging
-          CHANGING lv_validate_ok lv_validate_msg.
-        IF lv_validate_ok <> abap_true.
-          MESSAGE lv_validate_msg TYPE 'S' DISPLAY LIKE 'E'.
-          RETURN.
-        ENDIF.
-        IF lv_validate_msg CS 'invalid duplicate Business Key group(s)'.
-          MESSAGE lv_validate_msg TYPE 'S' DISPLAY LIKE 'E'.
-          RETURN.
-        ENDIF.
-        CALL SCREEN 0500.
       ENDIF.
 
     WHEN 'SAVE_NOTE' OR 'SAVE_NOTE_OPT'.
@@ -579,7 +408,6 @@ MODULE user_command_0300 INPUT.
           gv_file_scope = gc_file_scope_my.
         ENDIF.
         PERFORM prepare_preview_file.
-        g_sub_dynpro = '0301'.
         ts_preview-activetab = 'TAB_FILES'.
         PERFORM reset_0300_all_alv.
         DATA(lv_zm055_661_1) = lines( gt_files_preview ).
@@ -611,9 +439,7 @@ MODULE exit_0350 INPUT.
 ENDMODULE.
 
 MODULE user_command_0350 INPUT.
-  DATA: lv_guard_0350_ok  TYPE abap_bool,
-        lv_guard_0350_msg TYPE string,
-        lv_tmpl_ok_0350   TYPE abap_bool,
+  DATA: lv_tmpl_ok_0350   TYPE abap_bool,
         lv_tmpl_msg_0350  TYPE string,
         lv_cmd_norm_0350  TYPE string.
 
@@ -646,14 +472,11 @@ MODULE user_command_0350 INPUT.
       PERFORM prepare_template_ctx
         CHANGING lv_tmpl_ok_0350 lv_tmpl_msg_0350.
       IF lv_tmpl_ok_0350 <> abap_true.
-        MESSAGE lv_tmpl_msg_0350 TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_tmpl_msg_0350 CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       PERFORM download_curr_prof_tmpl.
-
-    WHEN 'GT04' OR 'STAGING' OR 'FC_UPLOAD_REVIEW' OR 'REVIEW'
-      OR 'GT03' OR 'UPLOAD' OR 'INGEST' OR 'FC_GOTO_0300'.
-      MESSAGE s056(zbdc) DISPLAY LIKE 'W'.
 
     WHEN 'EXIT' OR '&F15' OR 'F15' OR 'ENDE' OR 'FC_EXIT'.
       PERFORM stop_result_timer_0650.
@@ -674,7 +497,8 @@ MODULE user_command_0350 INPUT.
           PERFORM prepare_template_ctx
             CHANGING lv_tmpl_ok_0350 lv_tmpl_msg_0350.
           IF lv_tmpl_ok_0350 <> abap_true.
-            MESSAGE lv_tmpl_msg_0350 TYPE 'S' DISPLAY LIKE 'E'.
+            PERFORM userize_ui_message USING lv_tmpl_msg_0350 CHANGING gv_ui_message.
+            MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
             RETURN.
           ENDIF.
           PERFORM download_curr_prof_tmpl.
@@ -707,12 +531,12 @@ MODULE user_command_0400 INPUT.
 
   CASE save_ok.
 
-    WHEN 'EXAL' OR 'RUN_ALL' OR 'RUNALL' OR 'EXEC_ALL' OR 'EXECUTE_ALL'.
+    WHEN 'EXAL'.
  "A real staging edit is a transaction boundary. Never execute while the
  "detail editor owns 0400; Save/Cancel first so no unsaved frontend values
  "can leak into an execution scope.
       IF gv_0400_view = gc_view_detail OR gv_0400_edit_mode = 'X'.
-        MESSAGE 'Save or Cancel Edit Staging before running execution.' TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s797(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
  "Flow B: 0400 is review/scope selection; 0500 is the real executor.
@@ -731,9 +555,9 @@ MODULE user_command_0400 INPUT.
       CLEAR: gt_z566_edit_scope, gv_z566_edit_groups.
       CALL SCREEN 0500.
 
-    WHEN 'EXSL' OR 'RUN_SEL' OR 'RUN_SELECTED' OR 'EXEC_SELECTED'.
+    WHEN 'EXSL'.
       IF gv_0400_view = gc_view_detail OR gv_0400_edit_mode = 'X'.
-        MESSAGE 'Save or Cancel Edit Staging before running execution.' TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s797(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
  "Flow B: selected rows are captured before leaving 0400.
@@ -764,9 +588,10 @@ MODULE user_command_0400 INPUT.
           CHANGING lv_stage_scope_ok lv_stage_scope_msg.
         IF lv_stage_scope_ok <> abap_true.
           IF lv_stage_scope_msg IS INITIAL.
-            lv_stage_scope_msg = 'No editable staging scope is loaded.'.
+            MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '974' INTO lv_stage_scope_msg.
           ENDIF.
-          MESSAGE lv_stage_scope_msg TYPE 'S' DISPLAY LIKE 'W'.
+          PERFORM userize_ui_message USING lv_stage_scope_msg CHANGING gv_ui_message.
+          MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
         ELSE.
           DATA: lv_z566_groups TYPE i,
                 lv_z566_rows   TYPE i.
@@ -776,13 +601,15 @@ MODULE user_command_0400 INPUT.
             USING    'EDIT'
             CHANGING lv_stage_scope_ok lv_z566_groups lv_z566_rows lv_stage_scope_msg.
           IF lv_stage_scope_ok <> abap_true.
-            MESSAGE lv_stage_scope_msg TYPE 'S' DISPLAY LIKE 'W'.
+            PERFORM userize_ui_message USING lv_stage_scope_msg CHANGING gv_ui_message.
+            MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
           ELSE.
             CLEAR: lv_stage_scope_ok, lv_stage_scope_msg.
             PERFORM build_edit_projection
               CHANGING lv_stage_scope_ok lv_stage_scope_msg.
             IF lv_stage_scope_ok <> abap_true.
-              MESSAGE lv_stage_scope_msg TYPE 'S' DISPLAY LIKE 'W'.
+              PERFORM userize_ui_message USING lv_stage_scope_msg CHANGING gv_ui_message.
+              MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
             ELSE.
               PERFORM switch_to_detail_edit.
               MESSAGE s063(zbdc) WITH lv_z566_groups lv_z566_rows.
@@ -828,13 +655,9 @@ MODULE user_command_0400 INPUT.
     WHEN 'ZNAVSET'.
       PERFORM configure_selected_navigation.
 
-    WHEN 'Z0400UI'.
- "Legacy/internal roundtrip alias retained for compatibility.
-      RETURN.
-
-    WHEN 'GT05' OR 'MONITOR' OR 'EXEC_LOG' OR 'EXECUTION_LOG' OR 'FC_GOTO_0500'.
+    WHEN 'GT05'.
       IF gv_0400_view = gc_view_detail OR gv_0400_edit_mode = 'X'.
-        MESSAGE 'Save or Cancel Edit Staging before opening Execution Monitor.' TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s798(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
  "Execution Monitor is selection-scoped. 0400 is the user's
@@ -846,10 +669,9 @@ MODULE user_command_0400 INPUT.
         CHANGING lv_count_0400 lv_ok_0400.
 
       IF lv_ok_0400 <> abap_true.
- "no exact monitor scope = silent no-op and clear any stale
- "status-bar text left by an earlier program load/action. This does
- "not navigate, select, execute, or mutate business/runtime state.
-        MESSAGE ' ' TYPE 'S'.
+ "No exact monitor scope: tell the user what to select before retrying.
+ "This does not navigate, select, execute, or mutate business/runtime state.
+        MESSAGE s799(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
@@ -859,7 +681,7 @@ MODULE user_command_0400 INPUT.
       CLEAR: gt_z566_edit_scope, gv_z566_edit_groups.
       CALL SCREEN 0500.
 
-    WHEN 'GT06' OR 'RESULT' OR 'RESULTS' OR 'DASHBOARD'.
+    WHEN 'GT06'.
       PERFORM open_result_dash_curr.
  WHEN 'EXIT' OR '&F15' OR 'F15' OR 'ENDE' OR 'FC_EXIT'.
       PERFORM clear_0400_context.
@@ -901,7 +723,8 @@ MODULE user_command_0500 INPUT.
   IF lv_state_ok_0500 <> abap_true
      AND lv_cmd_0500 <> gc_ucomm_refresh_0500
      AND lv_cmd_0500 <> 'BACK'.
-    MESSAGE lv_state_msg_0500 TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_state_msg_0500 CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -953,7 +776,8 @@ MODULE user_command_0500 INPUT.
       PERFORM check_runtime_policy
         CHANGING lv_pai_policy_ok_0500 lv_pai_policy_msg_0500.
       IF lv_pai_policy_ok_0500 <> abap_true.
-        MESSAGE lv_pai_policy_msg_0500 TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_pai_policy_msg_0500 CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       IF p_bdc_mode = gc_mode_batch.
@@ -969,7 +793,8 @@ MODULE user_command_0500 INPUT.
       PERFORM check_runtime_policy
         CHANGING lv_pai_policy_ok_0500 lv_pai_policy_msg_0500.
       IF lv_pai_policy_ok_0500 <> abap_true.
-        MESSAGE lv_pai_policy_msg_0500 TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_pai_policy_msg_0500 CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       IF p_bdc_mode = gc_mode_call.
@@ -995,7 +820,7 @@ MODULE user_command_0500 INPUT.
     WHEN gc_ucomm_stop_0500.
 
       IF lv_z714_closed_0500 = abap_true.
-        MESSAGE 'Execution is already terminal; no Stop Queue action is required.' TYPE 'S'.
+        MESSAGE s791(zbdc).
       ELSEIF gv_exec_mon_kind = gc_mon_sm35.
  "SM35 owns the external business execution. Stop Queue on 0500 stops
  "only this cockpit monitor immediately; it must not poison the next
@@ -1005,7 +830,7 @@ MODULE user_command_0500 INPUT.
                gv_sm35_job_finished.
         PERFORM stop_0500_timer.
         gv_exec_run_phase = 'SM35 cockpit monitoring stopped; standard SM35 session is unchanged'.
-        MESSAGE 'SM35 cockpit monitoring stopped; the standard SM35 session is unchanged.' TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s792(zbdc) DISPLAY LIKE 'W'.
       ELSE.
         PERFORM stop_bdc_execution.
         gv_exec_stop_req = abap_true.
@@ -1208,19 +1033,10 @@ MODULE user_command_0650 INPUT.
     WHEN 'RGSEL'.
       PERFORM select_result_group_0650 USING gv_group_pick_0650.
 
-    WHEN 'REFL' OR 'REFR' OR 'REFRESH' OR 'FC_REFRESH'.
-      "0650 is live; manual Refresh is intentionally retired.
-      RETURN.
-
-    WHEN 'ME23' OR 'DRILL' OR 'OPENOBJ' OR 'OPEN_OBJECT'.
-      "Open SAP Object is intentionally retired from the 0650 toolbar.
-      RETURN.
-
     WHEN 'AI' OR 'GT07'.
 
       IF txtp_result_session IS INITIAL OR txtp_result_group IS INITIAL.
-        MESSAGE 'Choose one ERROR Result Group before using Analyze Error.'
-          TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s800(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
@@ -1228,8 +1044,7 @@ MODULE user_command_0650 INPUT.
       CONDENSE lv_ai_status_0650 NO-GAPS.
       TRANSLATE lv_ai_status_0650 TO UPPER CASE.
       IF lv_ai_status_0650 <> 'ERROR'.
-        MESSAGE 'Analyze Error is available only for groups with ERROR status.'
-          TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s801(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
@@ -1243,8 +1058,7 @@ MODULE user_command_0650 INPUT.
         CHANGING lv_ai_0650_ok.
 
       IF lv_ai_0650_ok <> abap_true.
-        MESSAGE 'The selected ERROR group has no persisted error evidence to analyze.'
-          TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s802(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
@@ -1254,8 +1068,7 @@ MODULE user_command_0650 INPUT.
       ENDLOOP.
 
       IF lv_err_count_0650 <= 0.
-        MESSAGE 'The selected ERROR group has no ERROR evidence to analyze.'
-          TYPE 'S' DISPLAY LIKE 'W'.
+        MESSAGE s803(zbdc) DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
@@ -1267,11 +1080,6 @@ MODULE user_command_0650 INPUT.
 
       PERFORM stop_result_timer_0650.
       CALL SCREEN 0700.
-
-    "Historical 0650 COPY/Export Error actions are intentionally inert even
-    "if an older GUI status still contains them.
-    WHEN 'COPY' OR 'CPY' OR 'FC_EXP_ERR' OR 'EXPT' OR 'EXPORT'.
-      RETURN.
 
     WHEN 'EXIT' OR '&F15' OR 'F15' OR 'ENDE' OR 'FC_EXIT'.
       PERFORM stop_result_timer_0650.
@@ -1303,18 +1111,6 @@ MODULE user_command_0700 INPUT.
 
     WHEN 'ISSEL'.
       PERFORM select_issue_0700 USING gv_issue_pick_0700.
-
-    WHEN 'DIAG' OR 'ANALYZE' OR 'RULE' OR 'RULE_AI' OR 'RULE_BASED'
-      OR 'DIAGNOSE'.
-      PERFORM run_rule_ai_for_session.
-
-    WHEN 'DOWN' OR 'EXPORT' OR 'EXPFIX' OR 'AI_EXPORT'
-      OR 'FC_EXPORT' OR 'EXP_GUIDE' OR 'EXPORT_GUIDE'
-      OR 'EXPORT_FIX' OR 'FIX_EXPORT'.
-      PERFORM export_ai_fix_guide.
-
-    WHEN 'GT08' OR 'SHDB' OR 'SCRIPT' OR 'REC'.
-      CALL SCREEN 0800.
 
     WHEN 'EXIT' OR '&F15' OR 'F15' OR 'ENDE' OR 'FC_EXIT'.
       PERFORM stop_result_timer_0650.
@@ -1399,14 +1195,16 @@ MODULE user_command_0800 INPUT.
 
       IF lv_auto_map_ok <> abap_true.
         IF lv_auto_map_msg IS INITIAL.
-          lv_auto_map_msg = 'Mapping context is not exact. Select My Import or All Import first.'.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '975' INTO lv_auto_map_msg.
         ENDIF.
-        MESSAGE lv_auto_map_msg TYPE 'S' DISPLAY LIKE 'W'.
+        PERFORM userize_ui_message USING lv_auto_map_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
         RETURN.
       ENDIF.
 
       IF lv_auto_map_msg IS NOT INITIAL.
-        MESSAGE lv_auto_map_msg TYPE 'S'.
+        PERFORM userize_ui_message USING lv_auto_map_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S'.
       ENDIF.
 
       CALL SCREEN 0350.

@@ -65,8 +65,7 @@ DATA: gv_z689_review_pending TYPE abap_bool,
 
 CLASS lcl_recording_events IMPLEMENTATION.
   METHOD on_toolbar.
-    DATA: ls_btn    TYPE stb_button,
-          lv_origin TYPE c LENGTH 20.
+    DATA ls_btn    TYPE stb_button.
 
  "0800 toolbar owns onboarding navigation.
  "Existing GUI status buttons remain, while ALV adds:
@@ -327,7 +326,6 @@ TYPES: BEGIN OF ty_z920_gui_action,
 TYPES ty_t_z920_gui_action TYPE STANDARD TABLE OF ty_z920_gui_action WITH DEFAULT KEY.
 
 DATA gt_z866_screen_caps TYPE ty_t_z866_screen_cap.
-TYPES ty_t_z885_b64 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
 DATA: gv_z865_cap_script   TYPE string,
       gv_z865_cap_log   TYPE string,
@@ -338,7 +336,6 @@ DATA: gv_z865_cap_script   TYPE string,
       gv_z866_vision_required TYPE abap_bool,
       gv_z866_vision_analyzed TYPE abap_bool,
       gv_z877_cap_diag  TYPE string,
-      gv_z885_last_429_rt TYPE i,
       gv_z940_import_capture TYPE abap_bool.
 
 "FIX875: every return buffer used by CL_GUI_FRONTEND_SERVICES in the
@@ -4119,8 +4116,7 @@ FORM unique_source
         lv_datatype   TYPE dfies-datatype,
         lv_length     TYPE dfies-leng,
         lv_ddic_found TYPE abap_bool,
-        lv_technical  TYPE abap_bool,
-        lv_neutral    TYPE zbdc_mapping_bup-source_column.
+        lv_technical  TYPE abap_bool.
 
   FIELD-SYMBOLS <lv_used> TYPE any.
 
@@ -6000,7 +5996,6 @@ FORM script_contract_fp
         lv_dynpro TYPE zbdc_sct_ver_bup-dynpro_no,
         lv_ordinal TYPE i,
         lv_technical TYPE abap_bool,
-        lv_helper TYPE abap_bool,
         lv_sensitive TYPE abap_bool,
         lv_screen_helper TYPE abap_bool.
 
@@ -8376,7 +8371,7 @@ FORM get_mapping_ui_state
  "not replace it with the old repository rows during PBO.
     cv_readonly = abap_true.
     cv_message =
-      'Auto Template Mapping is ready. Generate Template will use exactly the visible, filled Mapping rows shown here.'.
+      'Mapping is ready. Review the fields, then press Generate Template.'.
     RETURN.
   ENDIF.
 
@@ -9675,7 +9670,6 @@ FORM onboard_parsed_script
         lv_version_fp        TYPE zbdc_script_bup-contract_hash,
         lv_version_ok        TYPE abap_bool,
         lv_version_msg       TYPE string,
-        lv_ref_schema_fp      TYPE zbdc_script_bup-contract_hash,
         lv_schema_fp_ok       TYPE abap_bool,
         lv_schema_fp_msg      TYPE string,
         lv_reservation_id TYPE zbdc_script_bup-script_id,
@@ -12684,7 +12678,6 @@ FORM z114_last_replay_value
 
   DATA: ls_script  TYPE ty_script_def_compat,
         lv_target  TYPE zbdc_mapping_bup-bdc_field,
-        lv_logical TYPE zbdc_mapping_bup-bdc_field,
         lv_raw     TYPE zbdc_mapping_bup-bdc_field,
         lv_key     TYPE zbdc_mapping_bup-bdc_field,
         lv_tech    TYPE abap_bool.
@@ -13261,9 +13254,7 @@ FORM start_guided_recording.
         lv_cap_msg     TYPE string,
         lv_action_pre_ok TYPE abap_bool,
         lv_action_pre_n  TYPE i,
-        lv_action_pre_msg TYPE string,
-        lv_onb_ok    TYPE abap_bool,
-        lv_onb_msg   TYPE string.
+        lv_action_pre_msg TYPE string.
 
   CLEAR ls_field.
   ls_field-tabname   = 'TSTC'.
@@ -13314,7 +13305,8 @@ FORM start_guided_recording.
     USING    lv_tcode
     CHANGING lv_tcode_ok lv_tcode_kind lv_tcode_msg.
   IF lv_tcode_ok <> abap_true.
-    MESSAGE lv_tcode_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_tcode_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13352,9 +13344,10 @@ FORM start_guided_recording.
     CHANGING lv_cap_started lv_cap_msg.
   IF lv_cap_started <> abap_true.
     IF lv_cap_msg IS INITIAL.
-      lv_cap_msg = 'FULL_SCREEN_CAPTURE_REQUIRED: Guided Recording did not start because full SAP-window capture is unavailable.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '859' INTO lv_cap_msg.
     ENDIF.
-    MESSAGE lv_cap_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_cap_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
   "Capture remains mandatory for deterministic user-action evidence.
@@ -13372,7 +13365,8 @@ FORM start_guided_recording.
   ENDIF.
 
   IF lv_rec_ok <> abap_true.
-    MESSAGE lv_rec_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_rec_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13380,10 +13374,10 @@ FORM start_guided_recording.
   "preflight with an empty/failed event manifest, and never hide its real error.
   IF lv_cap_ok <> abap_true.
     IF lv_cap_msg IS INITIAL.
-      lv_cap_msg =
-        'GUI_COMMAND_CAPTURE_FAILED: event manifest is unavailable. No API request was sent.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '860' INTO lv_cap_msg.
     ENDIF.
-    MESSAGE lv_cap_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_cap_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13394,7 +13388,8 @@ FORM start_guided_recording.
     CHANGING lt_saved_bdc lv_save_ok lv_save_msg.
 
   IF lv_save_ok <> abap_true.
-    MESSAGE lv_save_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_save_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13403,7 +13398,8 @@ FORM start_guided_recording.
     CHANGING lt_txt lv_txt_ok lv_txt_msg.
 
   IF lv_txt_ok <> abap_true.
-    MESSAGE lv_txt_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_txt_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13414,7 +13410,8 @@ FORM start_guided_recording.
     CHANGING lv_txt_tcode lt_script lv_parse_ok lv_parse_msg.
 
   IF lv_parse_ok <> abap_true.
-    MESSAGE lv_parse_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_parse_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13436,7 +13433,8 @@ FORM start_guided_recording.
     USING    lt_saved_bdc lt_script
     CHANGING lv_roundtrip_ok lv_roundtrip_msg.
   IF lv_roundtrip_ok <> abap_true.
-    MESSAGE lv_roundtrip_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_roundtrip_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13446,7 +13444,8 @@ FORM start_guided_recording.
     USING    lt_script
     CHANGING lv_action_pre_ok lv_action_pre_n lv_action_pre_msg.
   IF lv_action_pre_ok <> abap_true.
-    MESSAGE lv_action_pre_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_action_pre_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13457,9 +13456,8 @@ FORM start_guided_recording.
     USING lv_tcode 'GUIDED_RECORD' lt_script.
 
   CLEAR: gv_z866_vision_required, gv_z866_vision_analyzed.
-  MESSAGE
-    |Guided Recording saved. Deterministic user-action ledger ready: { lv_action_pre_n } field(s). Open Mapping Profile for SAP DDIC mapping (no AI).|
-    TYPE 'S'.
+  DATA(lv_zm738_13460_1) = |{ lv_action_pre_n }|.
+  MESSAGE s738(zbdc) WITH lv_zm738_13460_1.
 ENDFORM.
 
 *& Select one exact transaction block from multi-block SHDB TXT
@@ -13736,16 +13734,19 @@ FORM upload_shdb_recording.
 
     IF lv_onb_ok = abap_true.
       gt_script_def = lt_scr.
-      MESSAGE lv_onb_msg TYPE 'S'.
+      PERFORM userize_ui_message USING lv_onb_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S'.
     ELSE.
       IF lv_onb_msg IS INITIAL.
-        lv_onb_msg = 'SHDB generated program was parsed but onboarding did not complete.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '861' INTO lv_onb_msg.
       ENDIF.
-      MESSAGE lv_onb_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_onb_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDIF.
     RETURN.
   ELSEIF lv_onb_msg IS NOT INITIAL.
-    MESSAGE lv_onb_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_onb_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13758,7 +13759,8 @@ FORM upload_shdb_recording.
     USING    lt_raw
     CHANGING lt_txt_one lv_block_ok lv_block_msg.
   IF lv_block_ok <> abap_true.
-    MESSAGE lv_block_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_block_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13769,7 +13771,8 @@ FORM upload_shdb_recording.
     CHANGING lv_tcode lt_scr lv_parse_ok lv_parse_msg.
 
   IF lv_parse_ok <> abap_true.
-    MESSAGE lv_parse_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_parse_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -13778,9 +13781,7 @@ FORM upload_shdb_recording.
   PERFORM stage_acquisition_review
     USING lv_tcode 'SHDB_TXT' lt_scr.
 
-  MESSAGE
-    'SHDB recording loaded as RAW evidence. Open Mapping Profile for SAP DDIC mapping.'
-    TYPE 'S'.
+  MESSAGE s739(zbdc).
 ENDFORM.
 
 *&=====================================================================*
@@ -14714,7 +14715,6 @@ FORM filter_map_bus_view
         lv_script_id  TYPE zbdc_script_bup-script_id,
         lv_hash       TYPE zbdc_script_bup-contract_hash,
         lv_script_ok  TYPE abap_bool,
-        lv_user_src   TYPE abap_bool,
         lv_auth_ok   TYPE abap_bool,
         lv_auth_origin TYPE string,
         lv_z444_tcode   TYPE zbdc_prof_bup-tcode,
@@ -16023,9 +16023,10 @@ FORM resolve_mapping_config_context
     CHANGING lv_ctx_ok lv_ctx_msg.
   IF lv_ctx_ok <> abap_true.
     IF lv_ctx_msg IS INITIAL.
-      lv_ctx_msg = 'Select the exact TCODE/Profile/Version before maintaining Mapping.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '862' INTO lv_ctx_msg.
     ENDIF.
-    MESSAGE lv_ctx_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_ctx_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -17467,7 +17468,6 @@ FORM derive_auto_meta_from_script
         lv_source      TYPE zbdc_mapping_bup-source_column,
         lv_ddic_source TYPE zbdc_mapping_bup-source_column,
         lv_leaf_source TYPE zbdc_mapping_bup-source_column,
-        lv_fallback    TYPE string,
         lv_label       TYPE string,
         lv_rule        TYPE string,
         lv_example     TYPE string,
@@ -18951,8 +18951,6 @@ FORM create_mapping_draft.
         lv_message       TYPE string,
         lv_exact_complete TYPE abap_bool,
         lv_exact_message  TYPE string,
-        lv_has_default    TYPE abap_bool,
-        lv_default_value  TYPE string,
         lv_rep_found      TYPE abap_bool,
         lv_promote_ok     TYPE abap_bool,
         lv_promote_msg    TYPE string,
@@ -19002,7 +19000,8 @@ FORM create_mapping_draft.
     USING 'CREATE_MAPPING_DRAFT'
     CHANGING lv_guard_ok lv_guard_msg.
   IF lv_guard_ok <> abap_true.
-    MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19027,7 +19026,11 @@ FORM create_mapping_draft.
 
   DATA: lv_z36_ready TYPE abap_bool, lv_z36_unres TYPE i, lv_z36_msg TYPE string.
   PERFORM check_contract USING lt_script CHANGING lv_z36_ready lv_z36_unres lv_z36_msg.
-  IF lv_z36_ready <> abap_true. MESSAGE lv_z36_msg TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_z36_ready <> abap_true.
+    PERFORM userize_ui_message USING lv_z36_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
 
  "any new Mapping version must be compiled again from the immutable
  "raw acquisition snapshot, not cloned from a previously compiled contract.
@@ -19036,7 +19039,8 @@ FORM create_mapping_draft.
     USING    lv_tcode lv_script_id
     CHANGING lt_raw_source lv_raw_ok lv_raw_msg.
   IF lv_raw_ok <> abap_true.
-    MESSAGE lv_raw_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_raw_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19069,7 +19073,8 @@ FORM create_mapping_draft.
       USING    lt_member_source lv_script_id lv_contract_hash lv_z659_origin
       CHANGING lv_z659_ok2 lv_z659_msg2.
     IF lv_z659_ok2 <> abap_true.
-      MESSAGE lv_z659_msg2 TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_z659_msg2 CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -19664,9 +19669,12 @@ FORM create_mapping_draft.
                  lv_promote_ok lv_promote_msg.
       IF lv_promote_ok <> abap_true.
         IF lv_promote_msg IS INITIAL.
-          lv_promote_msg = |Logical alias resolution failed for { lv_logical_key }.|.
+          DATA(lv_zm863_19667_1) = |{ lv_logical_key }|.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '863'
+            WITH lv_zm863_19667_1 INTO lv_promote_msg.
         ENDIF.
-        MESSAGE lv_promote_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_promote_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
 
@@ -19798,7 +19806,8 @@ FORM create_mapping_draft.
     PERFORM build_missing_metadata_message
       USING    lv_tcode lt_missing
       CHANGING lv_message.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19824,7 +19833,8 @@ FORM create_mapping_draft.
     USING    lt_script_new
     CHANGING lv_plan_ok lv_plan_msg.
   IF lv_plan_ok <> abap_true.
-    MESSAGE lv_plan_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_plan_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19848,7 +19858,8 @@ FORM create_mapping_draft.
              lv_persist_ok lv_persist_msg.
   IF lv_persist_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_persist_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_persist_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19858,7 +19869,8 @@ FORM create_mapping_draft.
     CHANGING lv_raw_save_ok lv_raw_save_msg.
   IF lv_raw_save_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_raw_save_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_raw_save_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -19877,24 +19889,29 @@ FORM create_mapping_draft.
 
   IF lv_new_version = abap_true.
     IF lv_bootstrap_mode = abap_true.
-      lv_message = |Draft v{ lv_ver } created from generated DYNAMIC columns for first-time onboarding.|.
+      DATA(lv_zm864_19880_1) = |{ lv_ver }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '864'
+        WITH lv_zm864_19880_1 INTO lv_message.
     ELSE.
-      lv_message = |Draft v{ lv_ver } created after complete metadata resolution.|.
+      DATA(lv_zm865_19882_1) = |{ lv_ver }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '865'
+        WITH lv_zm865_19882_1 INTO lv_message.
     ENDIF.
   ELSE.
     IF lv_bootstrap_mode = abap_true.
-      lv_message = |Draft v{ lv_ver } rebuilt from generated DYNAMIC columns for first-time onboarding.|.
+      DATA(lv_zm866_19886_1) = |{ lv_ver }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '866'
+        WITH lv_zm866_19886_1 INTO lv_message.
     ELSE.
-      lv_message = |Draft v{ lv_ver } rebuilt after complete metadata resolution.|.
+      DATA(lv_zm867_19888_1) = |{ lv_ver }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '867'
+        WITH lv_zm867_19888_1 INTO lv_message.
     ENDIF.
   ENDIF.
-  lv_message = lv_message && | Rows: { lines( lt_draft ) };|.
-  lv_message = lv_message && | inherited: { lv_inherited };|.
-  lv_message = lv_message && | metadata: { lv_meta_count };|.
-  lv_message = lv_message && | static kept: { lv_static_count };|.
-  lv_message = lv_message && | review required: 0.|.
+  lv_message = lv_message && ' Review the fields, then press Generate Template.'.
 
-  MESSAGE lv_message TYPE 'S'.
+  PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+  MESSAGE gv_ui_message TYPE 'S'.
 ENDFORM.
 
 FORM display_mapping_screen.
@@ -19991,8 +20008,6 @@ FORM validate_mapping_profile
         lv_contract_reason TYPE string,
         lt_script TYPE ty_t_script,
         lv_script_dynamic TYPE abap_bool,
-        lv_has_default TYPE abap_bool,
-        lv_default_value TYPE string,
         ls_context TYPE zbdc_mapping_bup,
         ls_script TYPE ty_script_def_compat.
 
@@ -20219,14 +20234,10 @@ FORM sync_script_from_mapping
            cv_message TYPE string.
 
   DATA: lt_script       TYPE ty_t_script,
-        ls_map          TYPE zbdc_mapping_bup,
         lv_tcode        TYPE zbdc_mapping_bup-tcode,
         lv_profile      TYPE zbdc_mapping_bup-profile_name,
         lv_ver          TYPE zbdc_mapping_bup-profile_ver,
         lv_ctx_ok       TYPE abap_bool,
-        lv_logical      TYPE zbdc_mapping_bup-bdc_field,
-        lv_map_logical  TYPE zbdc_mapping_bup-bdc_field,
-        lv_technical    TYPE abap_bool,
         lv_script_id    TYPE zbdc_script_bup-script_id,
         lv_hash         TYPE zbdc_script_bup-contract_hash,
         lv_found        TYPE abap_bool,
@@ -20345,7 +20356,8 @@ FORM save_mapping_screen.
     USING 'SAVE_MAPPING'
     CHANGING lv_guard_ok lv_guard_msg.
   IF lv_guard_ok <> abap_true.
-    MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -20431,7 +20443,8 @@ FORM save_mapping_screen.
 
   PERFORM validate_mapping_profile CHANGING lv_valid lv_message.
   IF lv_valid <> abap_true.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -20460,7 +20473,8 @@ FORM save_mapping_screen.
     CHANGING lv_sync_ok lv_sync_message.
   IF lv_sync_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_sync_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_sync_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -20483,7 +20497,8 @@ FORM save_mapping_screen.
     CHANGING lv_z483_ok lv_z483_msg.
   IF lv_z483_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_z483_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_z483_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -20871,15 +20886,11 @@ FORM build_xlsx_contract
         lv_script_id   TYPE zbdc_script_bup-script_id,
         lv_hash        TYPE zbdc_script_bup-contract_hash,
         lv_script_ok   TYPE abap_bool,
-        lv_user_src    TYPE abap_bool,
         lv_input_ok    TYPE abap_bool,
         lv_auth_ok     TYPE abap_bool,
         lv_auth_origin TYPE string,
         lv_index       TYPE i,
         lv_effective_ver TYPE zbdc_mapping_bup-profile_ver,
-        lv_locked_found TYPE abap_bool,
-        lv_locked_ver   TYPE zbdc_mapping_bup-profile_ver,
-        lt_locked_map   TYPE ty_t_mapping_db,
         lt_expected_357 TYPE SORTED TABLE OF ty_z483_tmpl_bind
                         WITH UNIQUE KEY source staging bdc,
         lt_emitted_357  TYPE SORTED TABLE OF ty_z483_tmpl_bind
@@ -21737,8 +21748,7 @@ FORM build_csv_template_package
 
   DATA: ls_field TYPE ty_xlsx_field,
         lv_line  TYPE string,
-        lv_head  TYPE string,
-        lv_note  TYPE string.
+        lv_head  TYPE string.
 
   REFRESH ct_csv.
 
@@ -23140,9 +23150,7 @@ FORM apply_map_to_script
         lv_technical  TYPE abap_bool,
         lv_found      TYPE abap_bool,
         lv_map_step   TYPE zbdc_sct_ver_bup-step_seq,
-        lv_map_has_step TYPE abap_bool,
-        lv_z451_transient TYPE abap_bool,
-        lv_z451_reason    TYPE string.
+        lv_map_has_step TYPE abap_bool.
 
   FIELD-SYMBOLS <ls_scr> TYPE ty_script_def_compat.
 
@@ -24314,9 +24322,6 @@ FORM prepare_template_ctx
         lv_valid    TYPE abap_bool,
         lv_test_ok  TYPE abap_bool,
         lv_test_msg TYPE string,
-        lv_locked_found TYPE abap_bool,
-        lv_locked_ver   TYPE zbdc_mapping_bup-profile_ver,
-        lt_locked_map   TYPE ty_t_mapping_db,
         lv_cand_ok      TYPE abap_bool,
         lv_cand_msg     TYPE string.
 
@@ -24467,7 +24472,6 @@ FORM ensure_tmpl_fguide
            cv_message TYPE string.
 
   DATA: lt_guide TYPE ty_t_map_meta,
-        ls_guide TYPE ty_map_meta,
         lt_map   TYPE ty_t_mapping_db,
         ls_map   TYPE zbdc_mapping_bup,
         lv_src   TYPE zbdc_mapping_bup-source_column,
@@ -24662,9 +24666,10 @@ FORM download_curr_prof_tmpl.
       CHANGING lv_guard_ok lv_guard_msg.
     IF lv_guard_ok <> abap_true.
       IF lv_guard_msg IS INITIAL.
-        lv_guard_msg = 'Template context could not be prepared from the current Candidate Mapping.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '868' INTO lv_guard_msg.
       ENDIF.
-      MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -24673,7 +24678,8 @@ FORM download_curr_prof_tmpl.
     USING 'GENERATE_TEMPLATE'
     CHANGING lv_guard_ok lv_guard_msg.
   IF lv_guard_ok <> abap_true.
-    MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -24714,10 +24720,12 @@ FORM download_curr_prof_tmpl.
       CHANGING lv_guard_ok lv_guard_msg.
     IF lv_guard_ok <> abap_true.
       IF lv_guard_msg IS INITIAL.
-        lv_guard_msg =
-          |Template contract was not prepared; current profile status is { lv_status }.|.
+        DATA(lv_zm869_24717_1) = |{ lv_status }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '869'
+          WITH lv_zm869_24717_1 INTO lv_guard_msg.
       ENDIF.
-      MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -24736,9 +24744,10 @@ FORM download_curr_prof_tmpl.
     CHANGING lv_guard_ok lv_guard_msg.
   IF lv_guard_ok <> abap_true.
     IF lv_guard_msg IS INITIAL.
-      lv_guard_msg = 'Template Field Guide is missing and could not be prepared automatically.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '870' INTO lv_guard_msg.
     ENDIF.
-    MESSAGE lv_guard_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_guard_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -24768,7 +24777,7 @@ FORM download_curr_prof_tmpl.
       USING    ls_manifest_field-source_column
       CHANGING lv_manifest_source.
     IF lv_manifest_source IS INITIAL.
-      MESSAGE 'Generated Template contains an invalid source column.' TYPE 'S' DISPLAY LIKE 'E'.
+      MESSAGE s740(zbdc) DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     APPEND lv_manifest_source TO lt_manifest_sources.
@@ -24780,9 +24789,10 @@ FORM download_curr_prof_tmpl.
     CHANGING lv_manifest_ok lv_manifest_msg.
   IF lv_manifest_ok <> abap_true.
     IF lv_manifest_msg IS INITIAL.
-      lv_manifest_msg = 'Generated Template manifest could not be frozen.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '871' INTO lv_manifest_msg.
     ENDIF.
-    MESSAGE lv_manifest_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_manifest_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -24892,13 +24902,29 @@ FORM download_curr_prof_tmpl.
     ENDIF.
 
     IF lv_status = gc_m2_prof_active.
-      lv_message = |Certified template { lv_profile } v{ lv_ver } downloaded for { lv_tcode }; Contract and Mapping were not changed.|.
+      DATA(lv_zm872_24895_1) = |{ lv_profile }|.
+      DATA(lv_zm872_24895_2) = |{ lv_ver }|.
+      DATA(lv_zm872_24895_3) = |{ lv_tcode }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '872'
+        WITH lv_zm872_24895_1 lv_zm872_24895_2 lv_zm872_24895_3
+        INTO lv_message.
     ELSEIF lv_status = gc_m2_prof_mapped.
-      lv_message = |MAPPED template { lv_profile } v{ lv_ver } downloaded for { lv_tcode }; execution remains blocked until profile setup is complete.|.
+      DATA(lv_zm873_24897_1) = |{ lv_profile }|.
+      DATA(lv_zm873_24897_2) = |{ lv_ver }|.
+      DATA(lv_zm873_24897_3) = |{ lv_tcode }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '873'
+        WITH lv_zm873_24897_1 lv_zm873_24897_2 lv_zm873_24897_3
+        INTO lv_message.
     ELSE.
-      lv_message = |TESTING template { lv_profile } v{ lv_ver } downloaded for { lv_tcode }; the certified runtime contract remains unchanged.|.
+      DATA(lv_zm874_24899_1) = |{ lv_profile }|.
+      DATA(lv_zm874_24899_2) = |{ lv_ver }|.
+      DATA(lv_zm874_24899_3) = |{ lv_tcode }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '874'
+        WITH lv_zm874_24899_1 lv_zm874_24899_2 lv_zm874_24899_3
+        INTO lv_message.
     ENDIF.
-    MESSAGE lv_message TYPE 'S'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S'.
     RETURN.
   ENDIF.
 
@@ -24975,13 +25001,25 @@ FORM download_curr_prof_tmpl.
   ENDIF.
 
   IF lv_status = gc_m2_prof_active.
-    lv_message = |Certified XLSX template { lv_profile } v{ lv_ver } downloaded for { lv_tcode }; Contract and Mapping were not changed.|.
+    DATA(lv_zm875_24978_1) = |{ lv_profile }|.
+    DATA(lv_zm875_24978_2) = |{ lv_ver }|.
+    DATA(lv_zm875_24978_3) = |{ lv_tcode }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '875'
+      WITH lv_zm875_24978_1 lv_zm875_24978_2 lv_zm875_24978_3
+      INTO lv_message.
   ELSEIF lv_status = gc_m2_prof_mapped.
-    lv_message = |MAPPED XLSX template { lv_profile } v{ lv_ver }; execution remains blocked until profile setup is complete.|.
+    DATA(lv_zm876_24980_1) = |{ lv_profile }|.
+    DATA(lv_zm876_24980_2) = |{ lv_ver }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '876'
+      WITH lv_zm876_24980_1 lv_zm876_24980_2 INTO lv_message.
   ELSE.
-    lv_message = |TESTING XLSX template { lv_profile } v{ lv_ver }; the certified runtime contract remains unchanged.|.
+    DATA(lv_zm877_24982_1) = |{ lv_profile }|.
+    DATA(lv_zm877_24982_2) = |{ lv_ver }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '877'
+      WITH lv_zm877_24982_1 lv_zm877_24982_2 INTO lv_message.
   ENDIF.
-  MESSAGE lv_message TYPE 'S'.
+  PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+  MESSAGE gv_ui_message TYPE 'S'.
 ENDFORM.
 
 
@@ -25553,9 +25591,10 @@ FORM pick_import_history USING iv_scope TYPE csequence.
     CHANGING lv_resolve_ok lv_resolve_msg.
   IF lv_resolve_ok <> abap_true.
     IF lv_resolve_msg IS INITIAL.
-      lv_resolve_msg = 'Selected import contract could not be pinned as an exact Mapping context.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '878' INTO lv_resolve_msg.
     ENDIF.
-    MESSAGE lv_resolve_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_resolve_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -25581,7 +25620,8 @@ FORM pick_import_history USING iv_scope TYPE csequence.
       USING    gt_script_def ls_head-tcode ls_head-profile_name ls_head-profile_ver
       CHANGING lv_view_ok lv_view_msg.
     IF lv_view_ok <> abap_true.
-      MESSAGE lv_view_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_view_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -25589,7 +25629,11 @@ FORM pick_import_history USING iv_scope TYPE csequence.
   DESCRIBE TABLE gt_script_def LINES lv_count.
 
   IF lv_sel_ok = abap_true.
-    MESSAGE |{ ls_head-tcode } { ls_head-profile_name } v{ ls_head-profile_ver }: { lv_sel_count } previously selected Template field(s) restored.| TYPE 'S'.
+    DATA(lv_zm741_25592_1) = |{ ls_head-tcode }|.
+    DATA(lv_zm741_25592_2) = |{ ls_head-profile_name }|.
+    DATA(lv_zm741_25592_3) = |{ ls_head-profile_ver }|.
+    DATA(lv_zm741_25592_4) = |{ lv_sel_count }|.
+    MESSAGE s741(zbdc) WITH lv_zm741_25592_1 lv_zm741_25592_2 lv_zm741_25592_3 lv_zm741_25592_4.
   ELSE.
     MESSAGE s319(zbdc)
       WITH ls_head-tcode ls_head-profile_name ls_head-profile_ver lv_count.
@@ -25884,7 +25928,6 @@ FORM shape_auto_source
         lv_indexed TYPE abap_bool,
         lv_out    TYPE string,
         lv_screen_source TYPE zbdc_mapping_bup-source_column,
-        lv_screen_found  TYPE abap_bool,
         lv_ddic_source   TYPE zbdc_mapping_bup-source_column,
         lv_ddic_tech     TYPE abap_bool,
         lv_range_source  TYPE zbdc_mapping_bup-source_column,
@@ -31805,11 +31848,8 @@ FORM confirm_actions
         ls_ui         TYPE ty_z669_ui,
         lt_popup      TYPE STANDARD TABLE OF ty_z669_popup,
         ls_popup      TYPE ty_z669_popup,
-        lt_pick_ref   TYPE STANDARD TABLE OF ty_z659_pick,
         ls_pick       TYPE ty_z659_pick,
-        ls_pick2      TYPE ty_z659_pick,
         ls_script     TYPE ty_script_def_compat,
-        ls_fv         TYPE field_vals,
         lt_fieldcat   TYPE slis_t_fieldcat_alv,
         ls_fieldcat   TYPE slis_fieldcat_alv,
         ls_selfield   TYPE slis_selfield,
@@ -31817,7 +31857,6 @@ FORM confirm_actions
         lv_loaded     TYPE abap_bool,
         lv_exact      TYPE zbdc_mapping_bup-bdc_field,
         lv_key        TYPE zbdc_mapping_bup-bdc_field,
-        lv_gkey       TYPE zbdc_mapping_bup-bdc_field,
         lv_source     TYPE zbdc_mapping_bup-source_column,
         lv_origin     TYPE c LENGTH 20,
         lv_confirm_origin TYPE c LENGTH 20,
@@ -31835,34 +31874,19 @@ FORM confirm_actions
         lv_sub_dyn    TYPE d020s-dnum,
         lv_sub_len    TYPE i,
         lv_context    TYPE string,
-        lv_total      TYPE i,
         lv_selected   TYPE i,
         lv_indexed    TYPE abap_bool,
         lv_param      TYPE string,
         lv_idx        TYPE string,
         lv_dup_count  TYPE i,
-        lv_screen_raw TYPE char80,
-        lv_screen_hit TYPE abap_bool,
-        lv_idx_txt    TYPE string,
-        lv_left       TYPE string,
-        lv_right      TYPE string,
-        lv_suffix     TYPE string,
         lv_name       TYPE zbdc_mapping_bup-source_column,
         lv_bound      TYPE abap_bool,
         lv_expected_n TYPE i,
         lv_candidate_n TYPE i,
         lv_sample_found TYPE abap_bool,
-        lv_sample_cursor TYPE abap_bool,
         lv_sample_value TYPE string,
         lv_ui_key       TYPE zbdc_mapping_bup-bdc_field,
         lv_ui_key2      TYPE zbdc_mapping_bup-bdc_field,
-        lv_ui_count     TYPE i,
-        lv_suffix_no    TYPE i,
-        lv_suffix_txt   TYPE string,
-        lv_ddic_hit     TYPE abap_bool,
-        lv_ddic_name    TYPE zbdc_mapping_bup-source_column,
-        lv_gui_dup_raw  TYPE char80,
-        lv_gui_dup_hit  TYPE abap_bool,
         lv_piece        TYPE string,
         lv_join         TYPE string,
         lv_group_count  TYPE i,
@@ -31877,31 +31901,15 @@ FORM confirm_actions
         lv_fresh_import  TYPE abap_bool,
         lv_import_ai_ok  TYPE abap_bool,
         lv_import_ai_msg TYPE string,
-        lv_import_ai_fallback TYPE zbdc_mapping_bup-source_column,
-        ls_import_ai_name TYPE ty_z684_name_cert,
-        lt_import_ai_names LIKE gt_z684_names,
-        lv_runtime_raw   TYPE char80,
-        lv_runtime_hit   TYPE abap_bool,
         lv_import_live_ok TYPE abap_bool,
         lv_import_live_msg TYPE string,
         lv_import_tcode TYPE sy-tcode,
-        lv_leaf_name TYPE zbdc_mapping_bup-source_column,
-        lv_leaf_ok TYPE abap_bool,
-        lv_ddic_peer_name TYPE zbdc_mapping_bup-source_column,
-        lv_ddic_peer_ok TYPE abap_bool,
         lv_ddic_desc TYPE char80,
         lv_ddic_type TYPE char20,
         lv_ddic_len TYPE i,
         lv_ddic_meta_ok TYPE abap_bool,
         lv_ddic_label TYPE char80,
         lv_ddic_label_ok TYPE abap_bool,
-        lv_last_screen TYPE char60,
-        lv_screen_key TYPE char60,
-        lv_screen_prog TYPE char40,
-        lv_screen_dyn TYPE char10,
-        lv_screen_title TYPE char60,
-        lv_screen_desc TYPE char80,
-        lv_screen_desc_ok TYPE abap_bool,
         lv_popup_rc TYPE sy-subrc,
         lt_guided_actions TYPE ty_t_z920_gui_action,
         ls_guided_action  TYPE ty_z920_gui_action,
@@ -31909,9 +31917,7 @@ FORM confirm_actions
         lv_guided_ledger_ok TYPE abap_bool,
         lv_guided_ledger_msg TYPE string.
 
-  DATA: lt_groups TYPE SORTED TABLE OF zbdc_mapping_bup-bdc_field
-                  WITH UNIQUE KEY table_line,
-        lt_expected TYPE SORTED TABLE OF zbdc_mapping_bup-bdc_field
+  DATA: lt_expected TYPE SORTED TABLE OF zbdc_mapping_bup-bdc_field
                     WITH UNIQUE KEY table_line,
         lt_candidate TYPE SORTED TABLE OF zbdc_mapping_bup-bdc_field
                      WITH UNIQUE KEY table_line,
@@ -34467,7 +34473,6 @@ FORM filter_map_user_ev
         ls_guide     TYPE ty_map_meta,
         ls_map       TYPE zbdc_mapping_bup,
         ls_ctx       TYPE zbdc_mapping_bup,
-        lv_ok        TYPE abap_bool,
         lv_role      TYPE string,
         lv_reason    TYPE string,
         lv_script_id TYPE zbdc_script_bup-script_id,
@@ -34595,8 +34600,6 @@ FORM build_evid_map_view
         lv_dropped     TYPE i,
         lv_expected_dynamic TYPE i,
         lv_slot        TYPE zbdc_mapping_bup-staging_field,
-        lv_suffix_no   TYPE i,
-        lv_suffix_txt  TYPE string,
         lv_base_source TYPE zbdc_mapping_bup-source_column,
         lv_action_key  TYPE zbdc_mapping_bup-bdc_field,
         lv_map_key     TYPE zbdc_mapping_bup-bdc_field,
@@ -34895,7 +34898,7 @@ FORM build_evid_map_view
   DESCRIBE TABLE gt_mapping_screen LINES lv_count.
   IF lv_count <= 1.
     REFRESH gt_mapping_screen.
-    cv_message = 'Canonical recording projection found no business Template field; replay-only rows were retained in the Script.'.
+    cv_message = 'No business input fields were found. Review the recording and Mapping.'.
     RETURN.
   ENDIF.
 
@@ -35019,15 +35022,11 @@ FORM build_evid_map_view
 
   cv_ok = abap_true.
   IF lv_origin = 'GUIDED_RECORD'.
-    cv_message =
-      |Auto Template Mapping loaded from exact-context user-input names + confirmed native actions | &&
-      |({ lv_dynamic } dynamic field(s), 0 ambiguous field(s), { lv_dropped } replay-only/technical row(s) excluded). Press Generate Template.|.
+    cv_message = |Mapping ready: { lv_dynamic } input field(s) found. Press Generate Template.|.
   ELSEIF lv_origin = 'SHDB_TXT' OR lv_origin = 'SHDB_PROGRAM'.
-    cv_message =
-      |Auto Template Mapping loaded from exact-context user-input names + confirmed imported SHDB actions | &&
-      |({ lv_dynamic } dynamic field(s), 0 ambiguous field(s), { lv_dropped } replay-only/technical row(s) excluded). Press Generate Template.|.
+    cv_message = |Mapping ready: { lv_dynamic } input field(s) found. Press Generate Template.|.
   ELSE.
-    cv_message = |Auto Template Mapping loaded from parameter/evidence projection ({ lv_dynamic } dynamic field(s), { lv_ambiguous } ambiguous field(s), { lv_dropped } replay-only/technical row(s) excluded). Press Generate Template.|.
+    cv_message = |Mapping found { lv_dynamic } input field(s); { lv_ambiguous } need review. Review Mapping before generating the template.|.
   ENDIF.
 ENDFORM.
 
@@ -35861,8 +35860,11 @@ FORM ask_gmail_recipient
   PERFORM get_gmail_default_to CHANGING cv_email.
 
   CLEAR ls_sval.
-  ls_sval-tabname   = 'ZBDC_CONFIG_BUP'.
-  ls_sval-fieldname = 'CONFIG_VALUE'.
+  "Use SAP's standard e-mail address DDIC field for the popup so SAP does not
+  "uppercase the address during PAI. Keep the user-entered e-mail text exactly
+  "as typed, except for the existing surrounding-space cleanup below.
+  ls_sval-tabname   = 'ADR6'.
+  ls_sval-fieldname = 'SMTP_ADDR'.
   ls_sval-fieldtext = 'Recipient email'.
   ls_sval-value     = cv_email.
   APPEND ls_sval TO lt_sval.
@@ -36398,11 +36400,13 @@ FORM send_gmail_form_request
 
   IF lv_send_rc <> 0.
     lo_client->close( ).
-    lv_error_message =
-      |n8n Gmail request send failed (RC { lv_send_rc }).|.
+    DATA(lv_zm879_36404_1) = |{ lv_send_rc }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '879'
+      WITH lv_zm879_36404_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
@@ -36412,11 +36416,13 @@ FORM send_gmail_form_request
 
   IF lv_receive_rc <> 0.
     lo_client->close( ).
-    lv_error_message =
-      |n8n Gmail response receive failed (RC { lv_receive_rc }).|.
+    DATA(lv_zm880_36418_1) = |{ lv_receive_rc }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '880'
+      WITH lv_zm880_36418_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
@@ -36438,6 +36444,39 @@ FORM send_gmail_form_request
     CATCH cx_root INTO DATA(lx_json).
       lv_json_error = lx_json->get_text( ).
   ENDTRY.
+
+  IF lv_json_error IS INITIAL.
+    TRANSLATE ls_response-status TO UPPER CASE.
+  ENDIF.
+
+  "16L: a Gmail bounce is an asynchronous delivery result, not a transport
+  "failure. n8n returns INVALID_RECIPIENT with a non-2xx HTTP status so that
+  "SAP must surface the recipient error immediately instead of reporting the
+  "earlier Gmail API acceptance as success.
+  IF lv_json_error IS INITIAL
+     AND ls_response-status = 'INVALID_RECIPIENT'.
+    lv_error_message = ls_response-message.
+    IF lv_error_message IS INITIAL.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '881' INTO lv_error_message.
+    ENDIF.
+    IF strlen( lv_error_message ) > 180.
+      lv_error_message = lv_error_message(180).
+    ENDIF.
+
+    lv_audit_message =
+      |GMAIL_FORM;REQUEST={ lv_request_id };STATUS=INVALID_RECIPIENT;| &&
+      |HTTP={ lv_http_code };ERROR={ ls_response-error_code };| &&
+      |TO={ lv_recipient };MESSAGE={ lv_error_message }|.
+
+    PERFORM log_gmail_delivery
+      USING lv_request_id iv_tcode 'E'
+            'INVALID_RECIPIENT' lv_audit_message.
+
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    CLEAR: lv_header_value, lv_form_token.
+    RETURN.
+  ENDIF.
 
   IF lv_http_code < 200 OR lv_http_code >= 300.
     lv_error_message = ls_response-message.
@@ -36466,11 +36505,13 @@ FORM send_gmail_form_request
   ENDIF.
 
   IF lv_json_error IS NOT INITIAL.
-    lv_error_message =
-      |Invalid JSON from n8n Gmail workflow: { lv_json_error }|.
+    DATA(lv_zm882_36505_1) = |{ lv_json_error }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '882'
+      WITH lv_zm882_36505_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
@@ -36481,8 +36522,7 @@ FORM send_gmail_form_request
       lv_error_message = ls_response-error_code.
     ENDIF.
     IF lv_error_message IS INITIAL.
-      lv_error_message =
-        'n8n returned ok=false without an error message'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '883' INTO lv_error_message.
     ENDIF.
     IF strlen( lv_error_message ) > 180.
       lv_error_message = lv_error_message(180).
@@ -36490,39 +36530,49 @@ FORM send_gmail_form_request
 
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   IF ls_response-request_id <> lv_request_id.
-    lv_error_message =
-      |Gmail response requestId mismatch: { lv_request_id }.|.
+    DATA(lv_zm884_36535_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '884'
+      WITH lv_zm884_36535_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   IF ls_response-action <> lv_action.
-    lv_error_message =
-      |Gmail response action mismatch: { lv_request_id }.|.
+    DATA(lv_zm885_36545_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '885'
+      WITH lv_zm885_36545_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
-  TRANSLATE ls_response-status TO UPPER CASE.
-
-  IF ls_response-status <> 'EMAIL_SENT'.
-    lv_error_message =
-      |Gmail workflow returned status { ls_response-status } instead of EMAIL_SENT.|.
+  "The Gmail API accepting a send request is not proof that the mailbox
+  "exists. The n8n contract therefore returns DELIVERY_PENDING when no bounce
+  "was detected in the verification window. RECIPIENT_CONFIRMED is reserved
+  "for a future stronger proof (for example, recipient form interaction).
+  IF ls_response-status <> 'DELIVERY_PENDING'
+     AND ls_response-status <> 'RECIPIENT_CONFIRMED'.
+    DATA(lv_zm886_36560_1) = |{ ls_response-status }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '886'
+      WITH lv_zm886_36560_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
@@ -36530,61 +36580,85 @@ FORM send_gmail_form_request
   IF ls_response-form_url IS INITIAL
   OR ( ls_response-provider_message_id IS INITIAL
        AND ls_response-thread_id IS INITIAL ).
-    lv_error_message =
-      |Gmail response is missing form URL and provider identifiers ({ lv_request_id }).|.
+    DATA(lv_zm887_36572_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '887'
+      WITH lv_zm887_36572_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   IF ls_response-recipient-email IS NOT INITIAL
   AND ls_response-recipient-email <> lv_recipient.
-    lv_error_message =
-      |Gmail response recipient mismatch ({ lv_request_id }).|.
+    DATA(lv_zm888_36583_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '888'
+      WITH lv_zm888_36583_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   IF ls_response-contract-tcode IS NOT INITIAL
   AND ls_response-contract-tcode <> iv_tcode.
-    lv_error_message =
-      |Gmail response TCODE mismatch ({ lv_request_id }).|.
+    DATA(lv_zm889_36594_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '889'
+      WITH lv_zm889_36594_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   IF ls_response-schema-field_count > 0
   AND ls_response-schema-field_count <> lv_field_count.
-    lv_error_message =
-      |Gmail response schema field count mismatch ({ lv_request_id }).|.
+    DATA(lv_zm890_36605_1) = |{ lv_request_id }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '890'
+      WITH lv_zm890_36605_1 INTO lv_error_message.
     PERFORM log_gmail_delivery
       USING lv_request_id iv_tcode 'E' 'ERROR' lv_error_message.
-    MESSAGE lv_error_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_error_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     CLEAR: lv_header_value, lv_form_token.
     RETURN.
   ENDIF.
 
   lv_audit_message =
-    |GMAIL_FORM;REQUEST={ lv_request_id };STATUS=EMAIL_SENT;| &&
+    |GMAIL_FORM;REQUEST={ lv_request_id };STATUS={ ls_response-status };| &&
     |MAIL_ID={ ls_response-provider_message_id };| &&
     |THREAD_ID={ ls_response-thread_id };TO={ lv_recipient };| &&
     |FIELDS={ lv_field_count };REQUIRED={ lv_required_count }|.
 
-  PERFORM log_gmail_delivery
-    USING lv_request_id iv_tcode 'S' 'EMAIL_SENT' lv_audit_message.
+  IF ls_response-status = 'RECIPIENT_CONFIRMED'.
+    PERFORM log_gmail_delivery
+      USING lv_request_id iv_tcode 'S'
+            'RECIPIENT_CONFIRMED' lv_audit_message.
 
-  cv_ok = abap_true.
+    cv_ok = abap_true.
 
-  MESSAGE s341(zbdc)
-    WITH lv_request_id lv_field_count.
+    DATA(lv_zm742_36627_1) = |{ lv_recipient }|.
+    DATA(lv_zm742_36627_2) = |{ lv_request_id }|.
+    MESSAGE s742(zbdc) WITH lv_zm742_36627_1 lv_zm742_36627_2.
+  ELSE.
+    "No rejection was found in the verification window. Show the normal SAP
+    "success color (green) while keeping DELIVERY_PENDING as the technical
+    "status so we do not falsely claim confirmed delivery.
+    PERFORM log_gmail_delivery
+      USING lv_request_id iv_tcode 'S'
+            'DELIVERY_PENDING' lv_audit_message.
+
+    cv_ok = abap_true.
+
+    DATA(lv_zm743_36640_1) = |{ lv_recipient }|.
+    MESSAGE s743(zbdc) WITH lv_zm743_36640_1.
+  ENDIF.
 
  "Remove sensitive values from local memory after the HTTP round trip.
   CLEAR: lv_header_value, lv_form_token.

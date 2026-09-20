@@ -24,8 +24,7 @@ MODULE status_0100 OUTPUT.
            tcode TYPE char20,
          END OF ty_0100_tcode_dist.
 
-  DATA: lt_excl_0100      TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY,
-        lt_kpi_stg        TYPE STANDARD TABLE OF ty_0100_kpi_stg WITH DEFAULT KEY,
+  DATA: lt_kpi_stg        TYPE STANDARD TABLE OF ty_0100_kpi_stg WITH DEFAULT KEY,
         lt_sess_stg       TYPE STANDARD TABLE OF zbdc_staging_bup,
         lt_sess_res       TYPE STANDARD TABLE OF zbdc_result_bup,
         lt_ingested_sids  TYPE SORTED TABLE OF ty_kpi_sid_0100
@@ -55,37 +54,9 @@ MODULE status_0100 OUTPUT.
 
   FIELD-SYMBOLS <ls_group_0100> TYPE ty_kpi_group_0100.
 
- "Main Dashboard keeps only Upload Excel and Result Investigation
- "from the custom navigation strip. Backend screens and flows remain intact;
- "they are still reached from their proper workflow boundaries.
-  REFRESH lt_excl_0100.
-  APPEND 'GT01'          TO lt_excl_0100. "Source Config on delivered status
-  APPEND 'GT02'          TO lt_excl_0100.
-  APPEND 'SOURCE'        TO lt_excl_0100.
-  APPEND 'SRCFG'         TO lt_excl_0100.
-  APPEND 'CONFIG'        TO lt_excl_0100.
-  APPEND 'FC_SOURCE'     TO lt_excl_0100.
-  APPEND 'GT04'          TO lt_excl_0100. "Staging
-  APPEND 'STAGING'       TO lt_excl_0100.
-  APPEND 'FC_GOTO_0400'  TO lt_excl_0100.
-  APPEND 'GT05'          TO lt_excl_0100. "Execution Monitor
-  APPEND 'EXECUTE'       TO lt_excl_0100.
-  APPEND 'EXEC'          TO lt_excl_0100.
-  APPEND 'FC_GOTO_0500'  TO lt_excl_0100.
-  APPEND 'GT35'          TO lt_excl_0100. "Mapping Config on legacy/current status
-  APPEND 'MAP'           TO lt_excl_0100.
-  APPEND 'MAPPING'       TO lt_excl_0100.
-  APPEND 'FC_GOTO_0350'  TO lt_excl_0100.
-  APPEND 'GT08'          TO lt_excl_0100. "Recording/Mapping alias on some builds
-  APPEND 'SHDB'          TO lt_excl_0100.
-  APPEND 'SCRIPT'        TO lt_excl_0100.
-  APPEND 'FC_GOTO_0800'  TO lt_excl_0100.
-  APPEND 'GT75'          TO lt_excl_0100. "retired history/KB
-  APPEND 'KBAS'          TO lt_excl_0100.
-  APPEND 'KNOWLEDGE'     TO lt_excl_0100.
-  APPEND 'FC_GOTO_0750'  TO lt_excl_0100.
-
-  SET PF-STATUS 'STATUS_0100' EXCLUDING lt_excl_0100.
+ "STATUS_0100 is maintained physically with only the current visible actions:
+ "Upload Excel and Result Investigation. No retired FCODE is hidden in code.
+  SET PF-STATUS 'STATUS_0100'.
   SET TITLEBAR  'TITLE_0100'.
 
  "one canonical, all-time dashboard snapshot.
@@ -933,7 +904,8 @@ MODULE status_0100 OUTPUT.
       CREATE OBJECT go_alv_events.
       SET HANDLER go_alv_events->on_double_click FOR lo_events.
       CATCH cx_salv_msg INTO DATA(lx_salv_0100).
-        MESSAGE lx_salv_0100->get_text( ) TYPE 'I'.
+        gv_ui_message = 'Dashboard could not be displayed. Refresh and try again.'.
+        MESSAGE gv_ui_message TYPE 'I'.
     ENDTRY.
   ENDIF.
 
@@ -942,8 +914,7 @@ MODULE status_0100 OUTPUT.
 ENDMODULE.
 
 MODULE status_0300 OUTPUT.
-  DATA: lt_excl_0300       TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY,
-        lv_clean_path_0300 TYPE string,
+  DATA: lv_clean_path_0300 TYPE string,
         lv_sheet_meta_0300 TYPE string,
         lv_policy_ok_0300  TYPE abap_bool,
         lv_policy_msg_0300 TYPE string.
@@ -964,22 +935,14 @@ MODULE status_0300 OUTPUT.
   PERFORM check_runtime_policy
     CHANGING lv_policy_ok_0300 lv_policy_msg_0300.
   IF lv_policy_ok_0300 <> abap_true.
-    MESSAGE lv_policy_msg_0300 TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_policy_msg_0300 CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDIF.
   PERFORM render_runtime_policy.
 
- "V17.9.3.4 UI cleanup: template download belongs to Mapping Config and
- "0300 already repaints its preview deterministically, so the two redundant
- "toolbar buttons are hidden without deleting their backend helpers.
-  REFRESH lt_excl_0300.
-  APPEND 'FC_DL_TMPL'       TO lt_excl_0300.
-  APPEND 'DL_TMPL'          TO lt_excl_0300.
-  APPEND 'DOWNLOAD_TEMPLATE' TO lt_excl_0300.
-  APPEND 'REFR'             TO lt_excl_0300.
-  APPEND 'REFRESH'          TO lt_excl_0300.
-  APPEND 'FC_REFRESH'       TO lt_excl_0300.
-
-  SET PF-STATUS 'STATUS_0300' EXCLUDING lt_excl_0300.
+ "STATUS_0300 is maintained physically with only Staging and Save Note.
+ "Template/Refresh FCODEs are retired from the GUI status, not hidden here.
+  SET PF-STATUS 'STATUS_0300'.
   SET TITLEBAR  'TITLE_0300'.
 
   IF txtp_file_path CS '|SHEET='.
@@ -989,10 +952,9 @@ MODULE status_0300 OUTPUT.
   ENDIF.
 
  "the visible tab body on 0300 is the 0301 custom control.
- "Older builds tried to route Preview Files into dynpro 0302/SALV, but on
- "the delivered screen the user still sees the old 0301 grid. Keep one
- "visible body and switch the data projection by TS_PREVIEW-ACTIVETAB only.
-  g_sub_dynpro = '0301'.
+ "Preview Data and Preview Files share the delivered 0301 custom-control body.
+ "Switch only the data projection by TS_PREVIEW-ACTIVETAB; no alternate
+ "Preview Files dynpro is used by the active 0300 flow.
   IF ts_preview-activetab = 'TAB_FILES' OR ts_preview-activetab = 'TAB_FILE'.
     ts_preview-activetab = 'TAB_FILES'.
   ELSE.
@@ -1188,8 +1150,6 @@ MODULE status_0301 OUTPUT.
         i_soft_refresh = abap_false.
     CALL METHOD go_alv_0301->set_toolbar_interactive.
   ENDIF.
-
-  CLEAR gv_rebuild_0301.
   CALL METHOD cl_gui_cfw=>flush
     EXCEPTIONS
       cntl_system_error = 1
@@ -1197,309 +1157,18 @@ MODULE status_0301 OUTPUT.
       OTHERS            = 3.
 ENDMODULE.
 
-MODULE status_0302 OUTPUT.
-  DATA lv_file_header TYPE lvc_title.
-  IF gt_staging IS NOT INITIAL.
-    PERFORM apply_first_staging_ctx.
-  ENDIF.
-
- "Preview Files is a read-only projection. Reusing the existing SALV control
- "avoids the visible spin/flicker caused by FREE+CREATE on every tab repaint.
-  IF go_grid_0302 IS BOUND.
-    TRY.
-        DATA(lo_file_funcs_b) = go_grid_0302->get_functions( ).
-        lo_file_funcs_b->set_all( abap_false ).
-        TRY.
-            lo_file_funcs_b->add_function(
-              name     = 'ZMYFILES'
-              text     = 'My Uploads'
-              tooltip  = 'Show files uploaded by the current SAP user'
-              position = if_salv_c_function_position=>left_of_salv_functions ).
-          CATCH cx_root.
-        ENDTRY.
-        TRY.
-            lo_file_funcs_b->add_function(
-              name     = 'ZALLFILES'
-              text     = 'All Uploads'
-              tooltip  = 'Show recent upload/source history from all users'
-              position = if_salv_c_function_position=>left_of_salv_functions ).
-          CATCH cx_root.
-        ENDTRY.
-      CATCH cx_root.
-    ENDTRY.
-    PERFORM refresh_0302_scope.
-    TRY.
-        go_grid_0302->display( ).
-      CATCH cx_root.
-    ENDTRY.
-    RETURN.
-  ENDIF.
-
- "Preview Files is upload/source history, not the old error tab.
- "Do not call an error-only filter here; it can leave the file history empty
- "and it is not part of the 0302 responsibility.
-
- "screen 0300 has one visible tab-body custom control. Rendering
- "Preview Files into a non-existing/hidden CC_FILES_CONTAINER leaves the
- "old Preview Data grid visible even though GT_FILES_PREVIEW is filled.
- "0302 must therefore reuse the same visible body container after the
- "0301 grid is freed by the tab command boundary.
-  IF go_container_0302 IS INITIAL.
-    CREATE OBJECT go_container_0302
-      EXPORTING container_name = 'CC_PREVIEW_CONTAINER'.
-  ENDIF.
-
-  TRY.
-      cl_salv_table=>factory(
-        EXPORTING r_container  = go_container_0302
-        IMPORTING r_salv_table = go_grid_0302
-        CHANGING  t_table      = gt_files_preview ).
-      DATA(lo_file_funcs) = go_grid_0302->get_functions( ).
-      lo_file_funcs->set_all( abap_false ).
-      TRY.
- "keep My/All Upload controls visible on the Preview Files
- "ALV toolbar. The same function codes are also handled in 0300 PAI,
- "so the screen stays stable across SAP GUI/SALV variants.
-          lo_file_funcs->add_function(
-            name     = 'ZMYFILES'
-            text     = 'My Uploads'
-            tooltip  = 'Show files uploaded by the current SAP user'
-            position = if_salv_c_function_position=>left_of_salv_functions ).
-          lo_file_funcs->add_function(
-            name     = 'ZALLFILES'
-            text     = 'All Uploads'
-            tooltip  = 'Show recent upload/source history from all users'
-            position = if_salv_c_function_position=>left_of_salv_functions ).
-        CATCH cx_root.
-      ENDTRY.
-
-      go_grid_0302->get_selections( )->set_selection_mode( if_salv_c_selection_mode=>row_column ).
-
-      TRY.
-          DATA(lo_file_disp) = go_grid_0302->get_display_settings( ).
-          lo_file_disp->set_striped_pattern( abap_true ).
-          IF gv_file_scope = gc_file_scope_all.
-            lv_file_header = |All Uploads ({ lines( gt_files_preview ) }) - double-click a file to preview its data|.
-          ELSE.
-            lv_file_header = |My Uploads ({ lines( gt_files_preview ) }) - double-click a file to preview its data|.
-          ENDIF.
-          lo_file_disp->set_list_header( lv_file_header ).
-        CATCH cx_root.
-      ENDTRY.
-
-      DATA(lo_file_events) = go_grid_0302->get_event( ).
-      CREATE OBJECT go_alv_file_events.
-      SET HANDLER go_alv_file_events->on_file_double_click FOR lo_file_events.
-      SET HANDLER go_alv_file_events->on_file_function FOR lo_file_events.
-
-    CATCH cx_salv_msg INTO DATA(lx2).
-      MESSAGE lx2->get_text( ) TYPE 'I'.
-  ENDTRY.
-
-  IF go_grid_0302 IS BOUND.
-    TRY.
-        DATA(lo_columns) = go_grid_0302->get_columns( ).
-        DATA(lo_col_file) = lo_columns->get_column( 'STATUS_ICON' ).
-        lo_columns->set_optimize( abap_true ).
-
- "Hide raw technical/audit fields. They are still available in the row
- "for double-click loading and still persisted in ZBDC_FILE_LG_BUP.
-        TRY. lo_columns->get_column( 'FILE_NAME' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'FILE_SIZE' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'CHANNEL' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'UPLOAD_DATE' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'UPLOAD_TIME' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'USERNAME' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'SESSION_ID' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'RAW_STATUS' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'RAW_ERROR' )->set_visible( abap_true ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'DATA_UNIT' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
- "Upload outcome is part of Preview Files: accepted/rejected Ingest attempts
- "must remain visible with a status and exact rejection reason.
-        TRY. lo_columns->get_column( 'STATUS_ICON' )->set_visible( abap_true ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'STATUS_TEXT' )->set_visible( abap_true ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'NEXT_ACTION' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'BATCH_KEY' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-        TRY. lo_columns->get_column( 'SHEET_NAME' )->set_visible( abap_false ). CATCH cx_salv_not_found. ENDTRY.
-
-        DATA(lv_has_sheet_0302) = abap_false.
-        LOOP AT gt_files_preview INTO DATA(ls_sheet_0302).
-          IF ls_sheet_0302-sheet_name IS NOT INITIAL AND ls_sheet_0302-sheet_name <> 'DATA'.
-            lv_has_sheet_0302 = abap_true.
-            EXIT.
-          ENDIF.
-        ENDLOOP.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'STATUS_ICON' ).
-            lo_col_file->set_short_text( 'Status' ).
-            lo_col_file->set_medium_text( 'Status' ).
-            lo_col_file->set_long_text( 'File Status' ).
-            lo_col_file->set_output_length( 6 ).
-            lo_columns->set_column_position( columnname = 'STATUS_ICON' position = 6 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'BATCH_KEY' ).
-            lo_col_file->set_short_text( 'Batch' ).
-            lo_col_file->set_medium_text( 'Batch' ).
-            lo_col_file->set_long_text( 'Ingestion Batch' ).
-            lo_col_file->set_output_length( 18 ).
-            lo_columns->set_column_position( columnname = 'BATCH_KEY' position = 2 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'FILE_TITLE' ).
-            lo_col_file->set_short_text( 'File' ).
-            lo_col_file->set_medium_text( 'File Name' ).
-            lo_col_file->set_long_text( 'File Name' ).
-            lo_col_file->set_output_length( 40 ).
-            lo_columns->set_column_position( columnname = 'FILE_TITLE' position = 1 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'SHEET_NAME' ).
- "Preview Files hides worksheet internals. The visible
- "history grid already shows file/source and transaction; keeping
- "a mostly blank Sheet column confused CSV and single-sheet users.
-            lo_col_file->set_visible( abap_false ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'TX_CODE' ).
-            lo_col_file->set_short_text( 'TCode' ).
-            lo_col_file->set_medium_text( 'Transaction' ).
-            lo_col_file->set_long_text( 'Transaction' ).
-            lo_col_file->set_output_length( 12 ).
-            lo_columns->set_column_position( columnname = 'TX_CODE' position = 2 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'SOURCE_TEXT' ).
-            lo_col_file->set_short_text( 'Source' ).
-            lo_col_file->set_medium_text( 'Uploaded From' ).
-            lo_col_file->set_long_text( 'Uploaded From' ).
-            lo_col_file->set_output_length( 18 ).
-            lo_columns->set_column_position( columnname = 'SOURCE_TEXT' position = 4 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'ROWS_LOADED' ).
-            lo_col_file->set_short_text( 'Records' ).
-            lo_col_file->set_medium_text( 'Records' ).
-            lo_col_file->set_long_text( 'Records' ).
-            lo_col_file->set_output_length( 10 ).
-            lo_columns->set_column_position( columnname = 'ROWS_LOADED' position = 3 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'PROCESSED_ON' ).
-            lo_col_file->set_short_text( 'Time' ).
-            lo_col_file->set_medium_text( 'Uploaded At' ).
-            lo_col_file->set_long_text( 'Uploaded At' ).
-            lo_col_file->set_output_length( 19 ).
-            lo_columns->set_column_position( columnname = 'PROCESSED_ON' position = 5 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'OWNER' ).
-            lo_col_file->set_short_text( 'User' ).
-            lo_col_file->set_medium_text( 'Uploaded By' ).
-            lo_col_file->set_long_text( 'Uploaded By' ).
-            lo_col_file->set_output_length( 12 ).
-            IF gv_file_scope = gc_file_scope_my.
-              lo_col_file->set_visible( abap_false ).
-            ELSE.
-              lo_col_file->set_visible( abap_true ).
-            ENDIF.
-            lo_columns->set_column_position( columnname = 'OWNER' position = 9 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'STATUS_TEXT' ).
-            lo_col_file->set_short_text( 'Life' ).
-            lo_col_file->set_medium_text( 'Lifecycle' ).
-            lo_col_file->set_long_text( 'File Lifecycle Status' ).
-            lo_col_file->set_output_length( 12 ).
-            lo_col_file->set_visible( abap_true ).
-            lo_columns->set_column_position( columnname = 'STATUS_TEXT' position = 7 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'RAW_ERROR' ).
-            lo_col_file->set_short_text( 'Reason' ).
-            lo_col_file->set_medium_text( 'Result / Reason' ).
-            lo_col_file->set_long_text( 'Upload Result / Rejection Reason' ).
-            lo_col_file->set_output_length( 42 ).
-            lo_col_file->set_visible( abap_true ).
-            lo_columns->set_column_position( columnname = 'RAW_ERROR' position = 8 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-        TRY.
-            lo_col_file = lo_columns->get_column( 'NEXT_ACTION' ).
-            lo_col_file->set_short_text( 'Action' ).
-            lo_col_file->set_medium_text( 'Next Action' ).
-            lo_col_file->set_long_text( 'Recommended Next Action' ).
-            lo_col_file->set_output_length( 32 ).
-            lo_columns->set_column_position( columnname = 'NEXT_ACTION' position = 11 ).
-          CATCH cx_salv_not_found.
-        ENDTRY.
-
-      CATCH cx_salv_not_found.
-    ENDTRY.
-
-    go_grid_0302->refresh( refresh_mode = if_salv_c_refresh=>full ).
-    go_grid_0302->display( ).
-  ENDIF.
-ENDMODULE.
 
 MODULE status_0400 OUTPUT.
   DATA lt_excl_0400 TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY.
 
- "UI cleanup: Source Config and Refresh are retired from screen 0400.
- "Execution actions are also hidden while the real detail editor owns 0400;
- "this prevents entering 0500 with an unfinished edit transaction.
-  APPEND 'GT02'          TO lt_excl_0400.
-  APPEND 'FC_GOTO_0200' TO lt_excl_0400.
-  APPEND 'CONFIG'        TO lt_excl_0400.
-  APPEND 'CFG'           TO lt_excl_0400.
-  APPEND 'REFR'          TO lt_excl_0400.
-  APPEND 'REFRESH'       TO lt_excl_0400.
-  APPEND 'FC_REFRESH'    TO lt_excl_0400.
-
- "Cockpit GUI-status contract:
- "  EXAL = Run All, EXSL = Run Selected, GT06 = Result Dashboard,
- "  GT05 = Execution Monitor. These actions stay visible in COCKPIT.
- "Only the real DETAIL editor hides execution actions so unsaved staging
- "cannot be executed. A stale GV_0400_EDIT_MODE must never hide cockpit
- "buttons while GV_0400_VIEW already says COCKPIT.
+ "STATUS_0400 physically contains only the current cockpit actions:
+ "EXAL Run All, EXSL Run Selected, GT06 Result Dashboard, GT05 Execution Monitor.
+ "Only those real actions are context-hidden while the detail editor owns 0400.
   IF gv_0400_view = gc_view_detail.
     gv_0400_edit_mode = 'X'.
-    APPEND 'EXAL'             TO lt_excl_0400.
-    APPEND 'RUN_ALL'          TO lt_excl_0400.
-    APPEND 'RUNALL'           TO lt_excl_0400.
-    APPEND 'EXEC_ALL'         TO lt_excl_0400.
-    APPEND 'EXECUTE_ALL'      TO lt_excl_0400.
-    APPEND 'EXSL'             TO lt_excl_0400.
-    APPEND 'RUN_SEL'          TO lt_excl_0400.
-    APPEND 'RUN_SELECTED'     TO lt_excl_0400.
-    APPEND 'EXEC_SELECTED'    TO lt_excl_0400.
-    APPEND 'GT05'             TO lt_excl_0400.
-    APPEND 'MONITOR'          TO lt_excl_0400.
-    APPEND 'EXEC_LOG'         TO lt_excl_0400.
-    APPEND 'EXECUTION_LOG'    TO lt_excl_0400.
-    APPEND 'FC_GOTO_0500'     TO lt_excl_0400.
+    APPEND 'EXAL' TO lt_excl_0400.
+    APPEND 'EXSL' TO lt_excl_0400.
+    APPEND 'GT05' TO lt_excl_0400.
   ELSE.
     CLEAR gv_0400_edit_mode.
   ENDIF.
@@ -1518,7 +1187,11 @@ MODULE status_0400 OUTPUT.
     PERFORM free_0500_queue.
   ENDIF.
 
-  SET PF-STATUS 'STATUS_0400' EXCLUDING lt_excl_0400.
+  IF lt_excl_0400 IS INITIAL.
+    SET PF-STATUS 'STATUS_0400'.
+  ELSE.
+    SET PF-STATUS 'STATUS_0400' EXCLUDING lt_excl_0400.
+  ENDIF.
   SET TITLEBAR  'TITLE_0400'.
 
  "Session ID is a display/filter aid, never a mandatory dynpro input.
@@ -1547,7 +1220,8 @@ MODULE status_0400 OUTPUT.
     PERFORM repair_0400_context
       CHANGING lv_ctx_ok_0400 lv_ctx_msg_0400.
     IF lv_ctx_ok_0400 <> abap_true AND lv_ctx_msg_0400 IS NOT INITIAL.
-      MESSAGE lv_ctx_msg_0400 TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_ctx_msg_0400 CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDIF.
   ENDIF.
 
@@ -1876,8 +1550,7 @@ MODULE status_0350 OUTPUT.
 
  "0350 is a standalone Mapping Configuration screen.
  "0300 stays as Upload Center; 0350 handles only mapping profile maintenance.
-  DATA: lt_excl_0350    TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY,
-        lv_ro_0350      TYPE abap_bool,
+  DATA: lv_ro_0350      TYPE abap_bool,
         lv_msg_0350     TYPE string,
         lv_ctx_ok_0350  TYPE abap_bool,
         lv_ctx_msg_0350 TYPE string.
@@ -1917,16 +1590,9 @@ MODULE status_0350 OUTPUT.
     ENDIF.
   ENDIF.
 
- "UI_STATUS_CODE_FIX: hide stale PF-status buttons in code.
- "Refresh is redundant because PBO redraws the exact Mapping context.
- "Activate is retired; Generate Template is the only productive lifecycle
- "action kept on this screen besides standard navigation.
-  APPEND 'REFR'       TO lt_excl_0350.
-  APPEND 'REFRESH'    TO lt_excl_0350.
-  APPEND 'FC_REFRESH' TO lt_excl_0350.
-  APPEND 'ACTIVATE'   TO lt_excl_0350.
-
-  SET PF-STATUS 'STATUS_0350' EXCLUDING lt_excl_0350.
+ "STATUS_0350 is maintained physically with only Generate Template.
+ "Retired Refresh/Activate actions are not hidden in source.
+  SET PF-STATUS 'STATUS_0350'.
 
   PERFORM display_mapping_screen.
 
@@ -1948,33 +1614,17 @@ MODULE status_0350 OUTPUT.
  "errors remain visible, while Generate Template PAI messages are not
  "overwritten by the following PBO repaint.
     IF lv_msg_0350 NP 'Auto Template Mapping is ready*'.
-      MESSAGE lv_msg_0350 TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING lv_msg_0350 CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ENDIF.
   ENDIF.
 
 ENDMODULE.
 
 MODULE status_0500 OUTPUT.
-  DATA lt_excl_0500 TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY.
 
- "UI cleanup: the four SE41 application-toolbar actions are duplicates of
- "the state-aware ALV actions below. Hide only the PF-STATUS copies; the
- "ALV Execute/Create-SM35/SM35-Monitor actions remain fully functional.
-  APPEND 'REFR'                 TO lt_excl_0500.
-  APPEND 'REFRESH'              TO lt_excl_0500.
-  APPEND 'FC_REFRESH'           TO lt_excl_0500.
-  APPEND gc_ucomm_refresh_0500  TO lt_excl_0500.
-  APPEND 'RUN'                  TO lt_excl_0500.
-  APPEND 'EXEC'                 TO lt_excl_0500.
-  APPEND 'EXECUTE'              TO lt_excl_0500.
-  APPEND gc_ucomm_run_0500      TO lt_excl_0500.
-  APPEND 'BISM_RUN'             TO lt_excl_0500.
-  APPEND 'RUN_BATCH'            TO lt_excl_0500.
-  APPEND gc_ucomm_create_sm35   TO lt_excl_0500.
-  APPEND 'SM35'                 TO lt_excl_0500.
-  APPEND 'SM35_MON'             TO lt_excl_0500.
-  APPEND gc_ucomm_exec_sm35     TO lt_excl_0500.
-  APPEND gc_ucomm_open_sm35     TO lt_excl_0500.
+ "STATUS_0500 physically keeps only Dashboard on the PF-status.
+ "Execution/queue actions belong only to the state-aware ALV toolbar.
 
  "0500 is driven by ALV toolbar only.
  "For BDC mode A (All screens), SAP itself is the live progress UI,
@@ -1994,10 +1644,11 @@ MODULE status_0500 OUTPUT.
       CHANGING lv_pbo_policy_ok_0500 lv_pbo_policy_msg_0500.
   ENDIF.
   IF lv_pbo_policy_ok_0500 <> abap_true.
-    MESSAGE lv_pbo_policy_msg_0500 TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_pbo_policy_msg_0500 CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDIF.
 
-  SET PF-STATUS 'STATUS_0500' EXCLUDING lt_excl_0500.
+  SET PF-STATUS 'STATUS_0500'.
   SET TITLEBAR  'TITLE_0500'.
   gv_0500_active = abap_true.
   PERFORM 0500_pbo_sync.
@@ -2013,10 +1664,7 @@ MODULE status_0500 OUTPUT.
  "Old prototype options are permanently hidden. Engine selection is now
  "done by ALV actions: Run Batch Session and SM35 Monitor.
     IF screen-name = 'CHKP_STOP_ON_ERROR' OR
-       screen-name = 'CHKP_BACKGROUND' OR
-       screen-name = 'TXTP_PARALLEL_TASKS' OR
-       screen-name = 'P_PAR_TASKS' OR
-       screen-name = 'TXTGV_PAR_TASKS'.
+       screen-name = 'CHKP_BACKGROUND'.
       screen-active = '0'.
       screen-input  = '0'.
     ENDIF.
@@ -2057,29 +1705,10 @@ MODULE status_0560 OUTPUT.
 ENDMODULE.
 
 MODULE status_0650 OUTPUT.
-  DATA lt_excl_0650 TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY.
 
-  "Result Investigation keeps only the actions that belong to this workspace.
-  "COPY/Export Error are historical detail-screen actions and are deliberately
-  "disabled here; Error Detail/Fix Guide own their own export flows.
-  APPEND 'COPY'       TO lt_excl_0650.
-  APPEND 'CPY'        TO lt_excl_0650.
-  APPEND 'FC_EXP_ERR' TO lt_excl_0650.
-  APPEND 'EXPT'       TO lt_excl_0650.
-  APPEND 'EXPORT'     TO lt_excl_0650.
-
-  "0650 is live. Manual Refresh is redundant and Open SAP Object is no
-  "longer a toolbar action in this workspace.
-  APPEND 'REFL'        TO lt_excl_0650.
-  APPEND 'REFR'        TO lt_excl_0650.
-  APPEND 'REFRESH'     TO lt_excl_0650.
-  APPEND 'FC_REFRESH'  TO lt_excl_0650.
-  APPEND 'ME23'        TO lt_excl_0650.
-  APPEND 'DRILL'       TO lt_excl_0650.
-  APPEND 'OPENOBJ'     TO lt_excl_0650.
-  APPEND 'OPEN_OBJECT' TO lt_excl_0650.
-
-  SET PF-STATUS 'STATUS_0650' EXCLUDING lt_excl_0650.
+  "STATUS_0650 physically keeps only Analyze Error. Retired Copy/Export,
+  "manual Refresh and Open SAP Object actions are removed from the status.
+  SET PF-STATUS 'STATUS_0650'.
   SET TITLEBAR  'TITLE_0650'.
 
   "A no-change live tick performs no repaint at all; keep the user's current
@@ -2093,71 +1722,23 @@ MODULE status_0650 OUTPUT.
   PERFORM start_result_timer_0650.
 ENDMODULE.
 
-MODULE status_0651 OUTPUT.
-  "Legacy screen only. The rebuilt 0650 no longer CALL SUBSCREEN 0651.
-ENDMODULE.
-
 MODULE status_0700 OUTPUT.
 
-  DATA lt_excl_0700 TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY.
-
-  "Rule diagnosis is automatic on entry. Screen 0700 has no external-AI,
-  "history/KB, export, or script action. Exclude legacy function codes so an
-  "older STATUS_0700 cannot expose retired actions.
-  APPEND 'DIAG'         TO lt_excl_0700.
-  APPEND 'ANALYZE'      TO lt_excl_0700.
-  APPEND 'RULE'         TO lt_excl_0700.
-  APPEND 'RULE_AI'      TO lt_excl_0700.
-  APPEND 'RULE_BASED'   TO lt_excl_0700.
-  APPEND 'DIAGNOSE'     TO lt_excl_0700.
-  APPEND 'OPENAI'       TO lt_excl_0700.
-  APPEND 'AI_OPENAI'    TO lt_excl_0700.
-  APPEND 'OPENAI_AI'    TO lt_excl_0700.
-  APPEND 'AIREAL'       TO lt_excl_0700.
-  APPEND 'GEMI'         TO lt_excl_0700.
-  APPEND 'GEMINI'       TO lt_excl_0700.
-  APPEND 'AI_GEMINI'    TO lt_excl_0700.
-  APPEND 'GEMINI_AI'    TO lt_excl_0700.
-  APPEND 'DOWN'         TO lt_excl_0700.
-  APPEND 'EXPORT'       TO lt_excl_0700.
-  APPEND 'EXPFIX'       TO lt_excl_0700.
-  APPEND 'AI_EXPORT'    TO lt_excl_0700.
-  APPEND 'FC_EXPORT'    TO lt_excl_0700.
-  APPEND 'EXP_GUIDE'    TO lt_excl_0700.
-  APPEND 'EXPORT_GUIDE' TO lt_excl_0700.
-  APPEND 'EXPORT_FIX'   TO lt_excl_0700.
-  APPEND 'FIX_EXPORT'   TO lt_excl_0700.
-  APPEND 'GT08'         TO lt_excl_0700.
-  APPEND 'SHDB'         TO lt_excl_0700.
-  APPEND 'SCRIPT'       TO lt_excl_0700.
-  APPEND 'REC'          TO lt_excl_0700.
-  APPEND 'KBAS'         TO lt_excl_0700.
-  APPEND 'GT75'         TO lt_excl_0700.
-  APPEND 'ARCHIVE'      TO lt_excl_0700.
-  APPEND 'AIKB'         TO lt_excl_0700.
-  APPEND 'AI_KB'        TO lt_excl_0700.
-  APPEND 'KNOWLEDGE'    TO lt_excl_0700.
-  APPEND 'FC_GOTO_0750' TO lt_excl_0700.
-
-  SET PF-STATUS 'STATUS_0700' EXCLUDING lt_excl_0700.
+  "Screen 0700 is automatic diagnosis only. Retired manual Diagnose/Export,
+  "Recording and Knowledge actions are removed from the source contract.
+  SET PF-STATUS 'STATUS_0700'.
   SET TITLEBAR  'TITLE_0700'.
 
   "Load exact evidence first, then immediately produce one deterministic
-  "diagnosis for the selected ERROR group. Screen 0700 has no external-AI action.
+  "diagnosis for the selected ERROR group.
   PERFORM display_ai_landing.
   PERFORM auto_diagnose_0700.
 ENDMODULE.
 MODULE status_0800 OUTPUT.
-  DATA lt_excl_0800 TYPE STANDARD TABLE OF sy-ucomm WITH DEFAULT KEY.
 
- "UI_STATUS_CODE_FIX: Refresh is not a real onboarding action.
- "Keep Import Recording + Mapping Profile on the PF-status; the ALV owns
- "Start Recording / My Import / All Import.
-  APPEND 'REFR'       TO lt_excl_0800.
-  APPEND 'REFRESH'    TO lt_excl_0800.
-  APPEND 'FC_REFRESH' TO lt_excl_0800.
-
-  SET PF-STATUS 'STATUS_0800' EXCLUDING lt_excl_0800.
+ "STATUS_0800 physically keeps Import Recording + Mapping Profile only.
+ "Start Recording / My Import / All Import remain ALV toolbar actions.
+  SET PF-STATUS 'STATUS_0800'.
   SET TITLEBAR  'TITLE_0800'.
   PERFORM display_script_editor.
 ENDMODULE.

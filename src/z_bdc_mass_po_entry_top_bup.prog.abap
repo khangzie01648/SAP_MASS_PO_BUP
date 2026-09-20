@@ -14,25 +14,13 @@ CONSTANTS: gc_ucomm_run_0500        TYPE syucomm VALUE 'RUN0500',
            gc_ucomm_error_detail    TYPE syucomm VALUE 'ERR0500',
            gc_ucomm_fix_guide       TYPE syucomm VALUE 'FIX0500',
            gc_ucomm_retry_0500      TYPE syucomm VALUE 'RET0500',
-           gc_ucomm_dashboard_0500  TYPE syucomm VALUE 'DAS0500',
-           gc_ucomm_bism_run        TYPE syucomm VALUE 'BISM_RUN',
-           gc_ucomm_bism_all        TYPE syucomm VALUE 'BISM_ALL',
-           gc_ucomm_bism_selected   TYPE syucomm VALUE 'BISM_SEL'.
+           gc_ucomm_dashboard_0500  TYPE syucomm VALUE 'DAS0500'.
 
 TABLES: sscrfields.
 TYPE-POOLS: ICON, LVC, VRM.
 
 CLASS lcl_alv_events DEFINITION DEFERRED.
 CLASS lcl_grid_events DEFINITION DEFERRED.
-
-CLASS ltc_clean_utilities DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
-  PRIVATE SECTION.
-    METHODS split_csv_with_quotes FOR TESTING.
-    METHODS escape_html_text FOR TESTING.
-ENDCLASS.
-
 
 TYPES: BEGIN OF ty_session_disp,
          session_id    TYPE zbdc_result_bup-session_id,
@@ -103,18 +91,6 @@ TYPES: BEGIN OF ty_group_0100_disp,
          row_index      TYPE zbdc_staging_bup-row_index,
        END OF ty_group_0100_disp.
 
-TYPES: BEGIN OF ty_evidence_0100_disp,
-         evidence_kind TYPE char20,
-         evidence_at   TYPE zbdc_result_bup-created_at,
-         attempt       TYPE i,
-         msg_type      TYPE zbdc_result_bup-msg_type,
-         exec_status   TYPE c LENGTH 20,
-         dynpro        TYPE zbdc_result_bup-dynpro,
-         field_name    TYPE zbdc_result_bup-field_name,
-         exact_message TYPE char255,
-         retry_flag    TYPE zbdc_result_bup-retry_flag,
-       END OF ty_evidence_0100_disp.
-
 * final audit card shown at level 3. Only persisted/derived facts are
 * displayed; no guessed business field/object meaning is introduced.
 TYPES: BEGIN OF ty_evidence_card_0100,
@@ -127,7 +103,6 @@ DATA: gt_group_0100       TYPE STANDARD TABLE OF ty_group_0100_disp,
       go_group_grid_0100  TYPE REF TO cl_salv_table,
       go_group_evt_0100   TYPE REF TO lcl_alv_events,
       gv_z775_focus_group TYPE zbdc_staging_bup-record_key,
-      gt_evidence_0100    TYPE STANDARD TABLE OF ty_evidence_0100_disp,
       gt_evidence_card_0100 TYPE STANDARD TABLE OF ty_evidence_card_0100,
       go_evidence_grid_0100 TYPE REF TO cl_salv_table.
 
@@ -190,9 +165,6 @@ DATA: gt_kpi_sid_0100 TYPE SORTED TABLE OF ty_kpi_sid_0100
 * ============================================================
 * Runtime Processing Configuration (owned by screen 0300)
 * ============================================================
-DATA: rb_rest     TYPE c LENGTH 1 VALUE 'X',
-      rb_gdrive   TYPE c LENGTH 1,
-      rb_local    TYPE c LENGTH 1.
 
 DATA: txtp_webhook_url TYPE string,
       p_auth_type      TYPE char20,
@@ -202,7 +174,6 @@ DATA: txtp_webhook_url TYPE string,
       txtp_gdrive_url  TYPE char255,
       txtp_file_path   TYPE string,
       p_transaction    TYPE char20,
-      p_format         TYPE char10 VALUE 'CSV',
       rb_exec_ct       TYPE c LENGTH 1 VALUE 'X',
       rb_exec_bi       TYPE c LENGTH 1,
       rb_mode_n        TYPE c LENGTH 1 VALUE 'X',
@@ -213,10 +184,9 @@ DATA: txtp_webhook_url TYPE string,
       txtp_batch_size  TYPE char10 VALUE '100'.
 
 * ============================================================
-* Screen 0300 - Upload & Ingestion (+0301/0302)
+* Screen 0300 - Upload & Ingestion (+0301)
 * ============================================================
-DATA: g_sub_dynpro      TYPE sy-dynnr VALUE '0301',
-      txtp_file_size    TYPE char20,
+DATA: txtp_file_size    TYPE char20,
       txtp_row_count    TYPE char20,
       txtp_row          TYPE char20,
       txtp_rows         TYPE char20,
@@ -229,20 +199,13 @@ DATA: g_sub_dynpro      TYPE sy-dynnr VALUE '0301',
       txtgv_total_rows  TYPE char20,
       txtgv_tot_rows    TYPE char20,
       gt_staging        TYPE STANDARD TABLE OF zbdc_staging_bup,
-      gt_errors         TYPE STANDARD TABLE OF zbdc_staging_bup,
       go_container_0301 TYPE REF TO cl_gui_custom_container,
-      gv_rebuild_0301   TYPE abap_bool,
       go_grid_0301      TYPE REF TO cl_salv_table,
       go_alv_0301       TYPE REF TO cl_gui_alv_grid,
       g_0301_grid_events TYPE REF TO lcl_grid_events,
-      g_0650_grid_events TYPE REF TO lcl_grid_events,
-      go_container_0302 TYPE REF TO cl_gui_custom_container,
-      go_grid_0302      TYPE REF TO cl_salv_table.
+      g_0650_grid_events TYPE REF TO lcl_grid_events.
 
-DATA: gv_config_loaded TYPE c,
-      GV_RUNTIME_LAST_STAT TYPE char20,
-      GV_RUNTIME_LAST_MSG  TYPE char255,
-      GV_RUNTIME_LAST_AT   TYPE char30.
+DATA gv_config_loaded TYPE c.
 
 TYPES: BEGIN OF ty_files_disp,
          status_icon  TYPE icon_d,                         "UI only: traffic light
@@ -257,15 +220,15 @@ TYPES: BEGIN OF ty_files_disp,
          status_text  TYPE char20,                         "UI only: lifecycle status
          next_action  TYPE char50,                         "UI only: user action hint
          data_unit    TYPE char30,                         "UI only: File / Sheet / Payload
-         file_name    TYPE string,                         "raw/full path + sheet marker, hidden in 0302
-         file_size    TYPE char20,                         "legacy compatibility, hidden in 0302
-         channel      TYPE string,                         "raw source, hidden in 0302
-         upload_date  TYPE sy-datum,                       "raw date, hidden in 0302
-         upload_time  TYPE sy-uzeit,                       "raw time, hidden in 0302
-         username     TYPE sy-uname,                       "legacy compatibility, hidden in 0302
-         session_id   TYPE zbdc_staging_bup-session_id,     "technical, hidden in 0302
-         raw_status   TYPE zbdc_file_lg_bup-status,        "raw DB status, hidden in 0302
-         raw_error    TYPE zbdc_file_lg_bup-error_msg,     "raw DB message, hidden in 0302
+         file_name    TYPE string,                         "raw/full path + sheet marker, hidden in Preview Files
+         file_size    TYPE char20,                         "legacy compatibility, hidden in Preview Files
+         channel      TYPE string,                         "raw source, hidden in Preview Files
+         upload_date  TYPE sy-datum,                       "raw date, hidden in Preview Files
+         upload_time  TYPE sy-uzeit,                       "raw time, hidden in Preview Files
+         username     TYPE sy-uname,                       "legacy compatibility, hidden in Preview Files
+         session_id   TYPE zbdc_staging_bup-session_id,     "technical, hidden in Preview Files
+         raw_status   TYPE zbdc_file_lg_bup-status,        "raw DB status, hidden in Preview Files
+         raw_error    TYPE zbdc_file_lg_bup-error_msg,     "raw DB message, hidden in Preview Files
        END OF ty_files_disp.
 
 CONSTANTS:
@@ -276,9 +239,7 @@ CONSTANTS:
 
 DATA: gt_files_preview       TYPE STANDARD TABLE OF ty_files_disp,
       go_alv_events          TYPE REF TO lcl_alv_events,
-      go_alv_file_events     TYPE REF TO lcl_alv_events,
-      gv_file_scope          TYPE c LENGTH 1 VALUE 'M',
-      gv_0300_history_scope  TYPE abap_bool. "/selected from Preview Files history; keep persisted lifecycle
+      gv_file_scope          TYPE c LENGTH 1 VALUE 'M'.
 
 * Mass Automation Batch Context (code-only, no new SE11 fields)
 * One upload/pull run = one compact batch prefix BYYYYMMDDHHMMSS.
@@ -365,14 +326,10 @@ DATA: go_container_0400 TYPE REF TO cl_gui_custom_container,
       go_cont_body_0400 TYPE REF TO cl_gui_container,
       go_doc_head_0400  TYPE REF TO cl_dd_document,
       go_exec_grid      TYPE REF TO cl_gui_alv_grid,
-      go_staging_grid   TYPE REF TO cl_gui_alv_grid,
-      go_grid_0400      TYPE REF TO cl_gui_alv_grid.
+      go_staging_grid   TYPE REF TO cl_gui_alv_grid.
 
 DATA: txtp_session_id   TYPE char22,
       txtp_sess         TYPE char22,
-      p_status          TYPE char1,
-      p_filter          TYPE char80, "legacy screen field; replaces it with SE51 ZSTGAUD button
-      chkp_filter       TYPE char1,
       txtgv_tot         TYPE char20,
       txtgv_total       TYPE i,
       txtgv_suc         TYPE char20,
@@ -445,18 +402,10 @@ CLASS lcl_alv_events DEFINITION.
         IMPORTING row column,
       on_group_link_click FOR EVENT link_click OF cl_salv_events_table
         IMPORTING row column,
-      on_result_group_dbl FOR EVENT double_click OF cl_salv_events_table
-        IMPORTING row column,
-      on_result_group_link FOR EVENT link_click OF cl_salv_events_table
-        IMPORTING row column,
       on_issue_0700_dbl FOR EVENT double_click OF cl_salv_events_table
         IMPORTING row column,
       on_issue_0700_link FOR EVENT link_click OF cl_salv_events_table
         IMPORTING row column,
-      on_file_double_click FOR EVENT double_click OF cl_salv_events_table
-        IMPORTING row column,
-      on_file_function FOR EVENT added_function OF cl_salv_events_table
-        IMPORTING e_salv_function,
       on_fixguide_double_click FOR EVENT double_click OF cl_salv_events_table
         IMPORTING row column,
       on_fixguide_function FOR EVENT added_function OF cl_salv_events_table
@@ -508,9 +457,7 @@ TYPES ty_t_engine_group_key TYPE STANDARD TABLE OF ty_engine_group_key
 TYPES ty_t_bdclm TYPE STANDARD TABLE OF bdclm WITH DEFAULT KEY.
 
 * Phase 8 - bo dem monitoring (Screen 0500)
-DATA: g_exec_curr    TYPE i,
-      g_exec_success TYPE i,
-      g_exec_error   TYPE i,
+DATA: g_exec_curr TYPE i,
       g_stop_flag    TYPE c LENGTH 1.
 
 * ============================================================
@@ -685,7 +632,6 @@ DATA: GT_EXEC_DISP       TYPE TY_T_EXEC_DISP,
       GV_EXEC_HEADER_TXT   TYPE C LENGTH 255,
       GV_LAST_SM35_GROUP  TYPE APQI-GROUPID,
       GV_LAST_SM35_QID    TYPE APQI-QID,
-      GV_LAST_SM35_POLICY TYPE C LENGTH 1,
       GV_LAST_SM35_ACTION  TYPE C LENGTH 180,
       GV_LAST_SM35_JOBNAME TYPE TBTCO-JOBNAME,
       GV_LAST_SM35_JOBCOUNT TYPE TBTCO-JOBCOUNT,
@@ -711,8 +657,6 @@ TYPES: BEGIN OF TY_0400_SEL_KEY,
        END OF TY_0400_SEL_KEY.
 TYPES TY_T_0400_SEL_KEY TYPE HASHED TABLE OF TY_0400_SEL_KEY
   WITH UNIQUE KEY SESSION_ID GROUP_KEY TCODE.
-
-DATA GT_0400_SEL_KEYS TYPE TY_T_0400_SEL_KEY.
 
 * exact user-selected staging edit/audit scope.
 * Native cockpit row selection is expanded to persisted staging ROW_INDEX keys
@@ -771,7 +715,6 @@ DATA: gt_z770_audit_raw     TYPE ty_t_z770_audit_raw,
       gt_z770_audit_disp    TYPE ty_t_z770_audit_disp,
       gt_z770_before_disp   TYPE ty_t_z770_diff_disp,
       gt_z770_after_disp    TYPE ty_t_z770_diff_disp,
-      gv_z770_selected_idx  TYPE i,
       gv_z770_total_changes TYPE i,
       gv_z770_changed_rows  TYPE i,
       gv_z770_changed_groups TYPE i,
@@ -870,9 +813,6 @@ DATA: txtgv_exec_session TYPE char30,
       txtgv_exec_eta     TYPE char20,
       chkp_stop_on_error TYPE c LENGTH 1,
       chkp_background    TYPE c LENGTH 1,
-      gv_exec_start_ts   TYPE timestampl,
-      gv_exec_end_ts     TYPE timestampl,
-
       gv_exec_elapsed    TYPE i,
       gv_exec_scope_0500 TYPE char10,
       gv_exec_scope_text TYPE char60,
@@ -1088,7 +1028,6 @@ DATA: gt_log_0650       TYPE STANDARD TABLE OF zbdc_result_bup,
       gt_group_ctx_0650 TYPE STANDARD TABLE OF ty_group_0100_disp,
       go_group_container_0650 TYPE REF TO cl_gui_custom_container,
       go_group_grid_0650 TYPE REF TO cl_gui_alv_grid,
-      go_group_evt_0650 TYPE REF TO lcl_alv_events,
       gv_group_pick_0650 TYPE i,
       gv_result_row_index_0650 TYPE zbdc_staging_bup-row_index,
       txtp_sap_object_id TYPE char40,
@@ -1223,3 +1162,8 @@ DATA: gt_script_def     TYPE ty_t_script,
       go_rec_container  TYPE REF TO cl_gui_custom_container,
       go_rec_grid       TYPE REF TO cl_gui_alv_grid,
       p_rec_tcode       TYPE char20.
+
+
+* User-facing message buffer. Technical project diagnostics are normalized
+* immediately before MESSAGE display; SAP-standard texts pass through unchanged.
+DATA gv_ui_message TYPE string.

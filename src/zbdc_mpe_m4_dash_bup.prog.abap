@@ -132,22 +132,6 @@ FORM get_session_source
   ENDIF.
 ENDFORM.
 
-FORM RESET_0300_ALV.
- "KHONG free container/grid cua 0301 nua.
- "Ly do: FREE + CREATE OBJECT lai trong CUNG 1 vong PAI->PBO (khong doi dynpro)
- "khien SAP GUI Control Framework khong repaint container ngay - grid trong den
- "khi user chuyen tab sang 0302 roi quay lai 0301 (buoc do moi force ve lai).
- "MODULE status_0301 OUTPUT da co san nhanh xu ly dung khi container con song:
- " IF go_grid_0301 IS BOUND. go_grid_0301->refresh(...). go_grid_0301->display( ). ENDIF.
- "Nen chi can giu container/grid 0301 song va goi refresh() la du, khong can pha di tao lai.
-  IF GO_GRID_0302 IS BOUND.
-    FREE GO_GRID_0302.
-  ENDIF.
-  IF GO_CONTAINER_0302 IS BOUND.
-    FREE GO_CONTAINER_0302.
-  ENDIF.
-  CLEAR: GO_GRID_0302, GO_CONTAINER_0302.
-ENDFORM.
 
 FORM reset_0300_all_alv.
  "Use only when leaving/re-entering 0300. During upload refresh keep 0301 alive.
@@ -165,14 +149,7 @@ FORM reset_0300_all_alv.
         OTHERS            = 3.
     FREE go_container_0301.
   ENDIF.
-  IF go_grid_0302 IS BOUND.
-    FREE go_grid_0302.
-  ENDIF.
-  IF go_container_0302 IS BOUND.
-    FREE go_container_0302.
-  ENDIF.
-  CLEAR: go_alv_0301, go_grid_0301, go_container_0301,
-         go_grid_0302, go_container_0302.
+  CLEAR: go_alv_0301, go_grid_0301, go_container_0301.
 ENDFORM.
 
 *&---------------------------------------------------------------------*
@@ -3788,7 +3765,11 @@ FORM open_nav_target_new_mode
       cv_ok = abap_true.
       cv_message = |AI Navigation opened { iv_target } in a temporary /o-style SAP mode. Back/Exit there returns to the original cockpit.|.
     WHEN 1.
-      cv_message = |AI Navigation could not open { iv_target } in a new SAP mode because the maximum number of modes is already open. Close one SAP mode and try again.|.
+      "No free external SAP mode is available. This is recoverable: let the
+      "caller use the already-certified current-mode navigation path instead
+      "of failing AI Navigation just because the GUI mode limit was reached.
+      CLEAR cv_handled.
+      CLEAR cv_message.
     WHEN 3.
       cv_message = |You are not authorized to open transaction { iv_target } in a new SAP mode.|.
     WHEN OTHERS.
@@ -3873,7 +3854,23 @@ FORM call_nav_target_safe
       RETURN.
     ENDIF.
 
-    cv_message = 'Certified SPA/GPA navigation route could not be represented in a separate SAP mode.'.
+    "Fallback when SAP cannot create another external mode (for example the
+    "user already has the maximum number of SAP modes open). Reuse only the
+    "exact certified current-row SPA/GPA values, open the real target in the
+    "current mode, then restore the caller's previous SAP-memory values after
+    "the user returns with Back/Exit. No remembered object value is invented.
+    PERFORM apply_nav_binding_params CHANGING ct_binding.
+    CALL TRANSACTION iv_target.
+    lv_call_subrc = sy-subrc.
+    PERFORM restore_nav_binding_params USING ct_binding.
+
+    IF lv_call_subrc <> 0.
+      cv_message = |SAP could not open transaction { iv_target } in the current mode (SY-SUBRC={ lv_call_subrc }).|.
+      RETURN.
+    ENDIF.
+
+    cv_ok = abap_true.
+    cv_message = |Opened { iv_target } in the current SAP mode because no additional SAP mode was available.|.
     RETURN.
   ENDIF.
 
@@ -4178,7 +4175,7 @@ FORM configure_selected_navigation.
         lv_seq_txt       TYPE c LENGTH 1.
 
   IF sy-dynnr <> '0400' OR gv_0400_view <> gc_view_cockpit OR go_exec_grid IS NOT BOUND.
-    MESSAGE 'AI Navigation is available only in the Staging Execution Cockpit.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s744(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4189,7 +4186,7 @@ FORM configure_selected_navigation.
   DELETE ADJACENT DUPLICATES FROM lt_rows COMPARING index.
 
   IF lines( lt_rows ) <> 1.
-    MESSAGE 'Select exactly one SUCCESS row before AI Navigation.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s745(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4252,9 +4249,10 @@ FORM configure_selected_navigation.
       PERFORM build_exec_cockpit.
       PERFORM update_0400_counters.
       PERFORM refresh_0400_grid.
-      MESSAGE 'Cockpit context was repaired to the frozen Session ID. Reselect the SUCCESS row.' TYPE 'S' DISPLAY LIKE 'W'.
+      MESSAGE s746(zbdc) DISPLAY LIKE 'W'.
     ELSE.
-      MESSAGE lv_ctx_repair_msg_934 TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_ctx_repair_msg_934 CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDIF.
     RETURN.
   ENDIF.
@@ -4262,7 +4260,7 @@ FORM configure_selected_navigation.
   "Executor/mode is intentionally irrelevant. Any terminal SUCCESS row from
   "CALL TRANSACTION (A/E/N, any update mode) or BISM/SM35 is eligible.
   IF sy-subrc <> 0 OR ls_exec-run_status <> gc_st_success.
-    MESSAGE 'AI Navigation requires exactly one terminal SUCCESS row (CT or BISM).' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s747(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4271,7 +4269,8 @@ FORM configure_selected_navigation.
     USING    ls_exec
     CHANGING ls_nav lv_ok lv_message.
   IF lv_ok <> abap_true.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4328,7 +4327,8 @@ FORM configure_selected_navigation.
             USING    ls_nav-session_id
             CHANGING lv_reuse_nav_count_14a.
           IF lv_reuse_nav_count_14a <= 0.
-            MESSAGE |Certified navigation returned, but Session { ls_nav-session_id } could not be reloaded.| TYPE 'S' DISPLAY LIKE 'E'.
+            DATA(lv_zm748_4331_1) = |{ ls_nav-session_id }|.
+            MESSAGE s748(zbdc) WITH lv_zm748_4331_1 DISPLAY LIKE 'E'.
             RETURN.
           ENDIF.
           PERFORM clear_0400_context.
@@ -4338,7 +4338,8 @@ FORM configure_selected_navigation.
           gv_0400_view      = gc_view_cockpit.
           gv_0400_edit_mode = space.
           CLEAR: gt_z566_edit_scope, gv_z566_edit_groups.
-          MESSAGE |Certified AI Navigation opened the CURRENT object { lv_object }.| TYPE 'S'.
+          DATA(lv_zm749_4341_1) = |{ lv_object }|.
+          MESSAGE s749(zbdc) WITH lv_zm749_4341_1.
          "14D: external navigation may leave the frontend control tree stale.
          "Force next PBO to rebuild the cockpit while keeping exact session pin.
           gv_0400_render_view = gc_view_detail.
@@ -4363,7 +4364,8 @@ FORM configure_selected_navigation.
     CHANGING lv_target lv_program lv_dynpro lv_action lt_binding
              lv_object_type lv_confidence lv_reason lv_ok lv_message.
   IF lv_ok <> abap_true.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4384,7 +4386,8 @@ FORM configure_selected_navigation.
     USING    lv_target lv_program lv_dynpro lv_action
     CHANGING lt_binding lv_ok lv_message.
   IF lv_ok <> abap_true.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4436,7 +4439,7 @@ FORM configure_selected_navigation.
       PERFORM update_0400_counters.
     ENDIF.
 
-    MESSAGE 'AI navigation candidate rejected. Select the SUCCESS row and run AI Navigation again to rediscover.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s750(zbdc) DISPLAY LIKE 'W'.
     SET SCREEN 0400.
     LEAVE SCREEN.
   ENDIF.
@@ -4447,7 +4450,8 @@ FORM configure_selected_navigation.
     CHANGING lv_ok lv_message.
   IF lv_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4456,33 +4460,83 @@ FORM configure_selected_navigation.
   ELSE.
     PERFORM set_script_cfg USING ls_nav-script_id 'NAVMODE' 'SCREEN_BDC' CHANGING lv_ok lv_message.
   ENDIF.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVMSGID' ls_nav-msgid CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVMSGNR' ls_nav-msgnr CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVTCODE' lv_target CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVPROG' lv_program CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVDYN' lv_dynpro CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVACTION' lv_action CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
 
   lv_count_txt = lines( lt_binding ).
   CONDENSE lv_count_txt NO-GAPS.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVCOUNT' lv_count_txt CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
 
   IF lines( lt_binding ) = 1.
     READ TABLE lt_binding INTO DATA(ls_single_nav) INDEX 1.
     IF sy-subrc = 0.
       PERFORM set_script_cfg USING ls_nav-script_id 'NAVMSGV' ls_single_nav-msgv_idx CHANGING lv_ok lv_message.
-      IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+      IF lv_ok <> abap_true.
+        ROLLBACK WORK.
+        PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
       IF ls_single_nav-param_id IS NOT INITIAL.
         PERFORM set_script_cfg USING ls_nav-script_id 'NAVPID' ls_single_nav-param_id CHANGING lv_ok lv_message.
-        IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+        IF lv_ok <> abap_true.
+          ROLLBACK WORK.
+          PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+          MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+          RETURN.
+        ENDIF.
       ENDIF.
     ENDIF.
   ENDIF.
@@ -4494,18 +4548,33 @@ FORM configure_selected_navigation.
     CLEAR lv_kind.
     CONCATENATE 'NAVMSGV' lv_seq_txt INTO lv_kind.
     PERFORM set_script_cfg USING ls_nav-script_id lv_kind ls_binding-msgv_idx CHANGING lv_ok lv_message.
-    IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+    IF lv_ok <> abap_true.
+      ROLLBACK WORK.
+      PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
 
     CLEAR lv_kind.
     CONCATENATE 'NAVFIELD' lv_seq_txt INTO lv_kind.
     PERFORM set_script_cfg USING ls_nav-script_id lv_kind ls_binding-field_name CHANGING lv_ok lv_message.
-    IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+    IF lv_ok <> abap_true.
+      ROLLBACK WORK.
+      PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
 
     IF ls_binding-param_id IS NOT INITIAL.
       CLEAR lv_kind.
       CONCATENATE 'NAVPID' lv_seq_txt INTO lv_kind.
       PERFORM set_script_cfg USING ls_nav-script_id lv_kind ls_binding-param_id CHANGING lv_ok lv_message.
-      IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+      IF lv_ok <> abap_true.
+        ROLLBACK WORK.
+        PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
     ENDIF.
   ENDLOOP.
 
@@ -4518,7 +4587,8 @@ FORM configure_selected_navigation.
     CHANGING lv_ok lv_message.
   IF lv_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4528,7 +4598,8 @@ FORM configure_selected_navigation.
     CHANGING lv_ok lv_message.
   IF lv_ok <> abap_true.
     ROLLBACK WORK.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4537,17 +4608,37 @@ FORM configure_selected_navigation.
   ELSE.
     PERFORM set_script_cfg USING ls_nav-script_id 'NAVSOURCE' 'AI_SCREEN_METADATA_VERIFIED' CHANGING lv_ok lv_message.
   ENDIF.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
   IF lv_object_type IS NOT INITIAL.
     PERFORM set_script_cfg USING ls_nav-script_id 'NAVOBJECT' lv_object_type CHANGING lv_ok lv_message.
-    IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+    IF lv_ok <> abap_true.
+      ROLLBACK WORK.
+      PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
   ENDIF.
   IF lv_confidence IS NOT INITIAL.
     PERFORM set_script_cfg USING ls_nav-script_id 'NAVCONF' lv_confidence CHANGING lv_ok lv_message.
-    IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+    IF lv_ok <> abap_true.
+      ROLLBACK WORK.
+      PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
   ENDIF.
   PERFORM set_script_cfg USING ls_nav-script_id 'NAVSTATE' 'CERTIFIED' CHANGING lv_ok lv_message.
-  IF lv_ok <> abap_true. ROLLBACK WORK. MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'E'. RETURN. ENDIF.
+  IF lv_ok <> abap_true.
+    ROLLBACK WORK.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
 
   COMMIT WORK AND WAIT.
 
@@ -4561,7 +4652,8 @@ FORM configure_selected_navigation.
     USING    ls_nav-session_id
     CHANGING lv_post_cert_count_934.
   IF lv_post_cert_count_934 <= 0.
-    MESSAGE |AI route was certified, but Session { ls_nav-session_id } could not be reloaded for projection.| TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm751_4564_1) = |{ ls_nav-session_id }|.
+    MESSAGE s751(zbdc) WITH lv_zm751_4564_1 DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
   "The selected SUCCESS session becomes the only canonical 0400 context
@@ -4580,12 +4672,14 @@ FORM configure_selected_navigation.
     WITH KEY session_id = ls_exec-session_id group_key = ls_exec-group_key.
   IF sy-subrc = 0 AND ls_nav_proj_new-sap_object_text IS NOT INITIAL
      AND ls_nav_proj_new-review_state = 'CERTIFIED'.
-    MESSAGE |AI route CERTIFIED. Current Document { ls_nav_proj_new-sap_object_text } is clickable.| TYPE 'S'.
+    DATA(lv_zm752_4583_1) = |{ ls_nav_proj_new-sap_object_text }|.
+    MESSAGE s752(zbdc) WITH lv_zm752_4583_1.
   ELSE.
     IF sy-subrc = 0.
-      MESSAGE |AI route was certified, but Document projection state is { ls_nav_proj_new-review_state }.| TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm753_4586_1) = |{ ls_nav_proj_new-review_state }|.
+      MESSAGE s753(zbdc) WITH lv_zm753_4586_1 DISPLAY LIKE 'E'.
     ELSE.
-      MESSAGE 'AI route was certified, but the current cockpit row could not be rebuilt.' TYPE 'S' DISPLAY LIKE 'E'.
+      MESSAGE s754(zbdc) DISPLAY LIKE 'E'.
     ENDIF.
   ENDIF.
 
@@ -4785,7 +4879,7 @@ FORM open_exec_navigation
   "after PBO/refresh while still failing closed on DB/contract mismatch.
   IF ls_exec-run_status <> gc_st_success OR
      ls_exec-sap_object_id IS INITIAL.
-    MESSAGE 'No persisted SAP document exists for this SUCCESS row.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s755(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -4793,7 +4887,7 @@ FORM open_exec_navigation
     INTO @ls_session
     WHERE session_id = @ls_exec-session_id.
   IF sy-subrc <> 0 OR ls_session-script_id IS INITIAL.
-    MESSAGE 'The exact frozen session context is unavailable; navigation was blocked.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s756(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4804,7 +4898,8 @@ FORM open_exec_navigation
     CHANGING lv_navstate lv_target lv_program lv_dynpro lv_action
              lv_msgid lv_msgnr lt_binding lv_contract_ok lv_contract_msg.
   IF lv_contract_ok <> abap_true.
-    MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4830,7 +4925,8 @@ FORM open_exec_navigation
       USING    ls_exec lt_res lv_msgid lv_msgnr ls_exec-sap_object_id
       CHANGING lt_binding lv_contract_ok lv_contract_msg.
     IF lv_contract_ok <> abap_true.
-      MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     lv_recovered = abap_true.
@@ -4846,7 +4942,8 @@ FORM open_exec_navigation
         USING    ls_exec lt_res lv_msgid lv_msgnr ls_exec-sap_object_id
         CHANGING lt_binding lv_contract_ok lv_contract_msg.
       IF lv_contract_ok <> abap_true.
-        MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
     ENDIF.
@@ -4916,9 +5013,10 @@ FORM open_exec_navigation
 
   IF lv_resolve_ok <> abap_true.
     IF lv_resolve_msg IS INITIAL.
-      lv_resolve_msg = 'Certified route exists, but the exact persisted object binding could not be rebuilt.' .
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '952' INTO lv_resolve_msg.
     ENDIF.
-    MESSAGE lv_resolve_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_resolve_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4927,7 +5025,8 @@ FORM open_exec_navigation
     USING    lv_target lv_program lv_dynpro lv_action
     CHANGING lt_binding lv_contract_ok lv_contract_msg.
   IF lv_contract_ok <> abap_true.
-    MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -4941,7 +5040,8 @@ FORM open_exec_navigation
       CHANGING lv_contract_ok lv_contract_msg.
     IF lv_contract_ok <> abap_true.
       ROLLBACK WORK.
-      MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     CLEAR: lv_contract_ok, lv_contract_msg.
@@ -4950,7 +5050,8 @@ FORM open_exec_navigation
       CHANGING lv_contract_ok lv_contract_msg.
     IF lv_contract_ok <> abap_true.
       ROLLBACK WORK.
-      MESSAGE lv_contract_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_contract_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     COMMIT WORK AND WAIT.
@@ -5485,7 +5586,7 @@ FORM BUILD_EXEC_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
         <F>-ICON = 'X'.
       WHEN 'GROUP_KEY' OR 'RUN_STATUS'.
         <F>-KEY = 'X'.
-      WHEN 'MESSAGE' OR 'EXECUTION' OR 'ACTION_HINT' OR 'HEALTH_TEXT'.
+      WHEN 'MESSAGE' OR 'EXECUTION'.
         <F>-LOWERCASE = 'X'.
     ENDCASE.
   ENDLOOP.
@@ -5545,8 +5646,7 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
     USING    ls_first_edit-session_id
     CHANGING lv_tcode lv_profile lv_ver lv_found.
   IF lv_found <> abap_true.
-    MESSAGE 'Edit Staging cannot resolve the frozen session contract.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s757(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5557,9 +5657,12 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
     CHANGING lt_sources lv_schema_ok lv_schema_msg.
   IF lv_schema_ok <> abap_true OR lt_sources IS INITIAL.
     IF lv_schema_msg IS INITIAL.
-      lv_schema_msg = |EDIT_SCHEMA_UNAVAILABLE: session { ls_first_edit-session_id }.|.
+      DATA(lv_zm953_5560_1) = |{ ls_first_edit-session_id }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '953'
+        WITH lv_zm953_5560_1 INTO lv_schema_msg.
     ENDIF.
-    MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5570,8 +5673,14 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
       AND profile_name = @lv_profile
       AND profile_ver  = @lv_ver.
   IF lt_map_all IS INITIAL.
-    lv_schema_msg = |EDIT_MAPPING_UNAVAILABLE: { lv_tcode }/{ lv_profile } v{ lv_ver }.|.
-    MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm954_5573_1) = |{ lv_tcode }|.
+    DATA(lv_zm954_5573_2) = |{ lv_profile }|.
+    DATA(lv_zm954_5573_3) = |{ lv_ver }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '954'
+      WITH lv_zm954_5573_1 lv_zm954_5573_2 lv_zm954_5573_3
+      INTO lv_schema_msg.
+    PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5594,8 +5703,11 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
       CHANGING lv_norm_source.
 
     IF lv_norm_source IS INITIAL.
-      lv_schema_msg = |EDIT_HEADER_INVALID: column { lv_col_pos } has no source identity.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm955_5597_1) = |{ lv_col_pos }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '955'
+        WITH lv_zm955_5597_1 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -5620,18 +5732,27 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
     ENDLOOP.
 
     IF lv_match_count = 0.
-      lv_schema_msg = |EDIT_MAPPING_SOURCE_MISSING: { lv_norm_source }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm956_5623_1) = |{ lv_norm_source }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '956'
+        WITH lv_zm956_5623_1 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ELSEIF lv_match_count > 1.
-      lv_schema_msg = |EDIT_MAPPING_SOURCE_AMBIGUOUS: { lv_norm_source }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm957_5627_1) = |{ lv_norm_source }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '957'
+        WITH lv_zm957_5627_1 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
     IF ls_map_match-staging_field IS INITIAL.
-      lv_schema_msg = |EDIT_MAPPING_TARGET_MISSING: { lv_norm_source }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm958_5633_1) = |{ lv_norm_source }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '958'
+        WITH lv_zm958_5633_1 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -5640,9 +5761,12 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
     "Mapping row points there; that would display an edit which Save does not
     "own. New ingests are expected to use the frozen FIELDxx business slots.
     IF ls_map_match-staging_field NP 'FIELD*'.
-      lv_schema_msg =
-        |EDIT_STAGING_TARGET_UNSUPPORTED: { lv_norm_source } -> { ls_map_match-staging_field }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm959_5643_1) = |{ lv_norm_source }|.
+      DATA(lv_zm959_5643_2) = |{ ls_map_match-staging_field }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '959'
+        WITH lv_zm959_5643_1 lv_zm959_5643_2 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -5652,9 +5776,11 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
       WITH TABLE KEY table_line = ls_map_match-staging_field
       TRANSPORTING NO FIELDS.
     IF sy-subrc = 0.
-      lv_schema_msg =
-        |EDIT_MAPPING_TARGET_COLLISION: multiple uploaded columns share { ls_map_match-staging_field }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm960_5655_1) = |{ ls_map_match-staging_field }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '960'
+        WITH lv_zm960_5655_1 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     INSERT ls_map_match-staging_field INTO TABLE lt_target_seen.
@@ -5662,9 +5788,12 @@ FORM BUILD_DETAIL_FIELDCAT CHANGING CT_FCAT TYPE LVC_T_FCAT.
     READ TABLE ct_fcat ASSIGNING FIELD-SYMBOL(<ls_fcat>)
       WITH KEY fieldname = ls_map_match-staging_field.
     IF sy-subrc <> 0.
-      lv_schema_msg =
-        |EDIT_STAGING_BIND_INVALID: { lv_norm_source } -> { ls_map_match-staging_field }.|.
-      MESSAGE lv_schema_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm961_5665_1) = |{ lv_norm_source }|.
+      DATA(lv_zm961_5665_2) = |{ ls_map_match-staging_field }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '961'
+        WITH lv_zm961_5665_1 lv_zm961_5665_2 INTO lv_schema_msg.
+      PERFORM userize_ui_message USING lv_schema_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -5717,7 +5846,7 @@ FORM FREE_0400_GRID.
   ENDIF.
   CALL METHOD CL_GUI_CFW=>FLUSH EXCEPTIONS OTHERS = 1.
 
-  CLEAR: GO_EXEC_GRID, GO_STAGING_GRID, GO_GRID_0400,
+  CLEAR: GO_EXEC_GRID, GO_STAGING_GRID,
          GO_DOC_HEAD_0400, GO_SPLIT_0400, GO_CONT_HEAD_0400,
          GO_CONT_BODY_0400, GO_CONTAINER_0400, G_0400_GRID_EVENTS,
          GV_0400_RENDER_SID, GV_0400_RENDER_VIEW.
@@ -6370,7 +6499,7 @@ FORM SAVE_DETAIL_AND_RETURN.
         PERFORM table_exists USING gc_z16_tab_chg CHANGING lv_audit_exists.
         IF lv_audit_exists <> abap_true.
           ROLLBACK WORK.
-          lv_val_msg = 'ZBDC_CHG_BUP is not installed; selected staging changes were not saved because audit is mandatory.'.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '962' INTO lv_val_msg.
         ELSE.
           CLEAR: lv_audit_ok, lv_audit_count, lv_audit_msg.
           PERFORM log_edit_audit
@@ -6396,7 +6525,9 @@ FORM SAVE_DETAIL_AND_RETURN.
                 WITH KEY session_id = ls_scope_key-session_id row_index = ls_scope_key-row_index.
               IF sy-subrc <> 0.
                 ROLLBACK WORK.
-                lv_val_msg = |Selected staging row { ls_scope_key-row_index } disappeared before validation.|.
+                DATA(lv_zm963_6399_1) = |{ ls_scope_key-row_index }|.
+                MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '963'
+                  WITH lv_zm963_6399_1 INTO lv_val_msg.
                 EXIT.
               ENDIF.
               APPEND ls_selected_db TO lt_selected.
@@ -6444,7 +6575,8 @@ FORM SAVE_DETAIL_AND_RETURN.
   ENDIF.
 
   IF lv_scope_ok <> abap_true.
-    MESSAGE lv_scope_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_scope_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -6457,7 +6589,8 @@ FORM SAVE_DETAIL_AND_RETURN.
     IF lv_val_msg IS INITIAL.
       lv_val_msg = lv_merge_msg.
     ENDIF.
-    MESSAGE lv_val_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_val_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -6465,12 +6598,14 @@ FORM SAVE_DETAIL_AND_RETURN.
     IF lv_val_msg IS INITIAL.
       lv_val_msg = lv_audit_msg.
     ENDIF.
-    MESSAGE lv_val_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_val_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   IF lv_val_ok <> abap_true.
-    MESSAGE lv_val_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_val_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -6575,8 +6710,7 @@ FORM free_change_history.
 
   CLEAR: go_z770_hist_grid, go_z770_before_grid, go_z770_after_grid,
          go_z770_split_diff, go_z770_split_main, go_z770_dialog,
-         go_z770_hist_cont, go_z770_before_cont, go_z770_after_cont,
-         gv_z770_selected_idx.
+         go_z770_hist_cont, go_z770_before_cont, go_z770_after_cont.
   REFRESH: gt_z770_before_disp, gt_z770_after_disp.
 ENDFORM.
 
@@ -6812,7 +6946,7 @@ FORM show_audit_detail USING iv_index TYPE i.
     WHERE session_id = @ls_raw-session_id
       AND row_index  = @ls_raw-row_index.
   IF sy-subrc <> 0.
-    MESSAGE 'The current persisted staging row no longer exists.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s758(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -6906,7 +7040,6 @@ FORM show_audit_detail USING iv_index TYPE i.
       row_color   = 'C510' ) TO gt_z770_after_disp.
   ENDIF.
 
-  gv_z770_selected_idx = iv_index.
   ls_stable-row = 'X'.
   ls_stable-col = 'X'.
   IF go_z770_before_grid IS BOUND.
@@ -6934,9 +7067,10 @@ FORM show_change_history.
   PERFORM load_change_history CHANGING lv_ok lv_message.
   IF lv_ok <> abap_true.
     IF lv_message IS INITIAL.
-      lv_message = 'No Change History is available for this session.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '964' INTO lv_message.
     ENDIF.
-    MESSAGE lv_message TYPE 'S' DISPLAY LIKE 'I'.
+    PERFORM userize_ui_message USING lv_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -6961,7 +7095,7 @@ FORM show_change_history.
       cntl_error = 1
       OTHERS     = 2.
   IF sy-subrc <> 0 OR go_z770_dialog IS NOT BOUND.
-    MESSAGE 'Change History window could not be created.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s759(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -7411,7 +7545,6 @@ ENDFORM.
 FORM reset_0400_selection.
   DATA lt_empty TYPE lvc_t_row.
 
-  CLEAR gt_0400_sel_keys.
   LOOP AT gt_exec_disp ASSIGNING FIELD-SYMBOL(<ls_sel_reset>).
     CLEAR <ls_sel_reset>-selected.
   ENDLOOP.
@@ -7606,7 +7739,12 @@ FORM sapgui_progress
     lv_pct = 0.
   ENDIF.
 
-  lv_msg = |0500 executing { iv_curr }/{ iv_total }: { iv_text }|.
+  DATA(lv_zm965_7609_1) = |{ iv_curr }|.
+  DATA(lv_zm965_7609_2) = |{ iv_total }|.
+  DATA(lv_zm965_7609_3) = |{ iv_text }|.
+  MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '965'
+    WITH lv_zm965_7609_1 lv_zm965_7609_2 lv_zm965_7609_3
+    INTO lv_msg.
 
   CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
     EXPORTING
@@ -8102,7 +8240,7 @@ FORM show_0500_attempt_history
   IF sy-subrc <> 0 OR
      ls_exec-session_id IS INITIAL OR
      ls_exec-group_key IS INITIAL.
-    MESSAGE 'The selected execution row is no longer available.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s760(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -8145,7 +8283,8 @@ FORM show_0500_attempt_history
   ENDLOOP.
 
   IF lt_attempts IS INITIAL.
-    MESSAGE |No persisted execution attempt exists for { ls_exec-group_key }. The next real CT/BISM run will create Attempt 1.| TYPE 'S' DISPLAY LIKE 'I'.
+    DATA(lv_zm761_8148_1) = |{ ls_exec-group_key }|.
+    MESSAGE s761(zbdc) WITH lv_zm761_8148_1 DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -8215,7 +8354,7 @@ FORM show_0500_attempt_history
       cntl_error = 1
       OTHERS     = 2.
   IF sy-subrc <> 0 OR go_attempt_0500_dlg IS NOT BOUND.
-    MESSAGE 'Execution Attempt History window could not be created.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s762(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -8725,16 +8864,17 @@ FORM open_result_dash_curr.
     CHANGING lv_scope_count lv_scope_ok lv_scope_msg.
   IF lv_scope_ok <> abap_true.
     IF lv_scope_msg IS INITIAL.
-      lv_scope_msg = 'No valid dashboard scope is available for Result Dashboard.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '966' INTO lv_scope_msg.
     ENDIF.
-    MESSAGE lv_scope_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_scope_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
   REFRESH: gt_result_all, gt_result_msg, gt_result_summary, gt_result_cards.
   PERFORM build_selected_summary.
   IF gt_result_summary IS INITIAL.
-    MESSAGE 'No current data exists for the selected dashboard scope.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s763(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -9738,7 +9878,8 @@ FORM show_result_dash_safe.
 
       lo_alv->display( ).
     CATCH cx_salv_msg INTO lx_msg.
-      MESSAGE lx_msg->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Result Dashboard could not be displayed. Refresh and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 ENDFORM.
 
@@ -10151,7 +10292,8 @@ FORM prepare_0560_pbo.
     IF lv_ok = abap_true.
       PERFORM pick_0560_field CHANGING p_fld_name.
     ELSEIF lv_msg IS NOT INITIAL.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDIF.
     gv_0560_prepared = abap_true.
   ENDIF.
@@ -10269,8 +10411,7 @@ FORM apply_correction.
                  <ls_raw>    TYPE zbdc_staging_bup.
 
   IF gt_0560_groups IS INITIAL.
-    MESSAGE 'Correction is blocked: select failed group(s) and choose Retry first.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s764(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -10278,19 +10419,21 @@ FORM apply_correction.
   PERFORM get_active_group
     CHANGING ls_key lv_ok lv_msg.
   IF lv_ok <> abap_true.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   IF p_fld_name IS INITIAL.
-    MESSAGE 'Choose Field to Replace.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s765(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   IF gt_0560_map IS INITIAL.
     PERFORM load_0560_map CHANGING lv_ok lv_msg.
     IF lv_ok <> abap_true.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -10300,23 +10443,20 @@ FORM apply_correction.
     lv_map_ok = abap_true.
   ENDIF.
   IF lv_map_ok <> abap_true.
-    MESSAGE 'The selected field is not an editable source field in the frozen mapping.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s766(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   PERFORM decode_old_value
     USING p_old_val CHANGING lv_old_found lv_old_text.
   IF lv_old_found <> abap_true.
-    MESSAGE 'Choose an Old Value from the values that exist in this Business Group.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s767(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   lv_new_text = p_new_val.
   IF lv_old_text = lv_new_text.
-    MESSAGE 'Old Value and New Value are identical; nothing was saved.'
-      TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s768(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -10324,8 +10464,7 @@ FORM apply_correction.
     WHERE session_id = @ls_key-session_id
       AND record_key = @ls_key-record_key.
   IF lt_db IS INITIAL.
-    MESSAGE 'The selected Business Group no longer exists in staging.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s769(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -10333,8 +10472,7 @@ FORM apply_correction.
     CLEAR ls_group.
     MOVE-CORRESPONDING ls_db TO ls_group.
     IF ls_group-status <> gc_st_error.
-      MESSAGE 'Retry correction is available only while the selected Business Group is ERROR. Reopen Retry.'
-        TYPE 'S' DISPLAY LIKE 'E'.
+      MESSAGE s770(zbdc) DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     APPEND ls_group TO lt_group.
@@ -10344,8 +10482,7 @@ FORM apply_correction.
     UNASSIGN <lv_any>.
     ASSIGN COMPONENT p_fld_name OF STRUCTURE <ls_group_fix> TO <lv_any>.
     IF sy-subrc <> 0 OR <lv_any> IS NOT ASSIGNED.
-      MESSAGE 'The selected field is no longer available in the staging structure.'
-        TYPE 'S' DISPLAY LIKE 'E'.
+      MESSAGE s771(zbdc) DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     IF |{ <lv_any> }| = lv_old_text.
@@ -10353,8 +10490,14 @@ FORM apply_correction.
       DESCRIBE FIELD <lv_any> LENGTH lv_field_len IN CHARACTER MODE.
       lv_new_len = strlen( p_new_val ).
       IF lv_field_len > 0 AND lv_new_len > lv_field_len.
-        lv_msg = |New Value is too long for { p_fld_name } ({ lv_new_len }; maximum { lv_field_len }).|.
-        MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+        DATA(lv_zm967_10356_1) = |{ p_fld_name }|.
+        DATA(lv_zm967_10356_2) = |{ lv_new_len }|.
+        DATA(lv_zm967_10356_3) = |{ lv_field_len }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '967'
+          WITH lv_zm967_10356_1 lv_zm967_10356_2 lv_zm967_10356_3
+          INTO lv_msg.
+        PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       <lv_any> = p_new_val.
@@ -10363,8 +10506,7 @@ FORM apply_correction.
   ENDLOOP.
 
   IF lv_group_match = 0.
-    MESSAGE 'The selected Old Value no longer exists for this field in this Business Group.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s772(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -10387,9 +10529,10 @@ FORM apply_correction.
 
     IF lv_selected_bad = abap_true OR lv_other_bad <> abap_true.
       IF lv_msg IS INITIAL.
-        lv_msg = 'The new value did not pass validation for the selected field; nothing was saved.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '968' INTO lv_msg.
       ENDIF.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -10403,7 +10546,7 @@ FORM apply_correction.
       lv_group_ready    = abap_false.
       lv_contract_block = abap_true.
       IF lv_contract_msg IS INITIAL.
-        lv_contract_msg = 'Correction is valid, but the exact execution contract is not ready.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '969' INTO lv_contract_msg.
       ENDIF.
     ENDIF.
   ENDIF.
@@ -10420,8 +10563,7 @@ FORM apply_correction.
   ENDLOOP.
   IF lv_concurrent = abap_true.
     ROLLBACK WORK.
-    MESSAGE 'Correction validation became stale. Reopen Retry; nothing was saved.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s773(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -10436,8 +10578,7 @@ FORM apply_correction.
         WITH KEY session_id = ls_db-session_id row_index = ls_db-row_index.
       IF sy-subrc <> 0.
         ROLLBACK WORK.
-        MESSAGE 'Validated correction rows no longer match staging; nothing was saved.'
-          TYPE 'S' DISPLAY LIKE 'E'.
+        MESSAGE s774(zbdc) DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       UNASSIGN <lv_valid>.
@@ -10446,8 +10587,7 @@ FORM apply_correction.
       ASSIGN COMPONENT p_fld_name OF STRUCTURE ls_update TO <lv_update>.
       IF sy-subrc <> 0 OR <lv_valid> IS NOT ASSIGNED OR <lv_update> IS NOT ASSIGNED.
         ROLLBACK WORK.
-        MESSAGE 'The validated correction field could not be written safely; nothing was saved.'
-          TYPE 'S' DISPLAY LIKE 'E'.
+        MESSAGE s775(zbdc) DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       lv_norm_new = |{ <lv_valid> }|.
@@ -10490,8 +10630,7 @@ FORM apply_correction.
   MODIFY zbdc_staging_bup FROM TABLE lt_group_update.
   IF sy-subrc <> 0.
     ROLLBACK WORK.
-    MESSAGE 'Correction could not be saved to staging; no retry state was changed.'
-      TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s776(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
   COMMIT WORK AND WAIT.
@@ -10525,7 +10664,7 @@ FORM apply_correction.
       lv_msg = lv_contract_msg.
     ENDIF.
     IF lv_msg IS INITIAL.
-      lv_msg = 'Correction saved, but this Business Group still has validation errors.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '970' INTO lv_msg.
     ENDIF.
     PERFORM exec_q_set USING ls_key gc_st_error lv_msg ''.
   ENDIF.
@@ -10539,24 +10678,35 @@ FORM apply_correction.
       CLEAR: p_bus_group, p_fld_name, p_old_val,
              gv_0560_prepared, gv_0560_last_group, gv_0560_last_field.
       REFRESH: gt_0560_map, gt_0560_old_opt.
-      lv_msg = |Business Group { ls_key-record_key } is READY. Continue with the next selected failed group ({ lv_remaining } remaining).|.
-      MESSAGE lv_msg TYPE 'S'.
+      DATA(lv_zm971_10542_1) = |{ ls_key-record_key }|.
+      DATA(lv_zm971_10542_2) = |{ lv_remaining }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '971'
+        WITH lv_zm971_10542_1 lv_zm971_10542_2 INTO lv_msg.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S'.
       RETURN.
     ENDIF.
 
     IF gt_0560_ready_done IS NOT INITIAL.
       PERFORM select_0500_keys USING gt_0560_ready_done.
     ENDIF.
-    lv_msg = |Correction saved for { ls_key-record_key } ({ lv_total_rows } row value(s)). Validation passed; choose CT or BISM to execute the next attempt.|.
-    MESSAGE lv_msg TYPE 'S'.
+    DATA(lv_zm972_10550_1) = |{ ls_key-record_key }|.
+    DATA(lv_zm972_10550_2) = |{ lv_total_rows }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '972'
+      WITH lv_zm972_10550_1 lv_zm972_10550_2 INTO lv_msg.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S'.
     PERFORM reset_0560.
     SET SCREEN 0.
     LEAVE SCREEN.
   ELSE.
     CLEAR: p_old_val, gv_0560_last_field.
     REFRESH gt_0560_old_opt.
-    lv_msg = |Correction saved for { ls_key-record_key }, but the group is still ERROR. Choose another field/value correction.|.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    DATA(lv_zm973_10558_1) = |{ ls_key-record_key }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '973'
+      WITH lv_zm973_10558_1 INTO lv_msg.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
   ENDIF.
 ENDFORM.
 
@@ -10609,8 +10759,6 @@ FORM prep_result_invest_0650
     ENDTRY.
     CLEAR go_group_container_0650.
   ENDIF.
-  CLEAR go_group_evt_0650.
-
   PERFORM stop_result_timer_0650.
   CLEAR: gv_result_0650_tick,
          gv_result_0650_skip_pbo,
@@ -11589,7 +11737,8 @@ FORM display_result_detail.
         go_grid_0650->display( ).
         gv_evidence_shape_0650 = lv_shape_0650.
       CATCH cx_salv_msg INTO DATA(lx_det).
-        MESSAGE lx_det->get_text( ) TYPE 'I'.
+        gv_ui_message = 'Execution evidence could not be displayed. Refresh and try again.'.
+        MESSAGE gv_ui_message TYPE 'I'.
       CATCH cx_salv_not_found.
     ENDTRY.
   ENDIF.
@@ -11700,104 +11849,6 @@ ENDFORM.
 
 *& Generic detail-screen drilldown compatibility
 *& Legacy-compatible object-text helper
-
-FORM pick_0100_session
-  CHANGING cv_session_id TYPE zbdc_staging_bup-session_id.
-
-  TYPES: BEGIN OF ty_z40_pick,
-           session_id TYPE zbdc_staging_bup-session_id,
-           tcode      TYPE tcode,
-           status     TYPE char40,
-           message    TYPE char255,
-         END OF ty_z40_pick.
-
-  DATA: lt_pick TYPE STANDARD TABLE OF ty_z40_pick,
-        ls_pick TYPE ty_z40_pick,
-        lt_ret  TYPE STANDARD TABLE OF ddshretval,
-        ls_ret  TYPE ddshretval.
-
-  FIELD-SYMBOLS: <ls_dash> TYPE any,
-                 <lv_any>  TYPE any.
-
-  CLEAR cv_session_id.
-  REFRESH lt_pick.
-
- "Build popup list from current 0100 dashboard table.
-  LOOP AT gt_dash_0100 ASSIGNING <ls_dash>.
-
-    CLEAR ls_pick.
-
-    ASSIGN COMPONENT 'SESSION_ID' OF STRUCTURE <ls_dash> TO <lv_any>.
-    IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-      ls_pick-session_id = <lv_any>.
-    ENDIF.
-
-    ASSIGN COMPONENT 'TCODE' OF STRUCTURE <ls_dash> TO <lv_any>.
-    IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-      ls_pick-tcode = <lv_any>.
-    ENDIF.
-
-    ASSIGN COMPONENT 'OVERALL_STATUS' OF STRUCTURE <ls_dash> TO <lv_any>.
-    IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-      ls_pick-status = <lv_any>.
-    ENDIF.
-
-    IF ls_pick-status IS INITIAL.
-      ASSIGN COMPONENT 'STATUS_TEXT' OF STRUCTURE <ls_dash> TO <lv_any>.
-      IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-        ls_pick-status = <lv_any>.
-      ENDIF.
-    ENDIF.
-
-    ASSIGN COMPONENT 'PROOF_LAST_MESSAGE' OF STRUCTURE <ls_dash> TO <lv_any>.
-    IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-      ls_pick-message = <lv_any>.
-    ENDIF.
-
-    IF ls_pick-message IS INITIAL.
-      ASSIGN COMPONENT 'LAST_MESSAGE' OF STRUCTURE <ls_dash> TO <lv_any>.
-      IF sy-subrc = 0 AND <lv_any> IS ASSIGNED.
-        ls_pick-message = <lv_any>.
-      ENDIF.
-    ENDIF.
-
-    IF ls_pick-session_id IS NOT INITIAL.
-      APPEND ls_pick TO lt_pick.
-    ENDIF.
-
-  ENDLOOP.
-
-  IF lt_pick IS INITIAL.
-    MESSAGE s617(zbdc) DISPLAY LIKE 'W'.
-    RETURN.
-  ENDIF.
-
-  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
-    EXPORTING
-      retfield        = 'SESSION_ID'
-      dynpprog        = sy-repid
-      dynpnr          = sy-dynnr
-      value_org       = 'S'
-      window_title    = 'Choose Staging Session'
-    TABLES
-      value_tab       = lt_pick
-      return_tab      = lt_ret
-    EXCEPTIONS
-      parameter_error = 1
-      no_values_found = 2
-      OTHERS          = 3.
-
-  IF sy-subrc <> 0.
-    RETURN.
-  ENDIF.
-
-  READ TABLE lt_ret INTO ls_ret INDEX 1.
-  IF sy-subrc = 0 AND ls_ret-fieldval IS NOT INITIAL.
-    cv_session_id = ls_ret-fieldval.
-    CONDENSE cv_session_id.
-  ENDIF.
-
-ENDFORM.
 
 *& evidence-driven executor projection for dashboard layers
 
@@ -12297,7 +12348,7 @@ FORM l2_show_panel
       ORDER BY row_index ASCENDING.
   ENDIF.
   IF lt_rows IS INITIAL.
-    MESSAGE 'No persisted staging rows exist for this group.' TYPE 'S' DISPLAY LIKE 'I'.
+    MESSAGE s777(zbdc) DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -12305,7 +12356,7 @@ FORM l2_show_panel
     USING    is_group-session_id
     CHANGING lv_tcode lv_profile lv_ver lv_found.
   IF lv_found <> abap_true.
-    MESSAGE 'The frozen mapping context for this group is unavailable.' TYPE 'S' DISPLAY LIKE 'I'.
+    MESSAGE s778(zbdc) DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -12346,7 +12397,7 @@ FORM l2_show_panel
     ENDLOOP.
 
     IF lt_input IS INITIAL.
-      MESSAGE 'No mapped input data is available for this group.' TYPE 'S' DISPLAY LIKE 'I'.
+      MESSAGE s779(zbdc) DISPLAY LIKE 'I'.
       RETURN.
     ENDIF.
 
@@ -12409,7 +12460,8 @@ FORM l2_show_panel
           end_line     = 24 ).
         lo_salv->display( ).
       CATCH cx_salv_msg INTO DATA(lx_input_salv).
-        MESSAGE lx_input_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+        gv_ui_message = 'Input Data could not be displayed. Reopen the group and try again.'.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDTRY.
     RETURN.
   ENDIF.
@@ -12420,7 +12472,7 @@ FORM l2_show_panel
 
   PERFORM table_exists USING gc_z16_tab_chg CHANGING lv_exists.
   IF lv_exists <> abap_true.
-    MESSAGE 'No persisted change audit is available for this group.' TYPE 'S' DISPLAY LIKE 'I'.
+    MESSAGE s780(zbdc) DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -12431,7 +12483,8 @@ FORM l2_show_panel
         INTO CORRESPONDING FIELDS OF TABLE @lt_chg_raw
         WHERE (lv_where).
     CATCH cx_root INTO DATA(lx_change_read).
-      MESSAGE lx_change_read->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Change History could not be loaded. Refresh and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
   ENDTRY.
 
@@ -12491,7 +12544,8 @@ FORM l2_show_panel
         end_line     = 22 ).
       lo_salv->display( ).
     CATCH cx_salv_msg INTO DATA(lx_change_salv).
-      MESSAGE lx_change_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Change History could not be displayed. Reopen it and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 ENDFORM.
 
@@ -12717,8 +12771,7 @@ FORM show_session_groups
 
   lv_group_count = lines( gt_group_0100 ).
   IF lv_group_count = 0.
-    MESSAGE 'This persisted session has no current canonical staging groups.'
-      TYPE 'S' DISPLAY LIKE 'I'.
+    MESSAGE s781(zbdc) DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -12945,7 +12998,8 @@ FORM show_session_groups
       go_group_grid_0100->display( ).
 
     CATCH cx_salv_msg INTO DATA(lx_salv).
-      MESSAGE lx_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Group details could not be displayed. Refresh and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 ENDFORM.
 
@@ -13595,7 +13649,7 @@ FORM show_group_evidence
   FIELD-SYMBOLS: <lv_mid> TYPE any,
                  <lv_mnr> TYPE any.
 
-  REFRESH: gt_evidence_0100, gt_evidence_card_0100.
+  REFRESH gt_evidence_card_0100.
   FREE go_evidence_grid_0100.
 
   IF is_group-record_key IS NOT INITIAL.
@@ -14253,6 +14307,7 @@ FORM show_group_evidence
       go_evidence_grid_0100->display( ).
 
     CATCH cx_salv_msg INTO DATA(lx_salv).
-      MESSAGE lx_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Evidence details could not be displayed. Refresh and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 ENDFORM.

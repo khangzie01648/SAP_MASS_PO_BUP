@@ -46,8 +46,7 @@ FORM p1_split_unit_name USING iv_name TYPE csequence
                          CHANGING cv_file_title TYPE csequence
                                   cv_sheet_name TYPE csequence.
   DATA: lv_file  TYPE string,
-        lv_sheet TYPE string,
-        lv_dummy TYPE string.
+        lv_sheet TYPE string.
   CLEAR: cv_file_title, cv_sheet_name.
   lv_file = iv_name.
   IF lv_file CS '|SHEET='.
@@ -98,17 +97,14 @@ FORM p1_resolve_declared_template
         lt_headers      TYPE string_table,
         lt_header_order TYPE string_table,
         lt_norm_headers TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
-        lt_sources      TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
         ls_pair         TYPE ty_pair,
         ls_prof         TYPE zbdc_prof_bup,
-        ls_map          TYPE zbdc_mapping_bup,
         ls_cert         TYPE zbdc_cert_bup,
         ls_script       TYPE zbdc_script_bup,
         lv_file         TYPE string,
         lv_prefix       TYPE string,
         lv_suffix       TYPE string,
         lv_header       TYPE string,
-        lv_source       TYPE string,
         lv_ver_text     TYPE string,
         lv_char         TYPE c LENGTH 1,
         lv_pos          TYPE i,
@@ -118,9 +114,6 @@ FORM p1_resolve_declared_template
         lv_decl_tcode   TYPE zbdc_prof_bup-tcode,
         lv_decl_profile TYPE zbdc_prof_bup-profile_name,
         lv_decl_ver     TYPE zbdc_prof_bup-profile_ver,
-        lv_max_ver      TYPE zbdc_prof_bup-profile_ver,
-        lv_map_count    TYPE i,
-        lv_header_count TYPE i,
         lv_script_stat  TYPE zbdc_script_bup-status,
         lv_cert_stat    TYPE zbdc_cert_bup-cert_status,
         lv_manifest_ok  TYPE abap_bool,
@@ -602,19 +595,16 @@ FORM p1_guard_contract
            cv_message TYPE string.
 
   DATA: ls_prof        TYPE zbdc_prof_bup,
-        ls_map         TYPE zbdc_mapping_bup,
         ls_cert        TYPE zbdc_cert_bup,
         ls_script      TYPE zbdc_script_bup,
         lt_map         TYPE STANDARD TABLE OF zbdc_mapping_bup,
         lt_headers     TYPE string_table,
         lt_header_order TYPE string_table,
         lt_norm_hdr    TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
-        lt_sources     TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
         lv_script_stat TYPE zbdc_script_bup-status,
         lv_cert_stat   TYPE zbdc_cert_bup-cert_status,
         lv_z469_ts     TYPE timestampl,
         lv_header      TYPE string,
-        lv_source      TYPE string,
         lv_manifest_ok TYPE abap_bool,
         lv_manifest_msg TYPE string.
 
@@ -1063,16 +1053,20 @@ FORM p1_resolve_unit_tcode USING iv_header TYPE string
       WITH cv_tcode txtp_profile_name gv_profile_ver.
     RETURN.
   ELSEIF lines( lt_exact_candidates ) > 1.
-    gv_ingest_error_msg = |AMBIGUOUS: { lines( lt_exact_candidates ) } exact versioned template contracts match; ingest is blocked.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm804_1066_1) = |{ lines( lt_exact_candidates ) }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '804'
+      WITH lv_zm804_1066_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
  "A filename that carries generated-template provenance must never be rebound
  "to a different ACTIVE version just because its headers look similar.
   IF lv_generated_hint = abap_true.
-    gv_ingest_error_msg = 'TEMPLATE_CONTRACT_MISMATCH: declared version does not match its exact mapping/script contract.'.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '805' INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -1085,11 +1079,15 @@ FORM p1_resolve_unit_tcode USING iv_header TYPE string
     MESSAGE s152(zbdc)
       WITH cv_tcode txtp_profile_name gv_profile_ver.
   ELSEIF lt_active_candidates IS INITIAL.
-    gv_ingest_error_msg = 'UNMATCHED: no ACTIVE profile has this exact emitted business-input schema.'.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '806' INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ELSE.
-    gv_ingest_error_msg = |AMBIGUOUS: { lines( lt_active_candidates ) } ACTIVE profiles match the exact emitted business-input schema; ingest is blocked.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm807_1091_1) = |{ lines( lt_active_candidates ) }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '807'
+      WITH lv_zm807_1091_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDIF.
 ENDFORM.
 
@@ -2337,8 +2335,9 @@ FIELD-SYMBOLS: <fv> TYPE any,
  " 1. Raw file must not be empty
 
   IF pt_raw IS INITIAL.
-    gv_ingest_error_msg = 'CSV parser received empty raw file content.'.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '808' INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -2361,8 +2360,9 @@ FIELD-SYMBOLS: <fv> TYPE any,
   ENDLOOP.
 
   IF lv_header_idx IS INITIAL OR lv_header_ln IS INITIAL.
-    gv_ingest_error_msg = 'File CSV khong co dong header.'.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '809' INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -2372,8 +2372,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
     USING    lv_header_ln
     CHANGING lv_csv_ok lv_csv_msg.
   IF lv_csv_ok <> abap_true.
-    gv_ingest_error_msg = |CSV_HEADER_INVALID: { lv_csv_msg }|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm810_2375_1) = |{ lv_csv_msg }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '810'
+      WITH lv_zm810_2375_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2385,8 +2388,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
     CHANGING lt_headers.
 
   IF lt_headers IS INITIAL.
-    gv_ingest_error_msg = |CSV header line cannot be parsed: { lv_header_ln }|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+    DATA(lv_zm811_2388_1) = |{ lv_header_ln }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '811'
+      WITH lv_zm811_2388_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -2413,9 +2419,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
     INSERT lv_hdr_norm_pre INTO TABLE lt_header_seen.
   ENDLOOP.
   IF lv_dup_header IS NOT INITIAL.
-    gv_ingest_error_msg =
-      |TEMPLATE_SCHEMA_DUPLICATE: header column { lv_dup_header } occurs more than once. Regenerate the template and keep each input column unique.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm812_2416_1) = |{ lv_dup_header }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '812'
+      WITH lv_zm812_2416_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2426,9 +2434,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
   "template somehow exceeds this invariant, reject before any staging row
   "is created so Preview/Edit Staging can never show an incomplete file.
   IF lv_header_cols > 25.
-    gv_ingest_error_msg =
-      |TEMPLATE_SCHEMA_TOO_WIDE: uploaded file has { lv_header_cols } columns; this runtime supports 25 without loss.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm813_2429_1) = |{ lv_header_cols }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '813'
+      WITH lv_zm813_2429_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2467,7 +2477,8 @@ FIELD-SYMBOLS: <fv> TYPE any,
   IF lv_declared_contract = abap_true.
     IF lv_declared_ok <> abap_true.
       gv_ingest_error_msg = lv_declared_msg.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ELSE.
@@ -2478,7 +2489,8 @@ FIELD-SYMBOLS: <fv> TYPE any,
       CHANGING p_transaction.
 
     IF gv_ingest_error_msg IS NOT INITIAL.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDIF.
@@ -2486,9 +2498,12 @@ FIELD-SYMBOLS: <fv> TYPE any,
   IF p_transaction IS INITIAL
      OR txtp_profile_name IS INITIAL
      OR gv_profile_ver IS INITIAL.
-    gv_ingest_error_msg =
-      |Cannot resolve one exact TCODE/Profile/Version. File={ gv_current_file_name }, Sheet={ gv_current_sheet_name }.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm814_2489_1) = |{ gv_current_file_name }|.
+    DATA(lv_zm814_2489_2) = |{ gv_current_sheet_name }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '814'
+      WITH lv_zm814_2489_1 lv_zm814_2489_2 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2503,9 +2518,14 @@ FIELD-SYMBOLS: <fv> TYPE any,
       AND profile_ver  = @gv_profile_ver.
 
   IF lt_map IS INITIAL.
-    gv_ingest_error_msg =
-      |Profile '{ txtp_profile_name }' v{ gv_profile_ver } for { p_transaction } has no mapping in ZBDC_MAPPING_BUP.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+    DATA(lv_zm815_2506_1) = |{ txtp_profile_name }|.
+    DATA(lv_zm815_2506_2) = |{ gv_profile_ver }|.
+    DATA(lv_zm815_2506_3) = |{ p_transaction }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '815'
+      WITH lv_zm815_2506_1 lv_zm815_2506_2 lv_zm815_2506_3
+      INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -2552,14 +2572,22 @@ FIELD-SYMBOLS: <fv> TYPE any,
     ENDLOOP.
 
     IF lv_map_match_count = 0.
-      gv_ingest_error_msg =
-        |TEMPLATE_MAPPING_SOURCE_MISSING: proven file column { lv_src } has no mapping row in { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }.|.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm816_2555_1) = |{ lv_src }|.
+      DATA(lv_zm816_2555_2) = |{ p_transaction }|.
+      DATA(lv_zm816_2555_3) = |{ txtp_profile_name }|.
+      DATA(lv_zm816_2555_4) = |{ gv_profile_ver }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '816'
+        WITH lv_zm816_2555_1 lv_zm816_2555_2 lv_zm816_2555_3 lv_zm816_2555_4
+        INTO gv_ingest_error_msg.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ELSEIF lv_map_match_count > 1.
-      gv_ingest_error_msg =
-        |TEMPLATE_MAPPING_SOURCE_AMBIGUOUS: proven file column { lv_src } maps to more than one runtime field.|.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm817_2560_1) = |{ lv_src }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '817'
+        WITH lv_zm817_2560_1 INTO gv_ingest_error_msg.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -2567,9 +2595,14 @@ FIELD-SYMBOLS: <fv> TYPE any,
   ENDLOOP.
 
   IF lt_map IS INITIAL.
-    gv_ingest_error_msg =
-      |Template Mapping projection is empty for { p_transaction }/{ txtp_profile_name } v{ gv_profile_ver }.|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    DATA(lv_zm818_2570_1) = |{ p_transaction }|.
+    DATA(lv_zm818_2570_2) = |{ txtp_profile_name }|.
+    DATA(lv_zm818_2570_3) = |{ gv_profile_ver }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '818'
+      WITH lv_zm818_2570_1 lv_zm818_2570_2 lv_zm818_2570_3
+      INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2581,9 +2614,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
   REFRESH lt_target_seen.
   LOOP AT lt_map INTO ls_map.
     IF ls_map-staging_field IS INITIAL.
-      gv_ingest_error_msg =
-        |TEMPLATE_MAPPING_TARGET_MISSING: source { ls_map-source_column } has no staging field.|.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm819_2584_1) = |{ ls_map-source_column }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '819'
+        WITH lv_zm819_2584_1 INTO gv_ingest_error_msg.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -2591,9 +2626,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
       WITH TABLE KEY table_line = ls_map-staging_field
       TRANSPORTING NO FIELDS.
     IF sy-subrc = 0.
-      gv_ingest_error_msg =
-        |TEMPLATE_MAPPING_TARGET_COLLISION: more than one uploaded source targets { ls_map-staging_field }. Regenerate/fix the exact Mapping contract before ingest.|.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm820_2594_1) = |{ ls_map-staging_field }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '820'
+        WITH lv_zm820_2594_1 INTO gv_ingest_error_msg.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     INSERT ls_map-staging_field INTO TABLE lt_target_seen.
@@ -2640,10 +2677,12 @@ FIELD-SYMBOLS: <fv> TYPE any,
   IF lv_ctx_ok_ingest <> abap_true.
     gv_ingest_error_msg = lv_ctx_msg_ingest.
     IF gv_ingest_error_msg IS INITIAL.
-      gv_ingest_error_msg =
-        |Cannot persist exact ingestion context for session { lv_sess }.|.
+      DATA(lv_zm821_2643_1) = |{ lv_sess }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '821'
+        WITH lv_zm821_2643_1 INTO gv_ingest_error_msg.
     ENDIF.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2654,9 +2693,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
   "that was parsed from this file; do not reconstruct it from Mapping later.
   LOOP AT lt_headers INTO lv_preview_header.
     IF sy-tabix > 25.
-      gv_ingest_error_msg =
-        |PREVIEW_SCHEMA_TOO_WIDE: uploaded file has { lv_header_cols } columns; Preview supports 25 file columns.|.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      DATA(lv_zm822_2657_1) = |{ lv_header_cols }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '822'
+        WITH lv_zm822_2657_1 INTO gv_ingest_error_msg.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -2692,14 +2733,17 @@ FIELD-SYMBOLS: <fv> TYPE any,
       USING    lv_line
       CHANGING lv_csv_ok lv_csv_msg.
     IF lv_csv_ok <> abap_true.
-      gv_ingest_error_msg =
-        |CSV_ROW_INVALID: data row { lv_raw_line_idx }: { lv_csv_msg }|.
+      DATA(lv_zm823_2695_1) = |{ lv_raw_line_idx }|.
+      DATA(lv_zm823_2695_2) = |{ lv_csv_msg }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '823'
+        WITH lv_zm823_2695_1 lv_zm823_2695_2 INTO gv_ingest_error_msg.
       lv_trim_idx = lines( gt_staging ).
       WHILE lv_trim_idx > lv_initial_staging.
         DELETE gt_staging INDEX lv_trim_idx.
         lv_trim_idx = lv_trim_idx - 1.
       ENDWHILE.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -2724,14 +2768,20 @@ FIELD-SYMBOLS: <fv> TYPE any,
         IF sy-subrc = 0.
           CONDENSE lv_extra_val.
           IF lv_extra_val IS NOT INITIAL.
-            gv_ingest_error_msg =
-              |ROW_SCHEMA_MISMATCH: data row { lv_raw_line_idx } has value '{ lv_extra_val }' in column { lv_extra_idx } but the generated template has only { lv_header_cols } columns.|.
+            DATA(lv_zm824_2727_1) = |{ lv_raw_line_idx }|.
+            DATA(lv_zm824_2727_2) = |{ lv_extra_val }|.
+            DATA(lv_zm824_2727_3) = |{ lv_extra_idx }|.
+            DATA(lv_zm824_2727_4) = |{ lv_header_cols }|.
+            MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '824'
+              WITH lv_zm824_2727_1 lv_zm824_2727_2 lv_zm824_2727_3 lv_zm824_2727_4
+              INTO gv_ingest_error_msg.
             lv_trim_idx = lines( gt_staging ).
             WHILE lv_trim_idx > lv_initial_staging.
               DELETE gt_staging INDEX lv_trim_idx.
               lv_trim_idx = lv_trim_idx - 1.
             ENDWHILE.
-            MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+            PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+            MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
             RETURN.
           ENDIF.
         ENDIF.
@@ -2745,14 +2795,19 @@ FIELD-SYMBOLS: <fv> TYPE any,
       IF sy-subrc = 0.
         CONDENSE lv_extra_val.
         IF lv_extra_val IS NOT INITIAL.
-          gv_ingest_error_msg =
-            |ROW_SCHEMA_MISMATCH: data row { lv_raw_line_idx } contains '{ lv_extra_val }' under blank header column { ls_col_idx-col_no }. Regenerate/fill the template without shifting columns.|.
+          DATA(lv_zm825_2748_1) = |{ lv_raw_line_idx }|.
+          DATA(lv_zm825_2748_2) = |{ lv_extra_val }|.
+          DATA(lv_zm825_2748_3) = |{ ls_col_idx-col_no }|.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '825'
+            WITH lv_zm825_2748_1 lv_zm825_2748_2 lv_zm825_2748_3
+            INTO gv_ingest_error_msg.
           lv_trim_idx = lines( gt_staging ).
           WHILE lv_trim_idx > lv_initial_staging.
             DELETE gt_staging INDEX lv_trim_idx.
             lv_trim_idx = lv_trim_idx - 1.
           ENDWHILE.
-          MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+          PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+          MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
           RETURN.
         ENDIF.
       ENDIF.
@@ -2786,14 +2841,16 @@ FIELD-SYMBOLS: <fv> TYPE any,
       ASSIGN COMPONENT lv_preview_col
         OF STRUCTURE ls_preview_cache-preview_row TO <pv>.
       IF sy-subrc <> 0 OR <pv> IS NOT ASSIGNED.
-        gv_ingest_error_msg =
-          |PREVIEW_SLOT_INVALID: { lv_preview_col } is unavailable.|.
+        DATA(lv_zm826_2789_1) = |{ lv_preview_col }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '826'
+          WITH lv_zm826_2789_1 INTO gv_ingest_error_msg.
         lv_trim_idx = lines( gt_staging ).
         WHILE lv_trim_idx > lv_initial_staging.
           DELETE gt_staging INDEX lv_trim_idx.
           lv_trim_idx = lv_trim_idx - 1.
         ENDWHILE.
-        MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       <pv> = lv_preview_value.
@@ -2828,28 +2885,34 @@ FIELD-SYMBOLS: <fv> TYPE any,
       "Executable staging must never lose a generated-template value silently.
       ASSIGN COMPONENT ls_map-staging_field OF STRUCTURE ls_stg TO <fv>.
       IF sy-subrc <> 0 OR <fv> IS NOT ASSIGNED.
-        gv_ingest_error_msg =
-          |TEMPLATE_STAGING_BIND_INVALID: { ls_map-source_column } -> { ls_map-staging_field } does not exist in ZBDC_STAGING_BUP.|.
+        DATA(lv_zm827_2831_1) = |{ ls_map-source_column }|.
+        DATA(lv_zm827_2831_2) = |{ ls_map-staging_field }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '827'
+          WITH lv_zm827_2831_1 lv_zm827_2831_2 INTO gv_ingest_error_msg.
         lv_trim_idx = lines( gt_staging ).
         WHILE lv_trim_idx > lv_initial_staging.
           DELETE gt_staging INDEX lv_trim_idx.
           lv_trim_idx = lv_trim_idx - 1.
         ENDWHILE.
-        MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
 
       <fv> = lv_val.
       lv_staged_check = <fv>.
       IF lv_staged_check <> lv_val.
-        gv_ingest_error_msg =
-          |TEMPLATE_STAGING_VALUE_LOSS: { ls_map-source_column } value could not round-trip through { ls_map-staging_field }.|.
+        DATA(lv_zm828_2845_1) = |{ ls_map-source_column }|.
+        DATA(lv_zm828_2845_2) = |{ ls_map-staging_field }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '828'
+          WITH lv_zm828_2845_1 lv_zm828_2845_2 INTO gv_ingest_error_msg.
         lv_trim_idx = lines( gt_staging ).
         WHILE lv_trim_idx > lv_initial_staging.
           DELETE gt_staging INDEX lv_trim_idx.
           lv_trim_idx = lv_trim_idx - 1.
         ENDWHILE.
-        MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
 
@@ -2882,13 +2945,19 @@ FIELD-SYMBOLS: <fv> TYPE any,
       UNASSIGN <fv>.
       ASSIGN COMPONENT ls_map-staging_field OF STRUCTURE ls_stg TO <fv>.
       IF sy-subrc <> 0 OR <fv> IS NOT ASSIGNED.
-        gv_ingest_error_msg =
-          |TEMPLATE_ROW_INTEGRITY_BIND_INVALID: { ls_map-source_column } -> { ls_map-staging_field }.|.
+        DATA(lv_zm829_2885_1) = |{ ls_map-source_column }|.
+        DATA(lv_zm829_2885_2) = |{ ls_map-staging_field }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '829'
+          WITH lv_zm829_2885_1 lv_zm829_2885_2 INTO gv_ingest_error_msg.
       ELSE.
         lv_actual_check = <fv>.
         IF lv_actual_check <> lv_expected_check.
-          gv_ingest_error_msg =
-            |TEMPLATE_ROW_INTEGRITY_LOSS: { ls_map-source_column } does not match final { ls_map-staging_field } in source row { lv_raw_line_idx }.|.
+          DATA(lv_zm830_2890_1) = |{ ls_map-source_column }|.
+          DATA(lv_zm830_2890_2) = |{ ls_map-staging_field }|.
+          DATA(lv_zm830_2890_3) = |{ lv_raw_line_idx }|.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '830'
+            WITH lv_zm830_2890_1 lv_zm830_2890_2 lv_zm830_2890_3
+            INTO gv_ingest_error_msg.
         ENDIF.
       ENDIF.
       UNASSIGN <fv>.
@@ -2899,7 +2968,8 @@ FIELD-SYMBOLS: <fv> TYPE any,
           DELETE gt_staging INDEX lv_trim_idx.
           lv_trim_idx = lv_trim_idx - 1.
         ENDWHILE.
-        MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
     ENDLOOP.
@@ -2928,9 +2998,11 @@ FIELD-SYMBOLS: <fv> TYPE any,
  " 9. No data rows after header
 
   IF lv_added = 0.
-    gv_ingest_error_msg =
-      |CSV parsed header OK but no data rows were loaded. Header line={ lv_header_ln }|.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+    DATA(lv_zm831_2931_1) = |{ lv_header_ln }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '831'
+      WITH lv_zm831_2931_1 INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -2954,7 +3026,8 @@ FIELD-SYMBOLS: <fv> TYPE any,
       DELETE gt_staging INDEX lv_trim_idx.
       lv_trim_idx = lv_trim_idx - 1.
     ENDWHILE.
-    MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2971,7 +3044,8 @@ FIELD-SYMBOLS: <fv> TYPE any,
         DELETE gt_staging INDEX lv_trim_idx.
         lv_trim_idx = lv_trim_idx - 1.
       ENDWHILE.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
   ENDLOOP.
@@ -3284,27 +3358,27 @@ FORM p1_source_msg_token
 ENDFORM.
 
 FORM prepare_preview_file.
-  TYPES: BEGIN OF ty_file_sid_0302,
+  TYPES: BEGIN OF ty_file_sid_hist,
            session_id TYPE zbdc_file_lg_bup-session_id,
-         END OF ty_file_sid_0302,
-         BEGIN OF ty_sess_sid_0302,
+         END OF ty_file_sid_hist,
+         BEGIN OF ty_sess_sid_hist,
            session_id TYPE zbdc_session_bup-session_id,
-         END OF ty_sess_sid_0302,
-         BEGIN OF ty_owner_0302,
+         END OF ty_sess_sid_hist,
+         BEGIN OF ty_owner_hist,
            session_id TYPE zbdc_file_lg_bup-session_id,
            created_by TYPE zbdc_session_bup-created_by,
-         END OF ty_owner_0302,
-         BEGIN OF ty_size_0302,
+         END OF ty_owner_hist,
+         BEGIN OF ty_size_hist,
            session_id TYPE zbdc_result_bup-session_id,
            message    TYPE zbdc_result_bup-message,
            created_at TYPE zbdc_result_bup-created_at,
-         END OF ty_size_0302,
-         BEGIN OF ty_source_0302,
+         END OF ty_size_hist,
+         BEGIN OF ty_source_hist,
            session_id TYPE zbdc_result_bup-session_id,
            tcode      TYPE zbdc_result_bup-tcode,
            message    TYPE zbdc_result_bup-message,
            created_at TYPE zbdc_result_bup-created_at,
-         END OF ty_source_0302.
+         END OF ty_source_hist.
 
   DATA: ls_meta       TYPE ty_files_disp,
         lv_date       TYPE sy-datum,
@@ -3326,19 +3400,19 @@ FORM prepare_preview_file.
         lv_src_skip   TYPE string,
         lv_stg_error  TYPE zbdc_staging_bup-error_msg,
         lv_stg_tcode  TYPE zbdc_staging_bup-tcode,
-        ls_seen_sid   TYPE ty_sess_sid_0302.
+        ls_seen_sid   TYPE ty_sess_sid_hist.
 
   DATA: lt_file_lg    TYPE STANDARD TABLE OF zbdc_file_lg_bup,
-        lt_my_sid     TYPE SORTED TABLE OF ty_file_sid_0302
+        lt_my_sid     TYPE SORTED TABLE OF ty_file_sid_hist
                       WITH UNIQUE KEY session_id,
-        lt_lookup_sid TYPE SORTED TABLE OF ty_sess_sid_0302
+        lt_lookup_sid TYPE SORTED TABLE OF ty_sess_sid_hist
                       WITH UNIQUE KEY session_id,
         lt_owner_raw  TYPE STANDARD TABLE OF zbdc_session_bup,
-        lt_owner      TYPE HASHED TABLE OF ty_owner_0302
+        lt_owner      TYPE HASHED TABLE OF ty_owner_hist
                       WITH UNIQUE KEY session_id,
-        lt_size_log   TYPE STANDARD TABLE OF ty_size_0302,
-        lt_source_log TYPE STANDARD TABLE OF ty_source_0302,
-        lt_seen_sid   TYPE SORTED TABLE OF ty_sess_sid_0302
+        lt_size_log   TYPE STANDARD TABLE OF ty_size_hist,
+        lt_source_log TYPE STANDARD TABLE OF ty_source_hist,
+        lt_seen_sid   TYPE SORTED TABLE OF ty_sess_sid_hist
                       WITH UNIQUE KEY session_id.
 
   REFRESH gt_files_preview.
@@ -3412,7 +3486,7 @@ FORM prepare_preview_file.
       WHERE session_id = lt_lookup_sid-session_id.
 
     LOOP AT lt_owner_raw INTO DATA(ls_owner_raw).
-      DATA ls_owner_conv TYPE ty_owner_0302.
+      DATA ls_owner_conv TYPE ty_owner_hist.
       CLEAR ls_owner_conv.
       ls_owner_conv-session_id = ls_owner_raw-session_id.
       ls_owner_conv-created_by = ls_owner_raw-created_by.
@@ -3758,37 +3832,6 @@ FORM prepare_preview_file.
   SORT gt_files_preview BY upload_date DESCENDING upload_time DESCENDING file_name ASCENDING.
 ENDFORM.
 
-FORM refresh_0302_scope.
-  DATA: lv_header      TYPE lvc_title,
-        lv_show_owner  TYPE abap_bool.
-
-  IF go_grid_0302 IS NOT BOUND.
-    RETURN.
-  ENDIF.
-
-  IF gv_file_scope = gc_file_scope_all.
-    lv_header = |All Uploads ({ lines( gt_files_preview ) }) - double-click a file to preview its data|.
-    lv_show_owner = abap_true.
-  ELSE.
-    lv_header = |My Uploads ({ lines( gt_files_preview ) }) - double-click a file to preview its data|.
-    lv_show_owner = abap_false.
-  ENDIF.
-
-  TRY.
-      go_grid_0302->get_display_settings( )->set_list_header( lv_header ).
-      go_grid_0302->get_columns( )->get_column( 'OWNER' )->set_visible( lv_show_owner ).
-      go_grid_0302->refresh( refresh_mode = if_salv_c_refresh=>full ).
-    CATCH cx_root.
-  ENDTRY.
-
-  IF gv_file_scope = gc_file_scope_all.
-    DATA(lv_all_upload_count) = lines( gt_files_preview ).
-    MESSAGE s154(zbdc) WITH lv_all_upload_count.
-  ELSE.
-    DATA(lv_my_upload_count) = lines( gt_files_preview ).
-    MESSAGE s155(zbdc) WITH lv_my_upload_count.
-  ENDIF.
-ENDFORM.
 
 FORM 0300_after_ingest USING iv_source TYPE char20.
   DATA: lv_total TYPE i,
@@ -3837,14 +3880,9 @@ FORM 0300_after_ingest USING iv_source TYPE char20.
     PERFORM apply_first_staging_ctx.
     PERFORM build_preview_rows.
 
- "after ingest stay on Preview Data. Do not hop through 0302 and
- "do not queue a synthetic PREV command. Mark the existing 0301 SALV for
- "one controlled rebuild in the next normal 0301 PBO, where the frontend
- "control can be safely destroyed and recreated from the new 13+ rows.
-    g_sub_dynpro = '0301'.
+ "After ingest stay on Preview Data and do not queue a synthetic PREV command.
+ "The next normal 0301 PBO refreshes the existing ALV from the rebuilt preview rows.
     ts_preview-activetab = 'TAB_PREVIEW'.
-    gv_rebuild_0301 = abap_true.
-
     IF lv_error > 0 OR lv_warn > 0.
       MESSAGE s156(zbdc)
         WITH iv_source lv_sess
@@ -3896,14 +3934,13 @@ ENDFORM.
 
 FORM clear_0300_runtime.
  "Fresh Upload Center: clear only runtime preview buffers, never delete persisted DB history.
-  REFRESH: gt_staging, gt_errors, gt_preview_data, gt_files_preview, gt_current_sessions.
+  REFRESH: gt_staging, gt_preview_data, gt_files_preview, gt_current_sessions.
   CLEAR: txtp_file_path, txtp_file_size, txtp_row_count, txtp_row, txtp_rows,
          txtp_loaded, txtp_rows_loaded, txtp_loaded_rows,
          txtgv_row_count, txtgv_rows, txtgv_loaded, txtgv_total_rows, txtgv_tot_rows,
          gv_current_batch_prefix, gv_ingest_batch_prefix, gv_forced_session_id,
          gv_current_batch_count, gv_current_file_name, gv_current_sheet_name,
          gv_current_unit_src.
-  g_sub_dynpro = '0301'.
   ts_preview-activetab = 'TAB_PREVIEW'.
   PERFORM reset_0300_all_alv.
 ENDFORM.

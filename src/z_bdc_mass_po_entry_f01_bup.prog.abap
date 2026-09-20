@@ -269,9 +269,8 @@ CLASS lcl_alv_events IMPLEMENTATION.
       RETURN.
     ENDIF.
 
- "dashboard double-click is now a read-only drill-down, not a
- "navigation side effect into staging. The Staging toolbar action remains
- "the explicit route to screen 0400 for the selected session.
+ "dashboard double-click is read-only. Staging is entered from the Upload
+ "workflow on screen 0300, not from a retired Main Dashboard toolbar action.
     PERFORM show_session_groups
       USING ls_dash_0100_evt.
   ENDMETHOD.
@@ -307,46 +306,6 @@ CLASS lcl_alv_events IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
-  METHOD on_result_group_dbl.
-    IF row <= 0.
-      RETURN.
-    ENDIF.
-
-    "14T: A SALV control event can change backend globals without causing a
-    "dynpro PBO. That was the real reason 14S visually stayed on PO_001: the
-    "selected row changed, but the screen fields and right evidence control
-    "were never repainted. Route the row through the existing RGSEL PAI code
-    "so SELECT_RESULT_GROUP_0650 runs in PAI and STATUS_0650 PBO repaints the
-    "context/evidence. DISPLAY_RESULT_GROUPS_0650 no longer rebuilds/refreshes
-    "the left SALV on normal selection, so its scroll position is preserved.
-    gv_group_pick_0650 = row.
-    TRY.
-        cl_gui_cfw=>set_new_ok_code( new_code = 'RGSEL' ).
-      CATCH cx_root.
-        "Fallback keeps exact identity pinned; the next normal PBO will paint it.
-        PERFORM select_result_group_0650 USING row.
-    ENDTRY.
-  ENDMETHOD.
-
-  METHOD on_result_group_link.
-    IF row <= 0.
-      RETURN.
-    ENDIF.
-
-    IF column <> 'GROUP_KEY'.
-      RETURN.
-    ENDIF.
-
-    "14T: Same PAI/PBO bridge for one-click Business Group selection.
-    "Do not rebuild or full-refresh the left Result Groups SALV here.
-    gv_group_pick_0650 = row.
-    TRY.
-        cl_gui_cfw=>set_new_ok_code( new_code = 'RGSEL' ).
-      CATCH cx_root.
-        PERFORM select_result_group_0650 USING row.
-    ENDTRY.
-  ENDMETHOD.
-
   METHOD on_issue_0700_dbl.
     IF row <= 0.
       RETURN.
@@ -371,92 +330,6 @@ CLASS lcl_alv_events IMPLEMENTATION.
       CATCH cx_root.
         PERFORM select_issue_0700 USING row.
     ENDTRY.
-  ENDMETHOD.
-
-  METHOD on_file_double_click.
-    DATA: lv_rows_file    TYPE i,
-          lv_load_ok      TYPE abap_bool,
-          lv_load_msg     TYPE string,
-          lv_display_file TYPE string,
-          lv_display_sheet TYPE string.
-
-    READ TABLE gt_files_preview INTO DATA(ls_file) INDEX row.
-    IF sy-subrc <> 0.
-      RETURN.
-    ENDIF.
-    IF ls_file-session_id IS INITIAL.
-      MESSAGE s022(zbdc) DISPLAY LIKE 'W'.
-      RETURN.
-    ENDIF.
-
-    PERFORM load_exact_staging
-      USING    ls_file-session_id space space
-      CHANGING lv_rows_file lv_load_ok lv_load_msg.
-    IF lv_load_ok <> abap_true.
-      MESSAGE lv_load_msg TYPE 'S' DISPLAY LIKE 'W'.
-      RETURN.
-    ENDIF.
-
-    REFRESH gt_current_sessions.
-    APPEND ls_file-session_id TO gt_current_sessions.
-
-    DATA lv_0300_hist_scope TYPE abap_bool.
-    lv_0300_hist_scope = abap_true.
-    EXPORT lv_0300_hist_scope = lv_0300_hist_scope TO MEMORY ID 'ZBDC_0300_HISTORY_SCOPE'.
-
-    lv_display_file  = ls_file-file_name.
-    lv_display_sheet = ls_file-sheet_name.
-    IF lv_display_file CS '|SHEET='.
-      SPLIT lv_display_file AT '|SHEET='
-        INTO lv_display_file lv_display_sheet.
-    ENDIF.
-    txtp_file_path = lv_display_file.
-    txtp_file_size = ls_file-file_size.
-    PERFORM recalc_source_size USING ls_file-channel lv_display_file CHANGING txtp_file_size.
-    gv_current_file_name  = ls_file-file_title.
-    gv_current_sheet_name = ls_file-sheet_name.
-    WRITE lv_rows_file TO txtp_row_count LEFT-JUSTIFIED.
-    txtp_row         = txtp_row_count.
-    txtp_rows        = txtp_row_count.
-    txtp_loaded      = txtp_row_count.
-    txtp_loaded_rows = txtp_row_count.
-    txtp_rows_loaded = txtp_row_count.
-    txtgv_row_count  = txtp_row_count.
-    txtgv_rows       = txtp_row_count.
-    txtgv_loaded     = txtp_row_count.
-    txtgv_total_rows = txtp_row_count.
-    txtgv_tot_rows   = txtp_row_count.
-
-    g_sub_dynpro = '0301'.
-    ts_preview-activetab = 'TAB_PREVIEW'.
-    PERFORM reset_0300_alv.
-
-    TRY.
-        cl_gui_cfw=>set_new_ok_code( new_code = 'PREV' ).
-      CATCH cx_root.
-    ENDTRY.
-
-    IF ls_file-owner IS INITIAL
-       OR ls_file-owner = sy-uname
-       OR ls_file-owner = 'UNKNOWN'.
-      MESSAGE s023(zbdc) WITH ls_file-file_title lv_rows_file.
-    ELSE.
-      MESSAGE s024(zbdc) WITH ls_file-owner.
-    ENDIF.
-  ENDMETHOD.
-
-  METHOD on_file_function.
-    CASE e_salv_function.
-      WHEN 'ZMYFILES'.
-        gv_file_scope = gc_file_scope_my.
-      WHEN 'ZALLFILES'.
-        gv_file_scope = gc_file_scope_all.
-      WHEN OTHERS.
-        RETURN.
-    ENDCASE.
-
-    PERFORM prepare_preview_file.
-    PERFORM refresh_0302_scope.
   ENDMETHOD.
 
   METHOD on_fixguide_double_click.
@@ -514,7 +387,8 @@ FORM open_file_history_row USING iv_row TYPE lvc_index.
     USING    ls_file-session_id space space
     CHANGING lv_rows_file lv_load_ok lv_load_msg.
   IF lv_load_ok <> abap_true.
-    MESSAGE lv_load_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_load_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -552,10 +426,7 @@ FORM open_file_history_row USING iv_row TYPE lvc_index.
   txtgv_loaded     = txtp_row_count.
   txtgv_total_rows = txtp_row_count.
   txtgv_tot_rows   = txtp_row_count.
-
-  g_sub_dynpro = '0301'.
   ts_preview-activetab = 'TAB_PREVIEW'.
-  PERFORM reset_0300_alv.
 
   TRY.
       cl_gui_cfw=>set_new_ok_code( new_code = 'PREV' ).
@@ -1044,7 +915,8 @@ CLASS lcl_grid_events IMPLEMENTATION.
     IF lv_state_ok <> abap_true
        AND lv_cmd <> gc_ucomm_refresh_0500
        AND lv_cmd <> 'BACK'.
-      MESSAGE lv_state_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_state_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -1091,14 +963,14 @@ CLASS lcl_grid_events IMPLEMENTATION.
 
       WHEN gc_ucomm_stop_0500.
         IF lv_z714_closed = abap_true.
-          MESSAGE 'Execution is already terminal; no Stop Queue action is required.' TYPE 'S'.
+          MESSAGE s791(zbdc).
         ELSEIF gv_exec_mon_kind = gc_mon_sm35.
           gv_exec_run_active = abap_false.
           CLEAR: gv_exec_mon_kind, gv_exec_stop_req, g_stop_flag,
                  gv_sm35_job_finished.
           PERFORM stop_0500_timer.
           gv_exec_run_phase = 'SM35 cockpit monitoring stopped; standard SM35 session is unchanged'.
-          MESSAGE 'SM35 cockpit monitoring stopped; the standard SM35 session is unchanged.' TYPE 'S' DISPLAY LIKE 'W'.
+          MESSAGE s792(zbdc) DISPLAY LIKE 'W'.
         ELSE.
           PERFORM stop_bdc_execution.
           gv_exec_stop_req = abap_true.
@@ -1159,31 +1031,3 @@ ENDCLASS.
 
 *& Legacy F01 kept for local class/event implementations only.
 *& Business FORM routines are in ZBDC_MPE_M*_BUP includes.
-
-
-CLASS ltc_clean_utilities IMPLEMENTATION.
-  METHOD split_csv_with_quotes.
-    DATA lt_cols TYPE string_table.
-    DATA lv_second TYPE string.
-
-    PERFORM split_csv_line_by_delim
-      USING    'A,"B,C",D' ','
-      CHANGING lt_cols.
-
-    cl_abap_unit_assert=>assert_equals( act = lines( lt_cols ) exp = 3 ).
-    READ TABLE lt_cols INTO lv_second INDEX 2.
-    cl_abap_unit_assert=>assert_equals( act = lv_second exp = 'B,C' ).
-  ENDMETHOD.
-
-  METHOD escape_html_text.
-    DATA lv_text TYPE string.
-
-    PERFORM html_escape_text
-      USING    '<A&B>'
-      CHANGING lv_text.
-
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_text
-      exp = '&lt;A&amp;B&gt;' ).
-  ENDMETHOD.
-ENDCLASS.

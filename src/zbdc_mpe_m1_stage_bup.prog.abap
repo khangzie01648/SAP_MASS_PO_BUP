@@ -79,7 +79,8 @@ FORM load_staging_by_batch
   IF lv_ok <> abap_true.
     CLEAR cv_count.
     IF lv_msg IS NOT INITIAL.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ENDIF.
   ENDIF.
 ENDFORM.
@@ -1242,7 +1243,8 @@ FORM load_staging_by_session
   IF lv_ok <> abap_true.
     CLEAR cv_count.
     IF lv_msg IS NOT INITIAL.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ENDIF.
   ENDIF.
 ENDFORM.

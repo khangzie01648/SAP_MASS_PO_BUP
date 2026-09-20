@@ -1471,7 +1471,7 @@ FORM cache_gmail_preview_schema
   DELETE gt_preview_hdr_cache WHERE session_id = iv_session_id.
 
   IF it_headers IS INITIAL.
-    gv_ingest_error_msg = 'GMAIL_PREVIEW_SCHEMA_EMPTY: no exact source headers were parsed.'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '832' INTO gv_ingest_error_msg.
     RETURN.
   ENDIF.
 
@@ -1479,8 +1479,7 @@ FORM cache_gmail_preview_schema
     lv_col_no = sy-tabix.
     IF lv_col_no > 25.
       DELETE gt_preview_hdr_cache WHERE session_id = iv_session_id.
-      gv_ingest_error_msg =
-        |GMAIL_PREVIEW_SCHEMA_TOO_WIDE: source has more than 25 business columns.|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '833' INTO gv_ingest_error_msg.
       RETURN.
     ENDIF.
 
@@ -1509,8 +1508,9 @@ FORM cache_gmail_preview_row
 
   CLEAR cv_ok.
   IF lines( it_cols ) > 25.
-    gv_ingest_error_msg =
-      |GMAIL_PREVIEW_ROW_TOO_WIDE: row { iv_row_index } has more than 25 business columns.|.
+    DATA(lv_zm834_1512_1) = |{ iv_row_index }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '834'
+      WITH lv_zm834_1512_1 INTO gv_ingest_error_msg.
     RETURN.
   ENDIF.
 
@@ -1529,8 +1529,9 @@ FORM cache_gmail_preview_row
     ASSIGN COMPONENT lv_component
       OF STRUCTURE ls_cache-preview_row TO <lv_preview>.
     IF sy-subrc <> 0 OR <lv_preview> IS NOT ASSIGNED.
-      gv_ingest_error_msg =
-        |GMAIL_PREVIEW_SLOT_INVALID: { lv_component } is unavailable.|.
+      DATA(lv_zm835_1532_1) = |{ lv_component }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '835'
+        WITH lv_zm835_1532_1 INTO gv_ingest_error_msg.
       RETURN.
     ENDIF.
 
@@ -1563,14 +1564,16 @@ FORM browse_gmail_pending.
 
   IF lv_pull_ok <> abap_true.
     IF lv_pull_message IS INITIAL.
-      lv_pull_message = 'Gmail pending submission pull failed.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '836' INTO lv_pull_message.
     ENDIF.
-    MESSAGE lv_pull_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_pull_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
   IF lt_available IS INITIAL.
-    MESSAGE lv_pull_message TYPE 'S' DISPLAY LIKE 'I'.
+    PERFORM userize_ui_message USING lv_pull_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'I'.
     RETURN.
   ENDIF.
 
@@ -1616,8 +1619,11 @@ FORM browse_gmail_pending.
   txtp_file_size = '0 B'.
   PERFORM set_row_count_fields USING 0.
 
-  lv_msg = |{ lv_selected } Gmail submission(s) selected. Press Upload/Ingest to create staging data.|.
-  MESSAGE lv_msg TYPE 'S'.
+  DATA(lv_zm837_1619_1) = |{ lv_selected }|.
+  MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '837'
+    WITH lv_zm837_1619_1 INTO lv_msg.
+  PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+  MESSAGE gv_ui_message TYPE 'S'.
 ENDFORM.
 
 
@@ -1685,8 +1691,7 @@ FORM upload_gmail_pending.
   "bypass the same Browse -> Upload/Ingest -> Preview contract as Local/Drive.
   lt_selected = gt_m1_gmail_selected_pending.
   IF lt_selected IS INITIAL OR txtp_file_path NP 'GmailForm://*'.
-    MESSAGE 'Select Gmail submission(s) with Browse first, then press Upload/Ingest.'
-      TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s737(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -1708,7 +1713,7 @@ FORM upload_gmail_pending.
   ENDLOOP.
 
   PERFORM clear_0300_after_browse.
-  REFRESH: gt_staging, gt_staging_alv, gt_errors, gt_preview_data,
+  REFRESH: gt_staging, gt_staging_alv, gt_preview_data,
            gt_preview_src_cache, gt_preview_hdr_cache.
   PERFORM start_ingest_batch.
 
@@ -1917,7 +1922,7 @@ FORM upload_gmail_pending.
   ENDLOOP.
 
   IF lv_integrity_fail = abap_true.
-    REFRESH: gt_staging, gt_staging_alv, gt_errors, gt_preview_data,
+    REFRESH: gt_staging, gt_staging_alv, gt_preview_data,
              gt_preview_src_cache, gt_preview_hdr_cache, gt_current_sessions,
              lt_audit.
     CLEAR: gv_current_batch_prefix, gv_ingest_batch_prefix,
@@ -1926,9 +1931,10 @@ FORM upload_gmail_pending.
     PERFORM set_row_count_fields USING 0.
     txtp_file_size = '0 B'.
     IF lv_integrity_msg IS INITIAL.
-      lv_integrity_msg = 'Gmail data integrity validation failed.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '838' INTO lv_integrity_msg.
     ENDIF.
-    MESSAGE lv_integrity_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_integrity_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2020,7 +2026,8 @@ FORM upload_gmail_pending.
              gt_preview_src_cache, gt_preview_hdr_cache.
     CLEAR gv_current_batch_prefix.
     PERFORM set_row_count_fields USING 0.
-    MESSAGE lv_ctx_message TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_ctx_message CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -2222,8 +2229,11 @@ FORM BROWSE_FILE.
   PERFORM set_row_count_fields USING 0.
 
   CALL METHOD cl_gui_cfw=>flush.
-  lv_msg = |{ lv_selected } local file(s) selected. Press Upload/Ingest to parse all files and all business sheets.|.
-  MESSAGE lv_msg TYPE 'S'.
+  DATA(lv_zm839_2225_1) = |{ lv_selected }|.
+  MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '839'
+    WITH lv_zm839_2225_1 INTO lv_msg.
+  PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+  MESSAGE gv_ui_message TYPE 'S'.
 ENDFORM.
 
 FORM UPLOAD_AND_PARSE_EXCEL.
@@ -2295,8 +2305,9 @@ FORM upload_local_file.
   ENDIF.
 
   IF lt_files IS INITIAL.
-    gv_ingest_error_msg = 'No local file selected.'.
-    MESSAGE gv_ingest_error_msg TYPE 'E'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '840' INTO gv_ingest_error_msg.
+    PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'E'.
     RETURN.
   ENDIF.
 
@@ -2353,7 +2364,9 @@ FORM upload_local_file.
           CHANGING lv_index lv_loaded lv_ok_files lv_bad_files.
       ELSE.
         lv_bad_files = lv_bad_files + 1.
-        gv_ingest_error_msg = |Cannot read XLSX file: { lv_file }|.
+        DATA(lv_zm841_2356_1) = |{ lv_file }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '841'
+          WITH lv_zm841_2356_1 INTO gv_ingest_error_msg.
         lv_index = lv_index + 1.
         PERFORM make_batch_session USING lv_index CHANGING lv_session_id.
         CLEAR lv_reject_unit.
@@ -2373,7 +2386,9 @@ FORM upload_local_file.
 
     IF lv_file NP '*.csv' AND lv_file NP '*.CSV'.
       lv_bad_files = lv_bad_files + 1.
-      gv_ingest_error_msg = |Unsupported local file type: { lv_file }. Use CSV or XLSX.|.
+      DATA(lv_zm842_2376_1) = |{ lv_file }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '842'
+        WITH lv_zm842_2376_1 INTO gv_ingest_error_msg.
       lv_index = lv_index + 1.
       PERFORM make_batch_session USING lv_index CHANGING lv_session_id.
       CLEAR lv_reject_unit.
@@ -2410,7 +2425,9 @@ FORM upload_local_file.
 
     IF sy-subrc <> 0.
       lv_bad_files = lv_bad_files + 1.
-      gv_ingest_error_msg = |GUI_UPLOAD failed for local file: { lv_file }|.
+      DATA(lv_zm843_2413_1) = |{ lv_file }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '843'
+        WITH lv_zm843_2413_1 INTO gv_ingest_error_msg.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name
         USING    lv_file 'DATA'
@@ -2428,7 +2445,9 @@ FORM upload_local_file.
 
     IF lt_raw IS INITIAL.
       lv_bad_files = lv_bad_files + 1.
-      gv_ingest_error_msg = |GUI_UPLOAD read 0 lines from local file: { lv_file }|.
+      DATA(lv_zm844_2431_1) = |{ lv_file }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '844'
+        WITH lv_zm844_2431_1 INTO gv_ingest_error_msg.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name
         USING    lv_file 'DATA'
@@ -2528,8 +2547,9 @@ FORM upload_local_file.
       lv_bad_files = lv_bad_files + 1.
 
       IF gv_ingest_error_msg IS INITIAL.
-        gv_ingest_error_msg =
-          |Parser did not create staging rows for file { lv_file }. Check CSV header, mapping profile, and data rows.|.
+        DATA(lv_zm845_2531_1) = |{ lv_file }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '845'
+          WITH lv_zm845_2531_1 INTO gv_ingest_error_msg.
       ENDIF.
 
       CLEAR lv_reject_unit.
@@ -2557,7 +2577,8 @@ FORM upload_local_file.
       REFRESH: gt_staging, gt_staging_alv, gt_current_sessions.
       CLEAR: gv_current_batch_prefix, lv_loaded.
       PERFORM set_row_count_fields USING 0.
-      MESSAGE lv_ctx_message TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_ctx_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -2588,7 +2609,8 @@ FORM upload_local_file.
     ENDIF.
 
     IF gv_ingest_error_msg IS NOT INITIAL.
-      MESSAGE gv_ingest_error_msg TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING gv_ingest_error_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ELSE.
       MESSAGE s112(zbdc) DISPLAY LIKE 'W'.
     ENDIF.
@@ -2607,17 +2629,9 @@ FORM select_gdrive_file_path.
         lv_resp         TYPE string,
         lv_url          TYPE string,
         lv_code         TYPE i,
-        lv_qcode        TYPE string,
-        lv_ret          TYPE c,
-        lt_sval         TYPE STANDARD TABLE OF sval,
-        ls_sval         TYPE sval,
         lv_gas_base_url TYPE string,
-        lv_token_url    TYPE string,
-        lv_auth_url     TYPE string,
-        lv_ready        TYPE c LENGTH 1,
         lv_cfg_file_id  TYPE string,
         lv_cfg_file_nm  TYPE string,
-        lv_tcode_url    TYPE string,
         lv_api_files_url TYPE string.
 
   TYPES: BEGIN OF ty_gfile,
@@ -3055,7 +3069,10 @@ FORM download_from_gdrive_file.
                lv_current_id && '/export?mimeType=text%2Fcsv'.
     ELSE.
       lv_bad_files = lv_bad_files + 1.
-      lv_last_error = |Unsupported Drive file type { lv_file_kind } for { lv_file_name }.|.
+      DATA(lv_zm846_3058_1) = |{ lv_file_kind }|.
+      DATA(lv_zm846_3058_2) = |{ lv_file_name }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '846'
+        WITH lv_zm846_3058_1 lv_zm846_3058_2 INTO lv_last_error.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name USING lv_file_name 'DATA' CHANGING lv_reject_unit.
       PERFORM p1_save_rejected_unit
@@ -3077,7 +3094,9 @@ FORM download_from_gdrive_file.
 
     IF sy-subrc <> 0 OR lo_client IS INITIAL.
       lv_bad_files = lv_bad_files + 1.
-      lv_last_error = |Cannot create Drive HTTP client for { lv_file_name }.|.
+      DATA(lv_zm847_3080_1) = |{ lv_file_name }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '847'
+        WITH lv_zm847_3080_1 INTO lv_last_error.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name USING lv_file_name 'DATA' CHANGING lv_reject_unit.
       PERFORM p1_save_rejected_unit
@@ -3103,9 +3122,15 @@ FORM download_from_gdrive_file.
     IF lv_code <> 200.
       lv_bad_files = lv_bad_files + 1.
       IF lv_code = 401 OR lv_code = 403.
-        lv_last_error = |Drive file { lv_file_name } rejected HTTP { lv_code }; authorize the owning user again.|.
+        DATA(lv_zm848_3106_1) = |{ lv_file_name }|.
+        DATA(lv_zm848_3106_2) = |{ lv_code }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '848'
+          WITH lv_zm848_3106_1 lv_zm848_3106_2 INTO lv_last_error.
       ELSE.
-        lv_last_error = |Drive file { lv_file_name } download failed HTTP { lv_code }.|.
+        DATA(lv_zm849_3108_1) = |{ lv_file_name }|.
+        DATA(lv_zm849_3108_2) = |{ lv_code }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '849'
+          WITH lv_zm849_3108_1 lv_zm849_3108_2 INTO lv_last_error.
       ENDIF.
       lo_client->close( ).
       CLEAR lv_reject_unit.
@@ -3122,7 +3147,9 @@ FORM download_from_gdrive_file.
 
     IF lv_payload_xstr IS INITIAL.
       lv_bad_files = lv_bad_files + 1.
-      lv_last_error = |Drive returned an empty body for { lv_file_name }.|.
+      DATA(lv_zm850_3125_1) = |{ lv_file_name }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '850'
+        WITH lv_zm850_3125_1 INTO lv_last_error.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name USING lv_file_name 'DATA' CHANGING lv_reject_unit.
       PERFORM p1_save_rejected_unit
@@ -3143,8 +3170,9 @@ FORM download_from_gdrive_file.
         IF gv_ingest_error_msg IS NOT INITIAL.
           lv_last_error = gv_ingest_error_msg.
         ELSE.
-          lv_last_error =
-            |Drive XLSX { lv_file_name } downloaded but produced no staging rows.|.
+          DATA(lv_zm851_3146_1) = |{ lv_file_name }|.
+          MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '851'
+            WITH lv_zm851_3146_1 INTO lv_last_error.
         ENDIF.
       ENDIF.
       CLEAR: gv_forced_session_id, gv_current_file_name,
@@ -3180,7 +3208,9 @@ FORM download_from_gdrive_file.
 
     IF lv_resp IS INITIAL.
       lv_bad_files = lv_bad_files + 1.
-      lv_last_error = |Drive CSV { lv_file_name } could not be converted to text.|.
+      DATA(lv_zm852_3183_1) = |{ lv_file_name }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '852'
+        WITH lv_zm852_3183_1 INTO lv_last_error.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name USING lv_file_name 'DATA' CHANGING lv_reject_unit.
       PERFORM p1_save_rejected_unit
@@ -3240,9 +3270,14 @@ FORM download_from_gdrive_file.
     ELSE.
       lv_bad_files = lv_bad_files + 1.
       IF gv_ingest_error_msg IS NOT INITIAL.
-        lv_last_error = |{ lv_file_name }: { gv_ingest_error_msg }|.
+        DATA(lv_zm853_3243_1) = |{ lv_file_name }|.
+        DATA(lv_zm853_3243_2) = |{ gv_ingest_error_msg }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '853'
+          WITH lv_zm853_3243_1 lv_zm853_3243_2 INTO lv_last_error.
       ELSE.
-        lv_last_error = |{ lv_file_name }: parser created no staging rows.|.
+        DATA(lv_zm854_3245_1) = |{ lv_file_name }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '854'
+          WITH lv_zm854_3245_1 INTO lv_last_error.
       ENDIF.
       CLEAR lv_reject_unit.
       PERFORM p1_compose_unit_name USING lv_file_name 'DATA' CHANGING lv_reject_unit.
@@ -3264,7 +3299,8 @@ FORM download_from_gdrive_file.
       REFRESH: gt_staging, gt_staging_alv, gt_current_sessions.
       CLEAR: gv_current_batch_prefix, lv_loaded.
       PERFORM set_row_count_fields USING 0.
-      MESSAGE lv_ctx_message TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_ctx_message CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -3286,9 +3322,10 @@ FORM download_from_gdrive_file.
            gv_current_batch_count.
     PERFORM set_row_count_fields USING 0.
     IF lv_last_error IS INITIAL.
-      lv_last_error = 'No valid Google Drive data rows were loaded.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '855' INTO lv_last_error.
     ENDIF.
-    MESSAGE lv_last_error TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_last_error CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDIF.
 ENDFORM.
 
@@ -3299,7 +3336,6 @@ FORM UPLOAD_FROM_REST.
         LT_RAW     TYPE STRING_TABLE,
         LV_RESP    TYPE STRING,
         LV_SIZE    TYPE I,
-        LV_SIZE_KB TYPE P DECIMALS 1,
         LV_REST_SESSION TYPE ZBDC_STAGING_BUP-SESSION_ID,
         LV_REST_XSTR TYPE XSTRING,
         LV_REST_HIST_PATH TYPE STRING,
@@ -3375,7 +3411,7 @@ FORM UPLOAD_FROM_REST.
  "A transport-success/parser-reject is still one real upload attempt.
       CLEAR TXTP_ROW_COUNT.
       IF gv_ingest_error_msg IS INITIAL.
-        gv_ingest_error_msg = 'REST payload returned no accepted staging rows.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '856' INTO gv_ingest_error_msg.
       ENDIF.
       PERFORM p1_save_rejected_unit
         USING LV_REST_SESSION 'REST' TXTP_FILE_PATH gv_ingest_error_msg.
@@ -3431,8 +3467,8 @@ FORM LOAD_SOURCE_CONFIG.
     lv_val = ls_config-config_value.
     CASE ls_config-config_key.
       WHEN 'SOURCE_TYPE' OR 'TRANSACTION' OR 'FORMAT' OR 'FILE_PATH'
-        OR 'GDRIVE_URL'.
- "Legacy context keys ignored by design.
+        OR 'GDRIVE_URL' OR 'CONN_STATUS' OR 'CONN_AT' OR 'CONN_MSG'.
+ "Legacy context/runtime display keys ignored by design.
       WHEN 'API_KEY' OR 'GDRIVE_API_KEY'.
  "Legacy plaintext credential keys ignored by design.
       WHEN 'WEBHOOK_URL'.
@@ -3464,12 +3500,6 @@ FORM LOAD_SOURCE_CONFIG.
         ENDIF.
       WHEN 'BATCH_SIZE'.
         txtp_batch_size = lv_val.
-      WHEN 'CONN_STATUS'.
-        gv_runtime_last_stat = lv_val.
-      WHEN 'CONN_AT'.
-        gv_runtime_last_at = lv_val.
-      WHEN 'CONN_MSG'.
-        gv_runtime_last_msg = lv_val.
     ENDCASE.
   ENDLOOP.
 
@@ -3520,7 +3550,8 @@ FORM LOAD_SOURCE_CONFIG.
     USING    p_bdc_mode lv_mode lv_update
     CHANGING lv_policy_ok lv_policy_msg.
   IF lv_policy_ok <> abap_true.
-    MESSAGE lv_policy_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_policy_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -3820,7 +3851,7 @@ FORM save_ingestion_source_log
     MODIFY zbdc_result_bup FROM ls_res.
   ENDIF.
 
- "File history source of truth for Screen 0302 Preview Files.
+ "File history source of truth for the Preview Files projection on Screen 0301.
  "ZBDC_FILE_LG_BUP structure in this system:
  "FILE_HASH, FILE_NAME, SOURCE, ROW_COUNT, SESSION_ID, PROCESSED_AT, STATUS, ERROR_MSG.
   SELECT COUNT(*)
@@ -3836,14 +3867,17 @@ FORM save_ingestion_source_log
     USING    iv_session_id
     CHANGING lv_hash lv_hash_ok lv_hash_msg.
   IF lv_hash_ok <> abap_true OR lv_hash IS INITIAL.
-    lv_contract_err = |CONTENT_HASH_FAILED: { lv_hash_msg }|.
+    DATA(lv_zm857_3839_1) = |{ lv_hash_msg }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '857'
+      WITH lv_zm857_3839_1 INTO lv_contract_err.
     UPDATE zbdc_staging_bup SET status = @gc_st_error, error_msg = @lv_contract_err
       WHERE session_id = @iv_session_id.
     LOOP AT gt_staging ASSIGNING <ls_contract_stg> WHERE session_id = iv_session_id.
       <ls_contract_stg>-status = gc_st_error.
       <ls_contract_stg>-error_msg = lv_contract_err.
     ENDLOOP.
-    MESSAGE lv_contract_err TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_contract_err CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -3852,7 +3886,9 @@ FORM save_ingestion_source_log
       AND session_id <> @iv_session_id
       AND status = 'IMPORTED'.
   IF sy-subrc = 0 AND lv_dup_session IS NOT INITIAL.
-    lv_contract_err = |DUPLICATE_CONTENT: identical canonical inbound content was already imported in session { lv_dup_session }.|.
+    DATA(lv_zm858_3855_1) = |{ lv_dup_session }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '858'
+      WITH lv_zm858_3855_1 INTO lv_contract_err.
     UPDATE zbdc_staging_bup SET status = @gc_st_error, error_msg = @lv_contract_err
       WHERE session_id = @iv_session_id.
     LOOP AT gt_staging ASSIGNING <ls_contract_stg> WHERE session_id = iv_session_id.
@@ -3869,7 +3905,8 @@ FORM save_ingestion_source_log
     ls_file_lg-status       = 'ERROR'.
     ls_file_lg-error_msg    = lv_contract_err.
     INSERT zbdc_file_lg_bup FROM ls_file_lg.
-    MESSAGE lv_contract_err TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_contract_err CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -3966,7 +4003,7 @@ FORM clear_0300_after_browse.
  "Selecting a new source/file means the old preview is no longer current.
  "This is a browse-only reset: do not delete DB history, only clear the
  "current in-memory upload preview and all counters on screen 0300.
-  REFRESH: gt_staging, gt_staging_alv, gt_errors, gt_preview_data,
+  REFRESH: gt_staging, gt_staging_alv, gt_preview_data,
            gt_current_sessions, gt_preview_src_cache, gt_preview_hdr_cache.
   CLEAR: txtp_row_count, txtp_row, txtp_rows, txtp_loaded, txtp_rows_loaded,
          txtp_loaded_rows, txtgv_row_count, txtgv_rows, txtgv_loaded,
@@ -3977,7 +4014,6 @@ FORM clear_0300_after_browse.
   FREE MEMORY ID 'ZBDC_0300_HISTORY_SCOPE'.
   txtp_file_size = '0 B'.
   PERFORM set_row_count_fields USING 0.
-  g_sub_dynpro = '0301'.
   ts_preview-activetab = 'TAB_PREVIEW'.
 
  "If the 0301 ALV already exists, refresh it immediately so a new Browse

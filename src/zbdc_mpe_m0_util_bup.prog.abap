@@ -763,3 +763,171 @@ FORM get_utc_w3cdtf CHANGING cv_text TYPE string.
     |{ lv_date+0(4) }-{ lv_date+4(2) }-{ lv_date+6(2) }T| &&
     |{ lv_time+0(2) }:{ lv_time+2(2) }:{ lv_time+4(2) }Z|.
 ENDFORM.
+
+*&---------------------------------------------------------------------*
+*& Form USERIZE_UI_MESSAGE
+*&---------------------------------------------------------------------*
+*& Converts project-internal diagnostics into short user-facing text.
+*& SAP-standard/runtime messages that do not match project patterns pass
+*& through unchanged so the real SAP result is never hidden or invented.
+*&---------------------------------------------------------------------*
+FORM userize_ui_message USING iv_message CHANGING cv_message.
+  DATA: lv_text   TYPE string,
+        lv_upper  TYPE string,
+        lv_colon  TYPE i,
+        lv_prefix TYPE string.
+
+  lv_text = iv_message.
+  cv_message = lv_text.
+  IF lv_text IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  lv_upper = lv_text.
+  TRANSLATE lv_upper TO UPPER CASE.
+
+  IF lv_upper CP 'GMAIL_ROW_JSON_*'
+     OR lv_upper CP 'GMAIL_ROW_KEY_*'
+     OR lv_upper CP 'GMAIL_ROW_ESCAPE_*'
+     OR lv_upper CP 'GMAIL_ROW_VALUE_*'
+     OR lv_upper CP 'GMAIL_ROW_SCHEMA_*'.
+    cv_message = 'Gmail submission data is invalid. Regenerate the form and try again.'.
+
+  ELSEIF lv_upper CP 'GMAIL_SCHEMA_*'
+      OR lv_upper CP 'GMAIL_MAPPING_*'
+      OR lv_upper CP 'GMAIL_STAGING_*'.
+    cv_message = 'Gmail data does not match the current Mapping. Regenerate the form.'.
+
+  ELSEIF lv_upper CP 'GROUP_CARDINALITY_*'
+      OR lv_upper CP 'GROUP_REPEAT_WINDOW_*'
+      OR lv_upper CP 'BUSINESS_KEY_SINGLE_SLOT_*'.
+    cv_message = 'Rows in this Business Group do not match the recorded multi-row setup.'.
+
+  ELSEIF lv_upper CP 'BLANK_CONTRACT_*'.
+    cv_message = 'Required input data is missing or does not match this profile.'.
+
+  ELSEIF lv_upper CP 'STANDARD_ONLY:*'.
+    cv_message = 'This transaction is not available for onboarding. Choose a standard SAP transaction.'.
+
+  ELSEIF lv_upper CP 'LIVE_CAPTURE_*'
+      OR lv_upper CP 'CAPTURE_CONTRACT_*'
+      OR lv_upper CP 'RECORDER_*'
+      OR lv_upper CP 'START_RECORD_*'
+      OR lv_upper CP 'GUI_COMMAND_*'.
+    cv_message = 'Recording could not be completed. Start or import the recording again.'.
+
+  ELSEIF lv_upper CP 'NO_TECH_BIND:*'
+      OR lv_upper CP 'AMBIGUOUS_TECH_BIND:*'
+      OR lv_upper CP 'NATIVE_INPUT_*'
+      OR lv_upper CP 'FOCUS_DELTA_*'
+      OR lv_upper CP 'COMPOSITE_BIND_*'
+      OR lv_upper CP 'RESTORE_BIND_*'.
+    cv_message = 'Recorded input could not be matched to the SAP screen. Record it again.'.
+
+  ELSEIF lv_upper CP 'EXEC_SOURCE_*'
+      OR lv_upper CP 'EXEC_RAW_*'
+      OR lv_upper CP 'DYNAMIC_MAPPING_*'
+      OR lv_upper CP 'DYNAMIC_INPUT_*'
+      OR lv_upper CP 'ENGINE_FIDELITY_*'
+      OR lv_upper CP 'RUNTIME_EXTRA_DYNPRO:*'.
+    cv_message = 'Execution setup does not match the current Recording or Mapping.'.
+
+  ELSEIF lv_upper CP 'PREVIEW_STAGING_*'
+      OR lv_upper CP 'TEMPLATE_STAGING_*'
+      OR lv_upper CP 'TEMPLATE_MAPPING_*'
+      OR lv_upper CP 'TEMPLATE_ROW_*'
+      OR lv_upper CP 'PREVIEW_SLOT_*'
+      OR lv_upper CP 'PREVIEW_CONTEXT_*'
+      OR lv_upper CP 'PREVIEW_SCHEMA_*'
+      OR lv_upper CP 'PREVIEW_MAPPING_*'
+      OR lv_upper CP 'PREVIEW_MANIFEST_*'
+      OR lv_upper CP 'PREVIEW_HEADER_*'.
+    cv_message = 'Uploaded data could not be matched to Staging. Review Mapping Profile.'.
+
+  ELSEIF lv_upper CP 'VERSION_IDENTITY_*'
+      OR lv_upper CP 'EXEC_RECORDING_*'
+      OR lv_upper CP 'VERSION_NOT_*'
+      OR lv_upper CP 'EXACT_MAPPING_*'
+      OR lv_upper CP 'EXACT_SCRIPT_*'
+      OR lv_upper CP 'EXACT_MANIFEST_*'
+      OR lv_upper CP 'SCRIPT_ID_*'
+      OR lv_upper CP 'CONTRACT_HASH_*'.
+    cv_message = 'The selected profile or recording is no longer valid. Refresh setup.'.
+
+  ELSEIF lv_upper CP 'CERT_STATE_*'
+      OR lv_upper CP 'CERT_REBIND_*'
+      OR lv_upper CP 'CERT_SET_*'
+      OR lv_upper CP 'CERTIFIED_NAME_*'
+      OR lv_upper CP 'NAME_CERT_*'
+      OR lv_upper CP 'MAPPING_SET_*'
+      OR lv_upper CP 'MAPPING_RESTORE_*'
+      OR lv_upper CP 'FRESH_MAPPING_*'
+      OR lv_upper CP 'POST_PROMOTION_*'
+      OR lv_upper CP 'LEGACY_SELECTION_*'
+      OR lv_upper CP 'SELECTION_SET_*'
+      OR lv_upper CP 'SELECTED_NAME_*'
+      OR lv_upper CP 'SELECTED_LABEL_*'
+      OR lv_upper CP 'LABEL_COLLISION:*'
+      OR lv_upper CP 'NAME_SET_*'
+      OR lv_upper CP 'DDIC_FIELD_*'
+      OR lv_upper CP 'DDIC_NAME_*'
+      OR lv_upper CP 'VISUAL_LABEL_*'
+      OR lv_upper CP 'MISSING_METADATA:*'
+      OR lv_upper CP 'INVARIANT_*'
+      OR lv_upper CP 'IMPORT_INVARIANT_*'.
+    cv_message = 'Mapping information could not be confirmed. Review Mapping Profile.'.
+
+  ELSEIF lv_upper CP 'GUIDED_*'
+      OR lv_upper CP 'SAMPLE_BLOCK:*'
+      OR lv_upper CP 'LOSSLESS_BLOCK:*'
+      OR lv_upper CP 'REPLAY_BIND_*'.
+    cv_message = 'Recording information is incomplete. Record or import the flow again.'.
+
+  ELSEIF lv_upper CP 'EDIT_*'.
+    cv_message = 'Editable fields could not be loaded. Reopen Staging and try again.'.
+
+  ELSEIF lv_upper CP 'STAGING_VALIDATION:*'.
+    cv_message = 'Staging validation failed. Review the group and correct the input.'.
+
+  ELSEIF lv_upper CP 'INPUT_FAIL:*'
+      OR lv_upper CP 'APQI_FAIL:*'
+      OR lv_upper CP 'TEMSE_PROTOCOL_FAIL:*'.
+    cv_message = 'SM35 result details are unavailable. Refresh the queue and try again.'.
+
+  ELSEIF lv_upper CP 'AI_PARSE_*'
+      OR lv_upper CP 'AI_QUALITY_*'
+      OR lv_upper CP 'GROUNDING_*'.
+    cv_message = 'AI analysis could not be verified. SAP error details are shown instead.'.
+
+  ELSEIF lv_upper CS 'EXACT-CONTEXT'
+      OR lv_upper CS 'CANONICAL'
+      OR lv_upper CS 'PROJECTION'
+      OR lv_upper CS 'PROVENANCE'
+      OR lv_upper CS 'INVARIANT'.
+    cv_message = 'The current setup could not be confirmed. Refresh and try again.'.
+
+  ELSEIF lv_upper CS 'FROZEN' AND lv_upper CS 'CONTRACT'.
+    cv_message = 'Session setup is unavailable. Reopen the session and try again.'.
+
+  ELSEIF lv_upper CS 'QID' AND lv_upper CS 'SM35'.
+    cv_message = 'SM35 session information is unavailable. Refresh the queue and try again.'.
+
+  ELSEIF lv_upper CS 'DDIC' AND lv_upper CS 'MAPPING'.
+    cv_message = 'Field information could not be loaded. Review Mapping Profile.'.
+
+  ELSEIF lv_upper CS 'SY-SUBRC='.
+    cv_message = 'The requested action could not be completed. Try again.'.
+
+  ELSE.
+    CLEAR: lv_colon, lv_prefix.
+    FIND FIRST OCCURRENCE OF ':' IN lv_upper MATCH OFFSET lv_colon.
+    IF sy-subrc = 0 AND lv_colon > 2.
+      lv_prefix = lv_upper(lv_colon).
+      IF lv_prefix CN 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.
+        "Normal user sentence before colon; keep it unchanged.
+      ELSE.
+        cv_message = 'The requested action could not be completed. Review the data and try again.'.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDFORM.

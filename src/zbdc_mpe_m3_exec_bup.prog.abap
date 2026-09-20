@@ -20,7 +20,6 @@ DATA: gv_z579_ct_started     TYPE abap_bool,
 "onboarding certification is an explicit UI action, not a production
 "Execute Now side effect. TESTING/PENDING_TEST may enter the live CT proof
 "path only while this short-lived flag is owned by CERT0500.
-DATA: gv_z582_cert_mode TYPE abap_bool.
 
 "freeze the visible CT display/update choice once at the Execute Now
 "command boundary. No lower layer may re-read radio globals and silently
@@ -629,7 +628,8 @@ FORM EXECUTE_BDC_ENGINE USING PT_PROCESS   LIKE GT_STAGING_ALV
     IF pv_exec_mode = gc_mode_batch.
       gv_last_sm35_action = lv_scope_msg.
     ENDIF.
-    MESSAGE lv_scope_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_scope_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -649,7 +649,8 @@ FORM EXECUTE_BDC_ENGINE USING PT_PROCESS   LIKE GT_STAGING_ALV
       ELSE.
         DATA(lv_ctx_msg1) = |Session { lv_sid } has no persisted mapping context; execution was blocked.|.
         PERFORM fail_process_scope USING lt_context lv_tcode lv_ctx_msg1.
-        MESSAGE lv_ctx_msg1 TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING lv_ctx_msg1 CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       ENDIF.
       REFRESH lt_context.
     ENDIF.
@@ -768,7 +769,7 @@ FORM fail_process_scope
 
   lv_msg = pv_msg.
   IF lv_msg IS INITIAL.
-    lv_msg = 'Execution was blocked before CALL TRANSACTION. Open Error Detail.' .
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '891' INTO lv_msg.
   ENDIF.
 
  "expose the real pre-SAP blocker to Screen 0500. This does not
@@ -781,7 +782,9 @@ FORM fail_process_scope
     USING    lv_msg
     CHANGING lv_setup.
   IF lv_setup = abap_true.
-    lv_msg = |Profile setup incomplete; execution was blocked before SAP replay. { lv_msg }|.
+    DATA(lv_zm892_784_1) = |{ lv_msg }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '892'
+      WITH lv_zm892_784_1 INTO lv_msg.
   ENDIF.
 
   IF p_bdc_mode = gc_mode_batch.
@@ -791,7 +794,7 @@ FORM fail_process_scope
   PERFORM save_synthetic_engine_log
     USING pt_process lv_tcode 0 gc_st_error lv_msg '' 'X'.
   PERFORM update_group_result USING pt_process gc_st_error lv_msg ''.
-  PERFORM update_exec_counters USING pt_process abap_false.
+  PERFORM update_exec_counters USING pt_process.
   COMMIT WORK AND WAIT.
 ENDFORM.
 
@@ -836,8 +839,7 @@ FORM execute_bdc_context
         LV_CHUNK_MSG        TYPE STRING,
         LV_BSIZE_NORM       TYPE STRING,
         LS_APQI_VERIFY      TYPE APQI,
-        LV_APQI_FOUND       TYPE ABAP_BOOL,
-        LV_Z574_CHANGED     TYPE ABAP_BOOL.
+        LV_APQI_FOUND       TYPE ABAP_BOOL.
 
   IF PT_PROCESS IS INITIAL.
     MESSAGE s504(zbdc) DISPLAY LIKE 'W'.
@@ -851,7 +853,8 @@ FORM execute_bdc_context
     CHANGING LV_REQUESTED_ENGINE LV_RUNTIME_OK LV_RUNTIME_MSG.
   IF LV_RUNTIME_OK <> ABAP_TRUE.
     PERFORM fail_process_scope USING PT_PROCESS PV_TCODE LV_RUNTIME_MSG.
-    MESSAGE LV_RUNTIME_MSG TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING LV_RUNTIME_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -882,7 +885,8 @@ FORM execute_bdc_context
   ENDIF.
   IF LV_RUNTIME_OK <> ABAP_TRUE.
     PERFORM fail_process_scope USING PT_PROCESS PV_TCODE LV_RUNTIME_MSG.
-    MESSAGE LV_RUNTIME_MSG TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING LV_RUNTIME_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -897,9 +901,10 @@ FORM execute_bdc_context
   READ TABLE pt_process INTO ls_row INDEX 1.
   lv_tcode = pv_tcode.
   IF lv_tcode IS INITIAL OR pv_profile IS INITIAL OR pv_ver IS INITIAL.
-    lv_msg = 'Execution context is incomplete: TCODE/Profile/Version is required.'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '893' INTO lv_msg.
     PERFORM fail_process_scope USING pt_process lv_tcode lv_msg.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -913,7 +918,8 @@ FORM execute_bdc_context
   IF LV_STD_OK <> ABAP_TRUE.
     LV_MSG = LV_STD_MSG.
     PERFORM fail_process_scope USING PT_PROCESS LV_TCODE LV_MSG.
-    MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -924,9 +930,13 @@ FORM execute_bdc_context
   AUTHORITY-CHECK OBJECT 'S_TCODE'
     ID 'TCD' FIELD LV_TCODE.
   IF SY-SUBRC <> 0.
-    LV_MSG = |User { SY-UNAME } is not authorized for target transaction { LV_TCODE }; execution was blocked.|.
+    DATA(lv_zm894_927_1) = |{ SY-UNAME }|.
+    DATA(lv_zm894_927_2) = |{ LV_TCODE }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '894'
+      WITH lv_zm894_927_1 lv_zm894_927_2 INTO LV_MSG.
     PERFORM fail_process_scope USING PT_PROCESS LV_TCODE LV_MSG.
-    MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -942,9 +952,13 @@ FORM execute_bdc_context
     CHANGING lt_map.
 
   IF lt_map IS INITIAL.
-    lv_msg = |Mapping profile { pv_profile } v{ pv_ver } is empty.|.
+    DATA(lv_zm895_945_1) = |{ pv_profile }|.
+    DATA(lv_zm895_945_2) = |{ pv_ver }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '895'
+      WITH lv_zm895_945_1 lv_zm895_945_2 INTO lv_msg.
     PERFORM fail_process_scope USING pt_process lv_tcode lv_msg.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -979,10 +993,11 @@ FORM execute_bdc_context
     CHANGING LT_KEYS.
 
   IF lt_keys IS INITIAL.
-    lv_msg = 'No document-group key could be built for BDC processing.'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '896' INTO lv_msg.
     PERFORM fail_process_scope USING pt_process lv_tcode lv_msg.
     PERFORM release_staging_lock USING ls_row-session_id.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -1001,7 +1016,8 @@ FORM execute_bdc_context
   IF LV_CHUNK_OK <> ABAP_TRUE.
     PERFORM fail_process_scope USING PT_PROCESS LV_TCODE LV_CHUNK_MSG.
     PERFORM release_staging_lock USING LS_ROW-SESSION_ID.
-    MESSAGE LV_CHUNK_MSG TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING LV_CHUNK_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
   REFRESH LT_PROC.
@@ -1034,11 +1050,12 @@ FORM execute_bdc_context
     IF lv_preflight_ok <> abap_true.
       lv_msg = lv_preflight_msg.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 preflight failed before queue creation.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '897' INTO lv_msg.
       ENDIF.
       PERFORM fail_process_scope USING pt_process lv_tcode lv_msg.
       PERFORM release_staging_lock USING ls_row-session_id.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     DATA: lv_open_subrc   TYPE i,
@@ -1062,10 +1079,16 @@ FORM execute_bdc_context
       CHANGING lv_open_subrc lv_open_attempt lv_open_reason LV_OPEN_QID.
 
     IF lv_open_subrc <> 0.
-      lv_msg = |Cannot open Batch Input session after { lv_open_attempt } attempt(s): { lv_open_reason }, sy-subrc={ lv_open_subrc }.|.
+      DATA(lv_zm898_1065_1) = |{ lv_open_attempt }|.
+      DATA(lv_zm898_1065_2) = |{ lv_open_reason }|.
+      DATA(lv_zm898_1065_3) = |{ lv_open_subrc }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '898'
+        WITH lv_zm898_1065_1 lv_zm898_1065_2 lv_zm898_1065_3
+        INTO lv_msg.
       PERFORM fail_process_scope USING pt_process lv_tcode lv_msg.
       PERFORM release_staging_lock USING ls_row-session_id.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -1079,7 +1102,7 @@ FORM execute_bdc_context
     GV_LAST_SM35_EXPECTED = LINES( LT_KEYS ).
   ENDIF.
 
-  CLEAR: G_EXEC_CURR, G_EXEC_SUCCESS, G_EXEC_ERROR,
+  CLEAR: G_EXEC_CURR,
          LV_GROUPS, LV_OKGRP, LV_ERRGRP, GV_EXEC_RUN_QUEUED.
   G_STOP_FLAG = SPACE.
   REFRESH LT_KEY_CHUNK.
@@ -1096,7 +1119,8 @@ FORM execute_bdc_context
       IF LV_CHUNK_OK <> ABAP_TRUE.
         G_STOP_FLAG = 'X'.
         PERFORM release_staging_lock USING LS_ROW-SESSION_ID.
-        MESSAGE LV_CHUNK_MSG TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING LV_CHUNK_MSG CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
         RETURN.
       ENDIF.
       PERFORM process_eng_chunk
@@ -1124,7 +1148,8 @@ FORM execute_bdc_context
     IF LV_CHUNK_OK <> ABAP_TRUE.
       G_STOP_FLAG = 'X'.
       PERFORM release_staging_lock USING LS_ROW-SESSION_ID.
-      MESSAGE LV_CHUNK_MSG TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING LV_CHUNK_MSG CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
     PERFORM process_eng_chunk
@@ -1191,23 +1216,37 @@ FORM execute_bdc_context
  "Never execute or label an empty technical session as successful.
  "All rejected groups already carry their real preflight/insert error.
         LV_PROFILE_OK = ABAP_FALSE.
-        LV_MSG = |SM35 session { LV_BIGROUP } contains 0 inserted transaction(s); processing was not started. Review Error Detail and re-record/fix the script.|.
+        DATA(lv_zm899_1194_1) = |{ LV_BIGROUP }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '899'
+          WITH lv_zm899_1194_1 INTO LV_MSG.
         GV_LAST_SM35_ACTION = LV_MSG.
-        MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       ELSEIF gv_z488_sm35_fidelity_ok <> abap_true.
  "Do not guess a session by name/time. If exact returned-QID APQI proof
  "or transaction count is missing, keep the created queue quarantined.
         LV_PROFILE_OK = ABAP_FALSE.
-        LV_MSG = |SM35 session { LV_BIGROUP } was closed, but exact APQI/QID transaction-count proof failed. QID={ GV_LAST_SM35_QID }, inserted={ GV_LAST_SM35_INSERTED }. Do not process this queue.|.
+        DATA(lv_zm900_1201_1) = |{ LV_BIGROUP }|.
+        DATA(lv_zm900_1201_2) = |{ GV_LAST_SM35_QID }|.
+        DATA(lv_zm900_1201_3) = |{ GV_LAST_SM35_INSERTED }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '900'
+          WITH lv_zm900_1201_1 lv_zm900_1201_2 lv_zm900_1201_3
+          INTO LV_MSG.
         GV_LAST_SM35_ACTION = LV_MSG.
         PERFORM stamp_sm35_action USING PT_PROCESS LV_MSG.
-        MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'E'.
+        PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+        MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       ELSE.
  "The genuine BI session is closed, exact-QID bound and count-verified.
  "Queue creation is not transaction processing.
         LV_PROFILE_OK = ABAP_TRUE.
-        LV_MSG = |SM35 batch-input session { LV_BIGROUP } queued with { GV_LAST_SM35_INSERTED } transaction(s); exact QID/APQI count verified.|.
-        LV_MSG = |{ LV_MSG } Choose SM35 Monitor; process the exact queue in standard SM35. The persisted exact QID is monitored and auto-reconciled without Refresh Queue.|.
+        DATA(lv_zm901_1209_1) = |{ LV_BIGROUP }|.
+        DATA(lv_zm901_1209_2) = |{ GV_LAST_SM35_INSERTED }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '901'
+          WITH lv_zm901_1209_1 lv_zm901_1209_2 INTO LV_MSG.
+        DATA(lv_zm902_1210_1) = |{ LV_MSG }|.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '902'
+          WITH lv_zm902_1210_1 INTO LV_MSG.
         GV_LAST_SM35_ACTION = LV_MSG.
         PERFORM stamp_sm35_action USING PT_PROCESS LV_MSG.
  "successful SM35 handoff is shown only by the explicit
@@ -1215,10 +1254,13 @@ FORM execute_bdc_context
  "instruction in the SAP status bar; errors still use MESSAGE below.
       ENDIF.
     ELSE.
-      LV_MSG = |BDC_CLOSE_GROUP failed, sy-subrc={ lv_close_subrc }. Check SM35.|.
+      DATA(lv_zm903_1218_1) = |{ lv_close_subrc }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '903'
+        WITH lv_zm903_1218_1 INTO LV_MSG.
       GV_LAST_SM35_ACTION = LV_MSG.
       gv_z488_sm35_fidelity_ok = abap_false.
-      MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ENDIF.
     PERFORM upd_all_rt_sess_sum.
     COMMIT WORK AND WAIT.
@@ -1241,11 +1283,23 @@ FORM execute_bdc_context
   COMMIT WORK AND WAIT.
 
   IF G_STOP_FLAG = 'X'.
-    LV_MSG = |Da STOP sau { LV_GROUPS } nhom. OK={ LV_OKGRP }, Error={ LV_ERRGRP }.|.
-    MESSAGE LV_MSG TYPE 'S' DISPLAY LIKE 'W'.
+    DATA(lv_zm904_1244_1) = |{ LV_GROUPS }|.
+    DATA(lv_zm904_1244_2) = |{ LV_OKGRP }|.
+    DATA(lv_zm904_1244_3) = |{ LV_ERRGRP }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '904'
+      WITH lv_zm904_1244_1 lv_zm904_1244_2 lv_zm904_1244_3
+      INTO LV_MSG.
+    PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
   ELSE.
-    LV_MSG = |CALL TRANSACTION complete: { LV_OKGRP }/{ LV_GROUPS } group(s) PROCESSED, { LV_ERRGRP } ERROR.|.
-    MESSAGE LV_MSG TYPE 'S'.
+    DATA(lv_zm905_1247_1) = |{ LV_OKGRP }|.
+    DATA(lv_zm905_1247_2) = |{ LV_GROUPS }|.
+    DATA(lv_zm905_1247_3) = |{ LV_ERRGRP }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '905'
+      WITH lv_zm905_1247_1 lv_zm905_1247_2 lv_zm905_1247_3
+      INTO LV_MSG.
+    PERFORM userize_ui_message USING LV_MSG CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S'.
   ENDIF.
 
   PERFORM release_staging_lock USING ls_row-session_id.
@@ -2641,20 +2695,15 @@ FORM reconcile_sm35
 
   DATA: lv_qstate      TYPE c LENGTH 1,
         lv_qid_local   TYPE apqi-qid,
-        lv_status      TYPE c LENGTH 20,
-        lv_final       TYPE string,
         lv_log_count   TYPE i,
         lv_log_retry   TYPE abap_bool,
         lv_log_reason  TYPE string,
         lv_run_ok      TYPE abap_bool,
         lv_run_msg     TYPE string,
         lv_retry_attempt TYPE i,
-        lv_tcode       TYPE sy-tcode,
         lt_sorted      TYPE ty_t_staging_alv,
         lt_group       TYPE ty_t_staging_alv,
         ls_row         TYPE ty_staging_alv,
-        ls_fb_first    TYPE ty_staging_alv,
-        ls_first       TYPE ty_staging_alv,
         lv_prev_sid     TYPE zbdc_staging_bup-session_id,
         lv_prev_key     TYPE zbdc_staging_bup-record_key,
         lv_curr_key     TYPE zbdc_staging_bup-record_key,
@@ -2682,7 +2731,9 @@ FORM reconcile_sm35
   PERFORM find_sm35_group_for_scope
     USING pt_process CHANGING lv_bound_group.
   IF lv_bound_group IS INITIAL OR lv_bound_group <> pv_group.
-    gv_last_sm35_action = |SM35 reconciliation blocked: current scope is not bound exactly to session { pv_group }.|.
+    DATA(lv_zm906_2685_1) = |{ pv_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '906'
+      WITH lv_zm906_2685_1 INTO gv_last_sm35_action.
     RETURN.
   ENDIF.
 
@@ -2695,8 +2746,7 @@ FORM reconcile_sm35
  "same batch lock around its execution/result writers.
   READ TABLE pt_process INTO ls_z559_lock_row INDEX 1.
   IF sy-subrc <> 0 OR ls_z559_lock_row-session_id IS INITIAL.
-    gv_last_sm35_action =
-      'SM35 reconciliation blocked: processing scope has no session identity.'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '907' INTO gv_last_sm35_action.
     RETURN.
   ENDIF.
 
@@ -2705,8 +2755,7 @@ FORM reconcile_sm35
     USING    ls_z559_lock_row-session_id
     CHANGING lv_z559_can_run lv_z559_locked.
   IF lv_z559_can_run <> abap_true OR lv_z559_locked <> abap_true.
-    gv_last_sm35_action =
-      'SM35 reconciliation skipped because this ingestion batch is being updated in another SAP session. Use Refresh Queue again after that update finishes.'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '908' INTO gv_last_sm35_action.
     RETURN.
   ENDIF.
 
@@ -2836,19 +2885,39 @@ FORM reconcile_sm35
 
   IF lv_grp_error > 0.
     IF lv_first_error IS NOT INITIAL.
-      gv_last_sm35_action = |SM35 reconciliation: { lv_grp_error } ERROR, { lv_grp_processed } PROCESSED, { lv_grp_warning } WARNING. First error: { lv_first_error }|.
+      DATA(lv_zm909_2839_1) = |{ lv_grp_error }|.
+      DATA(lv_zm909_2839_2) = |{ lv_grp_processed }|.
+      DATA(lv_zm909_2839_3) = |{ lv_grp_warning }|.
+      DATA(lv_zm909_2839_4) = |{ lv_first_error }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '909'
+        WITH lv_zm909_2839_1 lv_zm909_2839_2 lv_zm909_2839_3 lv_zm909_2839_4
+        INTO gv_last_sm35_action.
     ELSE.
-      gv_last_sm35_action = |SM35 reconciliation: { lv_grp_error } ERROR, { lv_grp_processed } PROCESSED, { lv_grp_warning } WARNING, { lv_grp_queued } queued. Review Error Detail/SM35 Log.|.
+      DATA(lv_zm910_2841_1) = |{ lv_grp_error }|.
+      DATA(lv_zm910_2841_2) = |{ lv_grp_processed }|.
+      DATA(lv_zm910_2841_3) = |{ lv_grp_warning }|.
+      DATA(lv_zm910_2841_4) = |{ lv_grp_queued }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '910'
+        WITH lv_zm910_2841_1 lv_zm910_2841_2 lv_zm910_2841_3 lv_zm910_2841_4
+        INTO gv_last_sm35_action.
     ENDIF.
   ELSEIF lv_grp_warning > 0.
-    gv_last_sm35_action = |SM35 reconciliation completed with { lv_grp_warning } unresolved warning group(s) and { lv_grp_processed } processed group(s).|.
+    DATA(lv_zm911_2844_1) = |{ lv_grp_warning }|.
+    DATA(lv_zm911_2844_2) = |{ lv_grp_processed }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '911'
+      WITH lv_zm911_2844_1 lv_zm911_2844_2 INTO gv_last_sm35_action.
   ELSEIF lv_grp_success > 0 OR lv_grp_processed > 0.
-    gv_last_sm35_action =
-      |SM35 exact protocol reconciled: { lv_grp_success } SUCCESS, { lv_grp_processed } PROCESSED group(s).|.
+    DATA(lv_zm912_2846_1) = |{ lv_grp_success }|.
+    DATA(lv_zm912_2846_2) = |{ lv_grp_processed }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '912'
+      WITH lv_zm912_2846_1 lv_zm912_2846_2 INTO gv_last_sm35_action.
   ELSEIF lv_grp_queued > 0.
-    gv_last_sm35_action = |SM35 session { pv_group } is queued/processing: { lv_grp_queued } group(s) pending protocol reconciliation.|.
+    DATA(lv_zm913_2849_1) = |{ pv_group }|.
+    DATA(lv_zm913_2849_2) = |{ lv_grp_queued }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '913'
+      WITH lv_zm913_2849_1 lv_zm913_2849_2 INTO gv_last_sm35_action.
   ELSE.
-    gv_last_sm35_action = |SM35 reconciliation returned no terminal per-group protocol yet.|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '914' INTO gv_last_sm35_action.
   ENDIF.
  "commit every STEP writer while the batch lock is still held.
  "Only then it, so a second reconciler sees the committed MAX(step).
@@ -4248,7 +4317,7 @@ FORM RUN_BDC_ONE_GROUP
     cv_err = cv_err + 1.
     PERFORM save_synthetic_engine_log USING pt_group pv_tcode 0 gc_st_error lv_group_msg '' ''.
     PERFORM update_group_result       USING pt_group gc_st_error lv_group_msg ''.
-    PERFORM update_exec_counters USING pt_group abap_false.
+    PERFORM update_exec_counters USING pt_group.
     RETURN.
   ENDIF.
 
@@ -4264,7 +4333,7 @@ FORM RUN_BDC_ONE_GROUP
     ENDIF.
     PERFORM save_synthetic_engine_log USING pt_group pv_tcode 0 gc_st_error lv_bdc_msg '' ''.
     PERFORM update_group_result       USING pt_group gc_st_error lv_bdc_msg ''.
-    PERFORM update_exec_counters USING pt_group abap_false.
+    PERFORM update_exec_counters USING pt_group.
     RETURN.
   ENDIF.
 
@@ -4280,17 +4349,24 @@ FORM RUN_BDC_ONE_GROUP
     IF lv_insert_subrc = 0.
       cv_ok = cv_ok + 1.
       APPEND LINES OF lt_exec_bdc TO gt_z488_sm35_expected.
-      lv_msg = |Queued exact BDCDATA in SM35 session { pv_bigrp }; use SM35 Monitor to process the exact session in standard SM35; the cockpit auto-reconciles the persisted QID.|.
+      DATA(lv_zm915_4283_1) = |{ pv_bigrp }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '915'
+        WITH lv_zm915_4283_1 INTO lv_msg.
       PERFORM save_synthetic_engine_log USING pt_group pv_tcode lv_business_attempt gc_st_sm35q lv_msg '' ''.
       PERFORM update_group_result       USING pt_group gc_st_sm35q lv_msg ''.
       g_exec_curr = g_exec_curr + lines( pt_group ).
       COMMIT WORK AND WAIT.
     ELSE.
       cv_err = cv_err + 1.
-      lv_msg = |BDC_INSERT failed after { lv_insert_try } attempt(s): { lv_insert_msg }, SY-SUBRC={ lv_insert_subrc }.|.
+      DATA(lv_zm916_4290_1) = |{ lv_insert_try }|.
+      DATA(lv_zm916_4290_2) = |{ lv_insert_msg }|.
+      DATA(lv_zm916_4290_3) = |{ lv_insert_subrc }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '916'
+        WITH lv_zm916_4290_1 lv_zm916_4290_2 lv_zm916_4290_3
+        INTO lv_msg.
       PERFORM save_synthetic_engine_log USING pt_group pv_tcode lv_business_attempt gc_st_error lv_msg '' 'X'.
       PERFORM update_group_result       USING pt_group gc_st_error lv_msg ''.
-      PERFORM update_exec_counters USING pt_group abap_false.
+      PERFORM update_exec_counters USING pt_group.
     ENDIF.
     RETURN.
   ENDIF.
@@ -4307,10 +4383,13 @@ FORM RUN_BDC_ONE_GROUP
   IF ( lv_ct_mode <> 'N' AND lv_ct_mode <> 'E' AND lv_ct_mode <> 'A' ) OR
      ( lv_ct_upd  <> 'S' AND lv_ct_upd  <> 'A' ).
     cv_err = cv_err + 1.
-    lv_msg = |Invalid frozen CTU policy { lv_ct_mode }/{ lv_ct_upd }; CALL TRANSACTION was blocked before SAP replay.|.
+    DATA(lv_zm917_4310_1) = |{ lv_ct_mode }|.
+    DATA(lv_zm917_4310_2) = |{ lv_ct_upd }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '917'
+      WITH lv_zm917_4310_1 lv_zm917_4310_2 INTO lv_msg.
     PERFORM save_synthetic_engine_log USING pt_group pv_tcode 0 gc_st_error lv_msg '' ''.
     PERFORM update_group_result       USING pt_group gc_st_error lv_msg ''.
-    PERFORM update_exec_counters USING pt_group abap_false.
+    PERFORM update_exec_counters USING pt_group.
     RETURN.
   ENDIF.
 
@@ -4415,15 +4494,20 @@ FORM RUN_BDC_ONE_GROUP
   IF lv_has_error = abap_true OR lv_ct_subrc <> 0.
     cv_err = cv_err + 1.
     IF lv_msg IS INITIAL.
-      lv_msg = |CALL TRANSACTION failed, SY-SUBRC={ lv_ct_subrc }. Review the exact SAP BDC protocol.|.
+      DATA(lv_zm918_4418_1) = |{ lv_ct_subrc }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '918'
+        WITH lv_zm918_4418_1 INTO lv_msg.
     ELSE.
-      lv_msg = |CALL TRANSACTION failed, SY-SUBRC={ lv_ct_subrc }: { lv_msg }|.
+      DATA(lv_zm919_4420_1) = |{ lv_ct_subrc }|.
+      DATA(lv_zm919_4420_2) = |{ lv_msg }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '919'
+        WITH lv_zm919_4420_1 lv_zm919_4420_2 INTO lv_msg.
     ENDIF.
     PERFORM explain_ct_failure USING lt_exec_bdc lv_ct_subrc messtab[] CHANGING lv_msg.
     PERFORM save_synthetic_engine_log USING pt_group pv_tcode lv_business_attempt gc_st_error lv_msg '' ''.
     PERFORM update_group_result       USING pt_group gc_st_error lv_msg ''.
     COMMIT WORK AND WAIT.
-    PERFORM update_exec_counters USING pt_group abap_false.
+    PERFORM update_exec_counters USING pt_group.
     RETURN.
   ENDIF.
 
@@ -4443,20 +4527,24 @@ FORM RUN_BDC_ONE_GROUP
     IF lv_success_text IS NOT INITIAL.
       lv_msg = lv_success_text.
     ELSE.
-      lv_msg = 'CALL TRANSACTION returned terminal SAP success evidence.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '920' INTO lv_msg.
     ENDIF.
     PERFORM save_synthetic_engine_log USING pt_group pv_tcode lv_business_attempt gc_st_success lv_msg '' ''.
     PERFORM update_group_result       USING pt_group gc_st_success lv_msg lv_sap_object.
     COMMIT WORK AND WAIT.
-    PERFORM update_exec_counters USING pt_group abap_true.
+    PERFORM update_exec_counters USING pt_group.
     RETURN.
   ENDIF.
 
   cv_ok = cv_ok + 1.
   IF lv_has_warning = abap_true.
-    lv_msg = |CALL TRANSACTION mode { lv_ct_mode } returned without E/A/X failure but also without terminal SAP success; warning/non-terminal evidence requires review.|.
+    DATA(lv_zm921_4457_1) = |{ lv_ct_mode }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '921'
+      WITH lv_zm921_4457_1 INTO lv_msg.
   ELSE.
-    lv_msg = |CALL TRANSACTION mode { lv_ct_mode } returned SY-SUBRC 0 without terminal SAP success or error evidence; replay may have been cancelled or left incomplete.|.
+    DATA(lv_zm922_4459_1) = |{ lv_ct_mode }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '922'
+      WITH lv_zm922_4459_1 INTO lv_msg.
   ENDIF.
   PERFORM save_synthetic_engine_log USING pt_group pv_tcode lv_business_attempt gc_st_partial lv_msg '' ''.
   PERFORM update_group_result       USING pt_group gc_st_partial lv_msg ''.
@@ -4667,18 +4755,8 @@ FORM count_term_scope
   cv_done  = lines( lt_done ).
 ENDFORM.
 
-FORM UPDATE_EXEC_COUNTERS USING PT_GROUP TYPE TY_T_STAGING_ALV
-                                PV_OK    TYPE ABAP_BOOL.
-  DATA LV_ROWS TYPE I.
-
-  LV_ROWS = LINES( PT_GROUP ).
-  G_EXEC_CURR = G_EXEC_CURR + LV_ROWS.
-
-  IF PV_OK = ABAP_TRUE.
-    G_EXEC_SUCCESS = G_EXEC_SUCCESS + LV_ROWS.
-  ELSE.
-    G_EXEC_ERROR = G_EXEC_ERROR + LV_ROWS.
-  ENDIF.
+FORM UPDATE_EXEC_COUNTERS USING PT_GROUP TYPE TY_T_STAGING_ALV.
+  G_EXEC_CURR = G_EXEC_CURR + LINES( PT_GROUP ).
 ENDFORM.
 
 *& UPDATE_GROUP_RESULT - update staging internal + DB + result log
@@ -4698,7 +4776,6 @@ ENDFORM.
 *& Sau upload van can review ROW_TYPE/VALUE_TYPE/SOURCE_COLUMN cho item.
 
 FORM init_execution_monitor.
-  DATA lv_total      TYPE i.
   DATA lv_den        TYPE i.
   DATA lv_pct_i      TYPE p LENGTH 7 DECIMALS 2.
   DATA lv_scope_done TYPE i.
@@ -4838,9 +4915,6 @@ FORM collect_ready_groups_selected
   IF go_exec_grid IS BOUND.
     CALL METHOD go_exec_grid->get_selected_rows
       IMPORTING et_index_rows = lt_rows.
-  ELSEIF go_grid_0400 IS BOUND.
-    CALL METHOD go_grid_0400->get_selected_rows
-      IMPORTING et_index_rows = lt_rows.
   ENDIF.
 
   IF lt_rows IS INITIAL.
@@ -4947,9 +5021,6 @@ FORM prepare_monitor_scope
 
   IF go_exec_grid IS BOUND.
     CALL METHOD go_exec_grid->get_selected_rows
-      IMPORTING et_index_rows = lt_rows.
-  ELSEIF go_grid_0400 IS BOUND.
-    CALL METHOD go_grid_0400->get_selected_rows
       IMPORTING et_index_rows = lt_rows.
   ENDIF.
 
@@ -5315,7 +5386,8 @@ FORM request_0500_run USING iv_engine TYPE csequence.
   PERFORM check_0500_state
     CHANGING lv_state_ok lv_state_msg.
   IF lv_state_ok <> abap_true.
-    MESSAGE lv_state_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_state_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5326,7 +5398,8 @@ FORM request_0500_run USING iv_engine TYPE csequence.
 
   PERFORM scope_from_0500_sel CHANGING lv_sel_ok lv_sel_msg.
   IF lv_sel_ok <> abap_true.
-    MESSAGE lv_sel_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_sel_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5383,7 +5456,8 @@ FORM execute_now_0500.
   IF lv_runtime_ok <> abap_true.
     p_bdc_mode      = lv_saved_mode.
     chkp_background = lv_saved_bg.
-    MESSAGE lv_runtime_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_runtime_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -5441,7 +5515,8 @@ FORM execute_now_0500.
       ENDIF.
     ENDLOOP.
     IF lv_ready_msg IS NOT INITIAL.
-      MESSAGE lv_ready_msg TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING lv_ready_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ELSE.
       MESSAGE s521(zbdc) WITH lv_done lv_total DISPLAY LIKE 'W'.
     ENDIF.
@@ -5564,20 +5639,20 @@ FORM finalize_q_from_group
   IF gv_z579_ct_started <> abap_true AND lv_ready = lv_total.
     lv_msg = gv_z579_pre_ct_message.
     IF lv_msg IS INITIAL.
-      lv_msg = 'Execution was blocked before SAP replay; exact frozen Script/Mapping/session context is incomplete.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '923' INTO lv_msg.
     ENDIF.
     PERFORM exec_q_set USING is_key 'BLOCKED_ONBOARDING' lv_msg ''.
     RETURN.
   ENDIF.
 
   IF lv_err > 0.
-    IF lv_msg IS INITIAL. lv_msg = 'SAP execution returned an error. Review the exact SAP BDC protocol.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '924' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_error lv_msg ''.
   ELSEIF lv_warn > 0.
-    IF lv_msg IS INITIAL. lv_msg = 'Execution completed with a warning/unresolved terminal protocol state.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '925' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_warning lv_msg ''.
   ELSEIF lv_partial > 0.
-    IF lv_msg IS INITIAL. lv_msg = 'Execution returned a partial terminal outcome; review the exact protocol.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '926' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_partial lv_msg ''.
   ELSEIF lv_ok = lv_total.
  "staging SUCCESS intentionally clears ERROR_MSG, so recover the
@@ -5587,20 +5662,20 @@ FORM finalize_q_from_group
       USING    is_key
       CHANGING lv_exact_success lv_msg.
     IF lv_exact_success <> abap_true OR lv_msg IS INITIAL.
-      lv_msg = 'SAP execution completed successfully; no terminal S-message was returned.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '927' INTO lv_msg.
     ENDIF.
     PERFORM exec_q_set USING is_key gc_st_success lv_msg ''.
   ELSEIF lv_processed > 0.
-    IF lv_msg IS INITIAL. lv_msg = 'SAP execution processed; review the exact protocol if terminal success is required.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '928' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_processed lv_msg ''.
   ELSEIF lv_skipped = lv_total.
-    IF lv_msg IS INITIAL. lv_msg = 'Execution group was skipped by the runtime lifecycle.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '929' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_skipped lv_msg ''.
   ELSEIF lv_sm35 = lv_total.
-    IF lv_msg IS INITIAL. lv_msg = 'Queued in the exact SM35 batch-input session; process it in standard SM35 and wait for automatic exact-QID reconciliation.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '930' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_sm35q lv_msg ''.
   ELSE.
-    IF lv_msg IS INITIAL. lv_msg = 'Execution returned, but the persisted group lifecycle could not be reconciled. Review exact protocol before retry.'. ENDIF.
+    IF lv_msg IS INITIAL. MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '931' INTO lv_msg. ENDIF.
     PERFORM exec_q_set USING is_key gc_st_warning lv_msg ''.
   ENDIF.
 ENDFORM.
@@ -6046,11 +6121,13 @@ FORM monitor_sm35_tick.
  "The RSBDCBTC compatibility job can finish before APQI/log persistence.
  "Only APQI terminal state or a canceled job is final.
   IF lv_job_status = 'A'.
-    lv_msg = |RSBDCBTC compatibility job { gv_last_sm35_jobname } was canceled. Session { gv_sm35_mon_group } remains queued; no business result was inferred.|.
+    DATA(lv_zm932_6049_1) = |{ gv_last_sm35_jobname }|.
+    DATA(lv_zm932_6049_2) = |{ gv_sm35_mon_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '932'
+      WITH lv_zm932_6049_1 lv_zm932_6049_2 INTO lv_msg.
     PERFORM stamp_sm35_action USING gt_sm35_mon_process lv_msg.
     gv_exec_run_done   = 0.
     gv_exec_run_active = abap_false.
-    GET TIME STAMP FIELD gv_exec_end_ts.
     gv_exec_run_phase  = 'RSBDCBTC job canceled; session still queued'.
     CLEAR: gv_exec_mon_kind, gv_sm35_job_finished.
     PERFORM stop_0500_timer.
@@ -6060,15 +6137,21 @@ FORM monitor_sm35_tick.
     lv_visible = gv_exec_run_done.
     PERFORM set_0500_progress USING lv_visible gv_exec_run_total lv_elapsed.
     PERFORM refresh_0500_tools.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
   IF lv_qstate = 'E' OR lv_qstate = 'F' OR lv_proto_term = abap_true.
     IF lv_qstate = 'E' OR lv_qstate = 'F'.
-      lv_msg = |SM35 session { gv_sm35_mon_group } reached terminal state { lv_qstate }.|.
+      DATA(lv_zm933_6069_1) = |{ gv_sm35_mon_group }|.
+      DATA(lv_zm933_6069_2) = |{ lv_qstate }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '933'
+        WITH lv_zm933_6069_1 lv_zm933_6069_2 INTO lv_msg.
     ELSE.
-      lv_msg = |SM35 session { gv_sm35_mon_group } left APQI and its exact QID now has terminal SAP protocol.|.
+      DATA(lv_zm934_6071_1) = |{ gv_sm35_mon_group }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '934'
+        WITH lv_zm934_6071_1 INTO lv_msg.
     ENDIF.
     PERFORM q_set_all USING 'VERIFYING' lv_msg.
     PERFORM reconcile_sm35
@@ -6080,9 +6163,11 @@ FORM monitor_sm35_tick.
  "Do not wait blindly for 300 seconds; reconcile real protocol/object proof.
     gv_sm35_job_finished = abap_true.
     IF lv_apqi_found = abap_true.
-      lv_msg = |RSBDCBTC job finished; APQI state { lv_qstate } is not terminal. Reconciling exact SM35 protocol.|.
+      DATA(lv_zm935_6083_1) = |{ lv_qstate }|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '935'
+        WITH lv_zm935_6083_1 INTO lv_msg.
     ELSE.
-      lv_msg = |RSBDCBTC job finished; APQI row is no longer available. Reconciling exact SM35 protocol.|.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '936' INTO lv_msg.
     ENDIF.
     PERFORM q_set_all USING 'VERIFYING' lv_msg.
     PERFORM reconcile_sm35
@@ -6125,14 +6210,15 @@ FORM monitor_sm35_tick.
     ENDIF.
 
     IF gv_sm35_mon_timeout <= 0.
-      lv_msg = 'SM35 monitor context is invalid because timeout is not positive.'.
+      MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '937' INTO lv_msg.
       PERFORM stamp_sm35_action USING gt_sm35_mon_process lv_msg.
       COMMIT WORK AND WAIT.
       gv_exec_run_active = abap_false.
       gv_exec_run_phase = 'SM35 monitoring blocked by invalid context'.
       CLEAR: gv_exec_mon_kind, gv_sm35_job_finished.
       PERFORM stop_0500_timer.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
     ENDIF.
 
@@ -6146,13 +6232,16 @@ FORM monitor_sm35_tick.
       RETURN.
     ENDIF.
 
-    lv_msg =
-      |SM35 live monitoring stopped after { gv_sm35_mon_timeout } sec. Session { gv_sm35_mon_group } is still in state { lv_qstate }; the business result remains pending in SM35.|.
+    DATA(lv_zm938_6149_1) = |{ gv_sm35_mon_timeout }|.
+    DATA(lv_zm938_6149_2) = |{ gv_sm35_mon_group }|.
+    DATA(lv_zm938_6149_3) = |{ lv_qstate }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '938'
+      WITH lv_zm938_6149_1 lv_zm938_6149_2 lv_zm938_6149_3
+      INTO lv_msg.
     PERFORM stamp_sm35_action USING gt_sm35_mon_process lv_msg.
     COMMIT WORK AND WAIT.
     gv_exec_run_done   = 0.
     gv_exec_run_active = abap_false.
-    GET TIME STAMP FIELD gv_exec_end_ts.
     gv_exec_run_phase  = 'SM35 result still pending'.
     CLEAR: gv_exec_mon_kind, gv_sm35_job_finished.
     PERFORM stop_0500_timer.
@@ -6162,7 +6251,8 @@ FORM monitor_sm35_tick.
     lv_visible = gv_exec_run_done.
     PERFORM set_0500_progress USING lv_visible gv_exec_run_total lv_elapsed.
     PERFORM refresh_0500_tools.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -6173,7 +6263,6 @@ FORM monitor_sm35_tick.
  "stop the active SM35 overlay before rebuilding 0500. Otherwise
  "build_0500_queue paints verified SUCCESS rows back to yellow SM35RUN.
   gv_exec_run_active = abap_false.
-  GET TIME STAMP FIELD gv_exec_end_ts.
   CLEAR gv_exec_mon_kind.
   PERFORM prepare_alv_0400.
   PERFORM build_exec_cockpit.
@@ -6297,31 +6386,31 @@ FORM sync_0500_q_db
 
     IF lv_error > 0.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 exact per-group protocol returned an execution error.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '939' INTO lv_msg.
       ENDIF.
       PERFORM exec_q_set USING ls_key gc_st_error lv_msg ''.
       lv_done = lv_done + 1.
     ELSEIF lv_warning > 0.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 terminal session state could not be resolved to exact per-group protocol.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '940' INTO lv_msg.
       ENDIF.
       PERFORM exec_q_set USING ls_key gc_st_warning lv_msg ''.
       lv_done = lv_done + 1.
     ELSEIF lv_success = lv_total.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 execution completed successfully for this exact group.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '941' INTO lv_msg.
       ENDIF.
       PERFORM exec_q_set USING ls_key gc_st_success lv_msg ''.
       lv_done = lv_done + 1.
     ELSEIF lv_success + lv_processed = lv_total.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 processing/protocol reconciled for this group; some rows have only processed evidence.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '942' INTO lv_msg.
       ENDIF.
       PERFORM exec_q_set USING ls_key gc_st_processed lv_msg ''.
       lv_done = lv_done + 1.
     ELSEIF lv_sm35 > 0.
       IF lv_msg IS INITIAL.
-        lv_msg = 'SM35 session is queued or waiting for standard SAP processing/protocol reconciliation.'.
+        MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '943' INTO lv_msg.
       ENDIF.
       PERFORM exec_q_set USING ls_key gc_st_sm35q lv_msg ''.
     ENDIF.
@@ -6346,8 +6435,6 @@ FORM queue_sm35_0500.
         lv_msg        TYPE string,
         lv_issue      TYPE abap_bool,
         lv_block_msg  TYPE string,
-        lv_bg_ok      TYPE abap_bool,
-        lv_bg_msg     TYPE string,
         lv_timeout    TYPE i.
 
   IF gv_exec_run_active = abap_true.
@@ -6413,7 +6500,6 @@ FORM queue_sm35_0500.
   g_exec_curr         = 0.
   gv_exec_run_engine  = 'B'.
   gv_exec_run_phase   = 'Creating SM35 batch-input session'.
-  GET TIME STAMP FIELD gv_exec_start_ts.
   GET RUN TIME FIELD lv_rt_start.
   gv_exec_run_start_rt = lv_rt_start.
 
@@ -6438,7 +6524,6 @@ FORM queue_sm35_0500.
   chkp_background = lv_saved_bg.
 
   GET RUN TIME FIELD lv_rt_end.
-  CLEAR gv_exec_end_ts. "Business execution ends only after terminal SM35 proof.
   lv_elapsed_ms = lv_rt_end - lv_rt_start.
   IF lv_elapsed_ms < 0.
     lv_elapsed_ms = 0.
@@ -6525,7 +6610,12 @@ FORM queue_sm35_0500.
     GET RUN TIME FIELD gv_exec_run_start_rt.
 
     gv_exec_run_phase = |SM35 session { gv_last_sm35_group } ready; choose SM35 Monitor to continue|.
-    lv_msg = |SM35 session { gv_last_sm35_group } created for { lv_queued }/{ lv_total } group(s). Choose SM35 Monitor to continue in standard SM35. Keep Extended log + Default Dynpro Size enabled; processing mode remains your SM35 choice.|.
+    DATA(lv_zm944_6528_1) = |{ gv_last_sm35_group }|.
+    DATA(lv_zm944_6528_2) = |{ lv_queued }|.
+    DATA(lv_zm944_6528_3) = |{ lv_total }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '944'
+      WITH lv_zm944_6528_1 lv_zm944_6528_2 lv_zm944_6528_3
+      INTO lv_msg.
     PERFORM stamp_sm35_action USING lt_monitor lv_msg.
     COMMIT WORK AND WAIT.
     PERFORM set_0500_progress USING 0 lv_total lv_elapsed_ms.
@@ -6574,9 +6664,11 @@ FORM queue_sm35_0500.
     PERFORM refresh_0500_tools.
 
     IF lv_block_msg IS NOT INITIAL OR lv_issue = abap_true.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     ELSE.
-      MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+      PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
     ENDIF.
   ENDIF.
 
@@ -6585,11 +6677,9 @@ ENDFORM.
 
 FORM run_execution_monitor USING iv_engine_mode TYPE csequence.
   DATA lt_process  TYPE STANDARD TABLE OF ty_staging_alv.
-  DATA lv_total    TYPE i.
   DATA lv_rt_start TYPE i.
   DATA lv_rt_end   TYPE i.
   DATA lv_rt_diff  TYPE i.
-  DATA lv_ok       TYPE abap_bool.
   DATA lv_scope    TYPE char60.
   DATA lv_old_mode TYPE char30.
   DATA lv_batch_run TYPE abap_bool.
@@ -6650,7 +6740,8 @@ FORM run_execution_monitor USING iv_engine_mode TYPE csequence.
     USING    iv_engine_mode
     CHANGING lv_engine lv_engine_ok lv_engine_msg.
   IF lv_engine_ok <> abap_true.
-    MESSAGE lv_engine_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_engine_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -6676,13 +6767,13 @@ FORM run_execution_monitor USING iv_engine_mode TYPE csequence.
     ENDIF.
   ENDIF.
   IF lv_runtime_ok <> abap_true.
-    MESSAGE lv_runtime_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_runtime_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
  "The explicit engine action is the command boundary; no hidden second dispatch.
 
-  GET TIME STAMP FIELD gv_exec_start_ts.
   GET RUN TIME FIELD lv_rt_start.
   g_stop_flag           = space.
   gv_exec_stop_req      = abap_false.
@@ -6738,7 +6829,6 @@ FORM run_execution_monitor USING iv_engine_mode TYPE csequence.
   gv_exec_run_active = abap_false.
 
   GET RUN TIME FIELD lv_rt_end.
-  GET TIME STAMP FIELD gv_exec_end_ts.
 
   lv_rt_diff = lv_rt_end - lv_rt_start.
   IF lv_rt_diff < 0.
@@ -6801,7 +6891,8 @@ FORM run_execution_monitor USING iv_engine_mode TYPE csequence.
 
   IF lv_batch_run = abap_true.
     IF gv_last_sm35_action IS NOT INITIAL.
-      MESSAGE gv_last_sm35_action TYPE 'S'.
+      PERFORM userize_ui_message USING gv_last_sm35_action CHANGING gv_ui_message.
+      MESSAGE gv_ui_message TYPE 'S'.
     ELSE.
       MESSAGE s558(zbdc) WITH lv_processed_grp.
     ENDIF.
@@ -7032,7 +7123,7 @@ FORM guard_ct_ready_group
     PERFORM save_synthetic_engine_log
       USING pt_group lv_tcode 0 gc_st_processed lv_msg '' 'X'.
     PERFORM update_group_result USING pt_group gc_st_processed lv_msg ''.
-    PERFORM update_exec_counters USING pt_group abap_false.
+    PERFORM update_exec_counters USING pt_group.
     COMMIT WORK AND WAIT.
 
     gv_exec_err_grp  = gv_exec_err_grp + 1.
@@ -7593,7 +7684,9 @@ FORM refresh_sm35_state.
     CHANGING gv_last_sm35_qid.
 
   IF gv_last_sm35_qid IS INITIAL.
-    lv_msg = |SM35 session { gv_last_sm35_group } was queued, but its Queue ID is not currently available. Open SM35/Log, then use Refresh Queue again.|.
+    DATA(lv_zm945_7596_1) = |{ gv_last_sm35_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '945'
+      WITH lv_zm945_7596_1 INTO lv_msg.
     PERFORM sync_0500_q_db USING gt_exec_scope_0500.
   ELSE.
     PERFORM reconcile_sm35
@@ -7766,8 +7859,9 @@ FORM open_sm35_0500.
   ENDIF.
 
   IF lv_sm35_group IS INITIAL OR lv_sm35_qid IS INITIAL.
-    lv_msg = 'SM35 Monitor cannot start because the exact session/QID binding is unavailable. No queue was executed.'.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '946' INTO lv_msg.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -7799,7 +7893,9 @@ FORM open_sm35_0500.
     gv_exec_run_phase = |SM35 session { lv_sm35_group } queued; process it in standard SM35|.
   ENDIF.
 
-  lv_msg = |SM35 Monitor opened session { lv_sm35_group } in a separate SAP mode. Process the exact session with Extended log + Default Dynpro Size; screen 0500 stays open and auto-reconciles the exact QID.|.
+  DATA(lv_zm947_7802_1) = |{ lv_sm35_group }|.
+  MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '947'
+    WITH lv_zm947_7802_1 INTO lv_msg.
   gv_exec_run_phase = |SM35 Monitor opened { lv_sm35_group }; waiting for standard SM35 processing|.
   gv_last_sm35_action = lv_msg.
   PERFORM stamp_sm35_action USING gt_exec_scope_0500 lv_msg.
@@ -7859,17 +7955,29 @@ FORM open_sm35_0500.
  "queued; do not duplicate a normal success message in the status bar.
     gv_last_sm35_action = lv_msg.
   ELSEIF lv_mode_rc = 1.
-    lv_msg = |SM35 could not open in a separate SAP mode because the maximum number of SAP modes is already open. Session { lv_sm35_group } remains queued and unchanged. Close one SAP mode, then choose SM35 Monitor again.|.
+    DATA(lv_zm948_7862_1) = |{ lv_sm35_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '948'
+      WITH lv_zm948_7862_1 INTO lv_msg.
     gv_last_sm35_action = lv_msg.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
   ELSEIF lv_mode_rc = 3.
-    lv_msg = |SM35 could not open because this user is not authorized to start SM35 in a new SAP mode. Session { lv_sm35_group } remains queued and unchanged.|.
+    DATA(lv_zm949_7866_1) = |{ lv_sm35_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '949'
+      WITH lv_zm949_7866_1 INTO lv_msg.
     gv_last_sm35_action = lv_msg.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ELSE.
-    lv_msg = |SM35 could not open in a separate SAP mode (TH_CREATE_MODE={ lv_mode_rc }, TH_CREATE_FOREIGN_MODE={ lv_foreign_rc }). Session { lv_sm35_group } remains queued and unchanged; exact-QID monitoring stays active.|.
+    DATA(lv_zm950_7870_1) = |{ lv_mode_rc }|.
+    DATA(lv_zm950_7870_2) = |{ lv_foreign_rc }|.
+    DATA(lv_zm950_7870_3) = |{ lv_sm35_group }|.
+    MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '950'
+      WITH lv_zm950_7870_1 lv_zm950_7870_2 lv_zm950_7870_3
+      INTO lv_msg.
     gv_last_sm35_action = lv_msg.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'W'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'W'.
   ENDIF.
  "arm/re-arm the 0500 timer only after the /o-style launcher has
  "returned control to the original mode. Arming it before TH_CREATE_MODE
@@ -8076,11 +8184,13 @@ FORM open_0500_retry.
   PERFORM reset_0560.
   PERFORM capture_retry_scope CHANGING lv_ok lv_msg.
   IF lv_ok <> abap_true.
-    MESSAGE lv_msg TYPE 'S' DISPLAY LIKE 'E'.
+    PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+    MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
-  MESSAGE lv_msg TYPE 'S'.
+  PERFORM userize_ui_message USING lv_msg CHANGING gv_ui_message.
+  MESSAGE gv_ui_message TYPE 'S'.
   CALL SCREEN 0560 STARTING AT 10 5 ENDING AT 88 18.
 ENDFORM.
 
@@ -8240,7 +8350,9 @@ FORM sync_term_sm35
     RETURN.
   ENDIF.
 
-  lv_msg = |SM35 exact QID { gv_sm35_mon_qid } reached terminal evidence; automatic reconciliation triggered.|.
+  DATA(lv_zm951_8243_1) = |{ gv_sm35_mon_qid }|.
+  MESSAGE ID 'ZBDC' TYPE 'S' NUMBER '951'
+    WITH lv_zm951_8243_1 INTO lv_msg.
   PERFORM reconcile_sm35
     USING gt_sm35_mon_process gv_sm35_mon_group
           gv_sm35_mon_qid lv_msg.
@@ -8290,7 +8402,6 @@ FORM close_term_sm35_mon
          gv_exec_stop_req,
          g_stop_flag,
          gv_sm35_job_finished.
-  GET TIME STAMP FIELD gv_exec_end_ts.
 
   IF lv_issue = abap_true.
     gv_exec_run_phase = 'SM35 terminal state reconciled with issue(s)'.

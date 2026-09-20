@@ -1859,7 +1859,8 @@ FORM show_issue_detail_safe.
           end_line     = 30.
       lo_alv->display( ).
     CATCH cx_salv_msg INTO lx_salv.
-      MESSAGE lx_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Error details could not be displayed. Reopen the group and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 ENDFORM.
 
@@ -3411,7 +3412,8 @@ FORM show_fixguide_text
         end_line     = 12 ).
       lo_salv->display( ).
     CATCH cx_salv_msg INTO lx_salv.
-      MESSAGE lx_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Fix Guide could not be displayed. Reopen it and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 
 ENDFORM.
@@ -3432,13 +3434,13 @@ FORM run_fixguide_ai.
         lv_ai_ok         TYPE abap_bool.
 
   IF gv_fixguide_stg_idx_789 IS INITIAL.
-    MESSAGE 'Fix Guide context is no longer available. Reopen the guide.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s782(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
   READ TABLE gt_staging_alv INTO ls_stg INDEX gv_fixguide_stg_idx_789.
   IF sy-subrc <> 0.
-    MESSAGE 'Fix Guide staging context is no longer available. Reopen the guide.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s783(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -3450,7 +3452,7 @@ FORM run_fixguide_ai.
       WITH KEY group_key = ls_stg-record_key.
   ENDIF.
   IF sy-subrc <> 0.
-    MESSAGE 'Fix Guide execution context is no longer available. Reopen the guide.' TYPE 'S' DISPLAY LIKE 'W'.
+    MESSAGE s784(zbdc) DISPLAY LIKE 'W'.
     RETURN.
   ENDIF.
 
@@ -3470,7 +3472,7 @@ FORM run_fixguide_ai.
       USING ls_stg ls_exec lv_protocol lv_category
             lv_rule_cause lv_rule_action
             lv_ai_source lv_ai_cause lv_ai_action lv_ground_field lv_ai_ok.
-    MESSAGE 'No error analysis is required. Verify the real SAP landing with AI Navigation and certify the object.' TYPE 'S' DISPLAY LIKE 'I'.
+    MESSAGE s785(zbdc) DISPLAY LIKE 'I'.
     IF go_fix_guide_789 IS BOUND.
       TRY.
           go_fix_guide_789->refresh( ).
@@ -3500,12 +3502,12 @@ FORM run_fixguide_ai.
        gv_z619_ai_http_diag CS 'RECEIVE_FAIL' OR
        gv_z619_ai_http_diag CS 'KEY_MISSING' OR
        gv_z619_ai_http_diag CS 'AI_CONFIG_MISSING'.
-      MESSAGE 'OpenAI is unavailable; verified SAP evidence is shown instead.' TYPE 'S' DISPLAY LIKE 'W'.
+      MESSAGE s786(zbdc) DISPLAY LIKE 'W'.
     ELSE.
-      MESSAGE 'OpenAI answer did not pass the evidence checks; verified SAP evidence is shown instead.' TYPE 'S' DISPLAY LIKE 'W'.
+      MESSAGE s787(zbdc) DISPLAY LIKE 'W'.
     ENDIF.
   ELSE.
-    MESSAGE 'AI analysis completed for the selected business group.' TYPE 'S'.
+    MESSAGE s788(zbdc).
   ENDIF.
 
   PERFORM build_fixguide_cards
@@ -3559,7 +3561,7 @@ FORM show_fix_guide_safe.
 
   READ TABLE gt_staging_alv INTO ls_stg INDEX g_edit_index.
   IF sy-subrc <> 0.
-    MESSAGE 'Selected business group could not be matched to staging data.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s789(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -3571,7 +3573,7 @@ FORM show_fix_guide_safe.
       WITH KEY group_key = ls_stg-record_key.
   ENDIF.
   IF sy-subrc <> 0.
-    MESSAGE 'Selected business group has no execution row.' TYPE 'S' DISPLAY LIKE 'E'.
+    MESSAGE s790(zbdc) DISPLAY LIKE 'E'.
     RETURN.
   ENDIF.
 
@@ -3680,7 +3682,8 @@ FORM show_fix_guide_safe.
           end_line     = 30.
       go_fix_guide_789->display( ).
     CATCH cx_salv_msg INTO lx_salv.
-      MESSAGE lx_salv->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'Fix Guide could not be displayed. Reopen it and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 
 ENDFORM.
@@ -5165,118 +5168,11 @@ FORM display_ai_landing.
 ENDFORM.
 
 *&---------------------------------------------------------------------*
-*& Export current diagnosis/fix guide text from Screen 0700.
-*&---------------------------------------------------------------------*
-FORM export_ai_fix_guide.
-
-  DATA: lt_text     TYPE STANDARD TABLE OF string,
-        lv_file     TYPE string,
-        lv_path     TYPE string,
-        lv_fullpath TYPE string,
-        lv_action   TYPE i,
-        lv_default  TYPE string.
-
-  IF txtp_ai_text IS INITIAL.
-    MESSAGE s682(zbdc) DISPLAY LIKE 'W'.
-    RETURN.
-  ENDIF.
-
-  lv_default = 'AI_FIX_GUIDE'.
-  IF txtp_ai_session IS NOT INITIAL.
-    CONCATENATE lv_default txtp_ai_session
-      INTO lv_default SEPARATED BY '_'.
-  ELSEIF txtp_result_session IS NOT INITIAL.
-    CONCATENATE lv_default txtp_result_session
-      INTO lv_default SEPARATED BY '_'.
-  ELSEIF txtp_session_id IS NOT INITIAL.
-    CONCATENATE lv_default txtp_session_id
-      INTO lv_default SEPARATED BY '_'.
-  ENDIF.
-  CONCATENATE lv_default '.txt' INTO lv_default.
-
-  REPLACE ALL OCCURRENCES OF '/' IN lv_default WITH '_'.
-  REPLACE ALL OCCURRENCES OF '\' IN lv_default WITH '_'.
-  REPLACE ALL OCCURRENCES OF ':' IN lv_default WITH '_'.
-  CONDENSE lv_default NO-GAPS.
-
-  CALL METHOD cl_gui_frontend_services=>file_save_dialog
-    EXPORTING
-      window_title      = 'Export AI Fix Guide'
-      default_extension = 'txt'
-      default_file_name = lv_default
-      file_filter       = 'Text File (*.txt)|*.txt|All Files (*.*)|*.*'
-    CHANGING
-      filename          = lv_file
-      path              = lv_path
-      fullpath          = lv_fullpath
-      user_action       = lv_action
-    EXCEPTIONS
-      OTHERS            = 1.
-
-  IF sy-subrc <> 0
-     OR lv_action = cl_gui_frontend_services=>action_cancel
-     OR lv_fullpath IS INITIAL.
-    RETURN.
-  ENDIF.
-
-  SPLIT txtp_ai_text AT cl_abap_char_utilities=>newline
-    INTO TABLE lt_text.
-
-  CALL METHOD cl_gui_frontend_services=>gui_download
-    EXPORTING
-      filename = lv_fullpath
-      filetype = 'ASC'
-    CHANGING
-      data_tab = lt_text
-    EXCEPTIONS
-      OTHERS   = 1.
-
-  IF sy-subrc = 0.
-    MESSAGE s683(zbdc) WITH lv_fullpath.
-  ELSE.
-    MESSAGE s684(zbdc) WITH sy-subrc DISPLAY LIKE 'E'.
-  ENDIF.
-
-ENDFORM.
-
-*&---------------------------------------------------------------------*
-*& Compatibility action for legacy STATUS_0700 function code.
-*& Rule diagnosis is automatic, but this safely re-runs it if invoked.
-*&---------------------------------------------------------------------*
-FORM run_rule_ai_for_session.
-
-  DATA lv_ok TYPE abap_bool.
-
-  IF gt_result_all IS INITIAL.
-    PERFORM prepare_ai_current CHANGING lv_ok.
-    IF lv_ok <> abap_true.
-      PERFORM display_ai_landing.
-      RETURN.
-    ENDIF.
-  ENDIF.
-
-  PERFORM build_ai_patterns.
-
-  IF gt_patterns IS INITIAL.
-    PERFORM display_ai_landing.
-    RETURN.
-  ENDIF.
-  IF gv_issue_selected_0700 <= 0.
-    gv_issue_selected_0700 = 1.
-  ENDIF.
-
-  PERFORM render_selected_issue_0700 USING 'RULE'.
-  PERFORM display_ai_patterns.
-
-ENDFORM.
-
-*&---------------------------------------------------------------------*
 *& Return diagnostic timestamp in Vietnam UTC+7 using the project-wide
 *& demo/current-time helper.
 *&---------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*& Archive current diagnosis patterns for Screen 0750.
-*& Exact Session + Pattern + Message is the idempotent archive key.
+*& Automatic diagnosis for the current 0700 session/group context.
 *&---------------------------------------------------------------------*
 FORM auto_diagnose_0700.
 
@@ -5846,13 +5742,16 @@ FORM show_ai_pattern_grid.
       go_pattern_grid->display( ).
 
     CATCH cx_salv_not_found INTO DATA(lx_nf).
-      MESSAGE lx_nf->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'AI analysis could not be displayed. Reopen Analyze Error and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
 
     CATCH cx_salv_msg INTO DATA(lx_msg).
-      MESSAGE lx_msg->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'AI analysis could not be displayed. Reopen Analyze Error and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
 
     CATCH cx_root INTO DATA(lx_any).
-      MESSAGE lx_any->get_text( ) TYPE 'S' DISPLAY LIKE 'E'.
+      gv_ui_message = 'AI analysis could not be displayed. Reopen Analyze Error and try again.'.
+      MESSAGE gv_ui_message TYPE 'S' DISPLAY LIKE 'E'.
   ENDTRY.
 
 ENDFORM.
@@ -5871,10 +5770,9 @@ FORM display_ai_patterns.
 
 ENDFORM.
 
-*& hide_0750_search_ui
-*& Purpose: Search Term is retired. Hide common screen element names.
-*& For a clean design-time layout, delete the Search Archive block
-*& from Screen Painter 0750 as described in the README.
+*&---------------------------------------------------------------------*
+*& Render the read-only diagnosis text panel on Screen 0700.
+*&---------------------------------------------------------------------*
 FORM show_ai_text_panel.
 
   DATA lt_text TYPE STANDARD TABLE OF char255.
