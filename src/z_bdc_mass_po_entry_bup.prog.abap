@@ -6,13 +6,12 @@
 *& Transaction routing:
 *&   ZBDC_CONFIG_BUP -> Configuration / Onboarding
 *&   ZBDC_RUN_BUP    -> Runtime / Operations
-*&   Z_BDC_02_BUP    -> Legacy Runtime
 *&---------------------------------------------------------------------*
 
 REPORT z_bdc_mass_po_entry_bup.
 
 *---------------------------------------------------------------------*
-* Legacy core includes
+* Core includes
 *---------------------------------------------------------------------*
 INCLUDE z_bdc_mass_po_entry_top_bup.
 INCLUDE z_bdc_mass_po_entry_o01_bup.
@@ -52,10 +51,6 @@ START-OF-SELECTION.
     WHEN 'ZBDC_RUN_BUP'.
       "Transaction 2:
       "Daily Runtime / Operations for end users
-      CALL SCREEN 0100.
-
-    WHEN 'Z_BDC_02_BUP'.
-      "Legacy transaction kept temporarily for compatibility
       CALL SCREEN 0100.
 
     WHEN OTHERS.
